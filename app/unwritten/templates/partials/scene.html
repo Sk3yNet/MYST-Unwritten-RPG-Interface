@@ -1,0 +1,66 @@
+{% set s = scene %}
+<header>
+  <h2 class="sc">The Scene</h2>
+  {% if s.name %}<span class="aspect" style="font-style:normal">{{ s.name }}</span>{% endif %}
+</header>
+{% if s.notes %}<p class="small muted" style="white-space:pre-wrap">{{ s.notes }}</p>{% endif %}
+
+<h3>Situation aspects</h3>
+{% if s.aspects %}
+<ul class="aspect-list">
+  {% for a in s.aspects %}
+  <li>
+    <span class="aspect {{ a.tag }}">{{ a.text }}
+      {% if a.tag in ("fact", "truth") %}<span class="tag">{{ a.tag }}</span>{% endif %}
+      {% if a.on %}<span class="tag">on {{ a.on }}</span>{% endif %}
+    </span>
+    <span class="invokes" title="{{ a.free }} free invoke(s)">{% for _ in range(a.free) %}<span class="pip on"></span>{% endfor %}</span>
+    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/inc" hx-vals='{"id": {{ a.id }}}' title="Add a free invoke">+</button>
+    {% if a.free %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/dec" hx-vals='{"id": {{ a.id }}}' title="Remove a free invoke">−</button>{% endif %}
+    <button class="x" hx-post="/c/{{ ctx.cid }}/scene/remove" hx-vals='{"id": {{ a.id }}}' hx-confirm="Remove “{{ a.text }}”?" title="Remove">×</button>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}<p class="empty small">No situation aspects yet.</p>{% endif %}
+<form class="row" hx-post="/c/{{ ctx.cid }}/scene/aspect" hx-on::after-request="if(event.detail.successful) this.reset()">
+  <input name="text" placeholder="New aspect, e.g. Slick with Lake Spray" required style="flex:1 1 12rem">
+  <input name="on" placeholder="on whom (optional)" style="width:9rem">
+  <label class="small muted">free <input type="number" name="free" value="0" min="0" max="9"></label>
+  <button class="btn tiny">Place</button>
+</form>
+
+<h3 style="margin-top:.8rem">Boosts</h3>
+{% if s.boosts %}
+<ul class="aspect-list">
+  {% for b in s.boosts %}
+  <li><span class="aspect boost">{{ b.text or "unnamed boost" }}{% if b.holder %}<span class="tag">{{ b.holder }}</span>{% endif %}</span>
+    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/promote" hx-vals='{"id": {{ b.id }}}' title="Promote to a full aspect with a free invoke">promote</button>
+    <button class="x" hx-post="/c/{{ ctx.cid }}/scene/unboost" hx-vals='{"id": {{ b.id }}}' title="Spent or faded">×</button></li>
+  {% endfor %}
+</ul>
+{% else %}<p class="empty small">None. Ties on advantages and excellent results earn them; they fade after the next action.</p>{% endif %}
+<form class="row" hx-post="/c/{{ ctx.cid }}/scene/boost" hx-on::after-request="if(event.detail.successful) this.reset()">
+  <input name="text" placeholder="Boost, e.g. A Little Off-Balance" style="flex:1 1 10rem">
+  <input name="holder" placeholder="held by" style="width:8rem">
+  <button class="btn tiny">Add</button>
+</form>
+
+{% if ctx.is_gm %}
+<details class="fold" style="margin-top:.9rem"><summary>GM: scene &amp; pacing</summary>
+  <form class="stack" hx-post="/c/{{ ctx.cid }}/scene/meta" style="margin-top:.4rem">
+    <label class="field">Scene name <input name="name" value="{{ s.name }}" placeholder="The Flooded Archive"></label>
+    <label class="field">Notes (visible to the table) <textarea name="notes">{{ s.notes }}</textarea></label>
+    <div><button class="btn tiny">Save scene</button></div>
+  </form>
+  <div class="row" style="margin-top:.6rem">
+    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/end" hx-confirm="End the scene? Boosts clear and recovering minor consequences heal.">End scene</button>
+    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/end" hx-vals='{"clear": 1}' hx-confirm="End the scene and clear its aspects too?">End &amp; clear aspects</button>
+    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/session" hx-confirm="Start a new session? Fate points refill to refresh (extras kept).">New session</button>
+    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/chapter" hx-confirm="Start a new chapter? Fate points reset to refresh, all recovering consequences heal.">New chapter</button>
+  </div>
+  <form class="row" hx-post="/c/{{ ctx.cid }}/milestone" style="margin-top:.5rem">
+    <select name="level">{% for k, m in rules.MILESTONES.items() %}<option value="{{ k }}">{{ m.label }} ({{ m.when|lower }})</option>{% endfor %}</select>
+    <button class="btn tiny brass">Award to all</button>
+  </form>
+</details>
+{% endif %}

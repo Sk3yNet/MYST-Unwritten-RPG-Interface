@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ ctx.camp.name if ctx and ctx.camp else "Journal" }}{% endblock %} · Unwritten Table</title>
+  <link rel="stylesheet" href="/static/fonts/fonts.css?v={{ VERSION }}">
+  <link rel="stylesheet" href="/static/app.css?v={{ VERSION }}">
+  <link rel="icon" href="/static/favicon.svg">
+  <script>try{if(localStorage.getItem("theme")==="cavern")document.documentElement.dataset.theme="cavern"}catch(e){}</script>
+  <script src="/static/vendor/htmx.min.js"></script>
+  <script src="/static/vendor/htmx-sse.js"></script>
+  <script src="/static/app.js?v={{ VERSION }}" defer></script>
+  {% block head %}{% endblock %}
+</head>
+<body hx-swap="none" {% if ctx and ctx.camp %}hx-ext="sse" sse-connect="/live/c/{{ ctx.camp.id }}"{% endif %}>
+<header class="masthead">
+  <a class="brand" href="/"><span class="dni" title="Shorah: peace">Sora</span><span class="brand-text">Unwritten Table</span></a>
+  {% if ctx and ctx.camp %}
+  <nav class="tabs">
+    <span class="camp-name">{{ ctx.camp.name }}</span>
+    {% set c = ctx.camp.id %}
+    {% for key, href, label in [("table", "/c/%d" % c, "The Table"), ("party", "/c/%d/party" % c, "Explorers"),
+                                ("deduction", "/c/%d/deduction" % c, "Deduction"), ("dni", "/c/%d/dni" % c, "D’ni Lore"),
+                                ("rules", "/c/%d/rules" % c, "Rules")] %}
+      <a href="{{ href }}" class="{{ 'on' if tab == key }}">{{ label }}</a>
+    {% endfor %}
+    {% if ctx.is_gm %}<a href="/c/{{ c }}/gm" class="{{ 'on' if tab == 'gm' }}">GM’s Desk</a>{% endif %}
+  </nav>
+  {% else %}
+  <nav class="tabs">
+    <a href="/" class="{{ 'on' if not tab }}">Journals</a>
+    <a href="/dni" class="{{ 'on' if tab == 'dni' }}">D’ni Lore</a>
+    <a href="/rules" class="{{ 'on' if tab == 'rules' }}">Rules</a>
+  </nav>
+  {% endif %}
+  <span class="spacer"></span>
+  {% if ctx %}<span class="who" title="{{ ctx.email }}">{{ ctx.user.name }}{% if ctx.camp %} · <em>{{ "Game Master" if ctx.is_gm else "Explorer" }}</em>{% endif %}</span>{% endif %}
+  <button type="button" class="ghost theme-toggle" onclick="toggleTheme()" title="Parchment / Cavern">☾</button>
+  <a class="ghost small" href="/oauth2/sign_out?rd=/">Sign out</a>
+</header>
+<main class="{% block mainclass %}{% endblock %}">
+{% block content %}{% endblock %}
+</main>
+<div id="toasts" aria-live="polite"></div>
+<footer class="colophon">Unwritten Table v{{ VERSION }} · a fan-made table companion for <em>Unwritten: Adventures in the Ages of MYST and Beyond</em>. Game mechanics: Fate Core (OGL). Myst, D’ni and Unwritten are © Cyan, Inc.; bring your own book.</footer>
+</body>
+</html>

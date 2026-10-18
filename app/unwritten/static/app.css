@@ -1,0 +1,312 @@
+/* Unwritten Table: a journal of parchment, ink and brass, after Atrus's notebooks. */
+@font-face {
+  font-family: "Dni";
+  src: url("/static/fonts/DniFont.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  --paper: #ecdcb8;
+  --paper-2: #e3cfa4;
+  --paper-edge: #b8925a;
+  --ink: #3a2816;
+  --ink-soft: #6b5236;
+  --ink-faint: #9a8160;
+  --brass: #8c6a2c;
+  --brass-hi: #c49a45;
+  --leather: #5b3518;
+  --leather-2: #3e2410;
+  --seal: #7d2a1c;
+  --moss: #4d5e2f;
+  --lake: #c8641e;
+  --shadow: rgba(58, 40, 22, .35);
+  --card: rgba(255, 248, 230, .45);
+  --rule: rgba(90, 60, 30, .28);
+  --display: "IM Fell English", "EB Garamond", Georgia, serif;
+  --display-sc: "IM Fell English SC", "IM Fell English", Georgia, serif;
+  --body: "EB Garamond", Georgia, "Times New Roman", serif;
+}
+
+:root[data-theme="cavern"] {
+  /* The D'ni cavern: dark stone lit by the glowing lake. */
+  --paper: #1c1a17;
+  --paper-2: #24211c;
+  --paper-edge: #3a3226;
+  --ink: #eadbb9;
+  --ink-soft: #c6b38e;
+  --ink-faint: #8e7d60;
+  --brass: #d3a252;
+  --brass-hi: #f0c574;
+  --leather: #2a1b10;
+  --leather-2: #140d07;
+  --seal: #e0703a;
+  --moss: #9db36a;
+  --shadow: rgba(0, 0, 0, .6);
+  --card: rgba(255, 235, 200, .04);
+  --rule: rgba(234, 219, 185, .16);
+}
+
+* { box-sizing: border-box; }
+html { background: var(--leather-2); }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font: 18px/1.45 var(--body);
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(255, 250, 230, .55), transparent 60%),
+    radial-gradient(ellipse at 100% 100%, rgba(120, 80, 30, .25), transparent 55%),
+    radial-gradient(ellipse at 0% 100%, rgba(120, 80, 30, .2), transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .24 0 0 0 0 .1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    var(--paper);
+  box-shadow: inset 0 0 120px rgba(90, 55, 20, .45);
+}
+:root[data-theme="cavern"] body {
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(200, 100, 30, .28), transparent 60%),
+    radial-gradient(ellipse at 50% -20%, rgba(80, 70, 60, .35), transparent 60%),
+    var(--paper);
+  box-shadow: none;
+}
+
+a { color: var(--seal); text-decoration-color: rgba(125, 42, 28, .35); text-underline-offset: 3px; }
+a:hover { text-decoration-color: currentColor; }
+h1, h2, h3, h4 { font-family: var(--display); font-weight: 400; color: var(--ink); margin: .2em 0 .4em; }
+h1 { font-size: 2.2rem; letter-spacing: .01em; }
+h2 { font-size: 1.55rem; }
+h3 { font-size: 1.2rem; }
+h2.sc, h3.sc { font-family: var(--display-sc); letter-spacing: .04em; }
+p { margin: .4em 0 .8em; }
+hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--paper-edge), transparent); margin: 1.2em 0; }
+.small { font-size: .85rem; }
+.muted { color: var(--ink-soft); }
+.faint { color: var(--ink-faint); }
+.mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .85em; }
+.dni { font-family: "Dni", serif; font-size: 1.3em; letter-spacing: .04em; }
+.spacer { flex: 1; }
+.right { text-align: right; }
+.row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+.stack > * + * { margin-top: .6rem; }
+.hidden { display: none !important; }
+
+/* ---- masthead: a leather book spine ---------------------------------------------------- */
+.masthead {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding: .55rem 1.2rem;
+  color: #f1e2c0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(0, 0, 0, .25)),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, .05) 0 2px, transparent 2px 6px),
+    var(--leather);
+  border-bottom: 3px double var(--brass);
+  box-shadow: 0 3px 12px var(--shadow);
+}
+.masthead a, .masthead .who { color: #f1e2c0; text-decoration: none; }
+.brand { display: flex; align-items: baseline; gap: .6rem; }
+.brand .dni { color: var(--brass-hi); font-size: 1.6rem; }
+.brand-text { font-family: var(--display-sc); font-size: 1.35rem; letter-spacing: .06em; }
+.tabs { display: flex; gap: .2rem; align-items: center; flex-wrap: wrap; }
+.tabs a {
+  font-family: var(--display); padding: .25rem .7rem; border-radius: 3px 3px 0 0; opacity: .82;
+  border: 1px solid transparent;
+}
+.tabs a:hover { opacity: 1; border-color: rgba(196, 154, 69, .4); }
+.tabs a.on { opacity: 1; background: rgba(236, 220, 184, .14); border-color: var(--brass); border-bottom-color: transparent; }
+.camp-name { font-family: var(--display); font-style: italic; color: var(--brass-hi); margin-right: .6rem; }
+.who em { color: var(--brass-hi); }
+.ghost { background: none; border: 1px solid rgba(241, 226, 192, .35); color: #f1e2c0; border-radius: 3px; padding: .15rem .55rem; cursor: pointer; font: inherit; }
+
+main { max-width: 1400px; margin: 0 auto; padding: 1.2rem 1.4rem 2rem; }
+main.narrow { max-width: 920px; }
+.colophon { text-align: center; font-size: .8rem; color: var(--ink-faint); padding: 1rem 1rem 2rem; font-style: italic; }
+
+/* ---- pages & cards: journal pages pinned to the desk ----------------------------------- */
+.page {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .4) inset, 0 2px 10px rgba(80, 50, 20, .18);
+}
+.page > h2:first-child, .page > h3:first-child, .page > header:first-child { margin-top: 0; }
+.page header { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+.page header h2, .page header h3 { margin: 0; }
+.corner { position: absolute; width: 22px; height: 22px; border-color: var(--brass); border-style: solid; opacity: .7; }
+.ornament { text-align: center; color: var(--brass); letter-spacing: .6em; font-size: .9rem; margin: .4rem 0; }
+
+.grid { display: grid; gap: 1rem; }
+.table-grid { grid-template-columns: minmax(280px, 1.05fr) minmax(300px, 1fr) minmax(300px, 1.1fr); align-items: start; }
+.two { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.three { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+@media (max-width: 1100px) { .table-grid { grid-template-columns: 1fr 1fr; } .table-grid > .log-col { grid-column: 1 / -1; } }
+@media (max-width: 720px) {
+  body { font-size: 17px; }
+  main { padding: .8rem 16px 1.5rem; }
+  .table-grid { grid-template-columns: 1fr; }
+  .masthead { padding: .5rem 16px; }
+}
+
+/* ---- form controls: ink on paper ------------------------------------------------------- */
+input, select, textarea, button { font: inherit; color: inherit; }
+input[type=text], input[type=number], input[type=date], input[type=datetime-local], input:not([type]), select, textarea {
+  background: rgba(255, 252, 240, .55);
+  border: 0; border-bottom: 1px solid var(--ink-faint);
+  padding: .2rem .35rem; border-radius: 2px 2px 0 0; min-width: 0;
+}
+:root[data-theme="cavern"] input, :root[data-theme="cavern"] select, :root[data-theme="cavern"] textarea { background: rgba(255, 240, 210, .06); }
+input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: var(--seal); background: rgba(255, 252, 240, .85); }
+:root[data-theme="cavern"] input:focus, :root[data-theme="cavern"] select:focus, :root[data-theme="cavern"] textarea:focus { background: rgba(255, 240, 210, .12); }
+textarea { width: 100%; min-height: 4.5em; resize: vertical; border: 1px solid var(--rule); }
+input[type=number] { width: 4.2em; }
+label.field { display: grid; gap: .1rem; font-size: .85rem; color: var(--ink-soft); }
+label.field > input, label.field > select, label.field > textarea { font-size: 1rem; color: var(--ink); }
+.btn, button.btn {
+  display: inline-flex; align-items: center; gap: .35rem;
+  font-family: var(--display); font-size: 1rem;
+  padding: .28rem .85rem; cursor: pointer; text-decoration: none;
+  color: #f6ead0; background: linear-gradient(180deg, #8a5a2c, var(--leather));
+  border: 1px solid var(--leather-2); border-radius: 3px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 1px 3px var(--shadow);
+}
+.btn:hover { filter: brightness(1.1); }
+.btn.brass { background: linear-gradient(180deg, var(--brass-hi), var(--brass)); color: #2b1b08; border-color: #6d5020; }
+.btn.seal { background: linear-gradient(180deg, #a3402b, var(--seal)); border-color: #4b170e; }
+.btn.plain { background: none; color: var(--ink); border-color: var(--rule); box-shadow: none; }
+.btn.tiny { font-size: .8rem; padding: .05rem .45rem; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.link { background: none; border: 0; padding: 0; color: var(--seal); cursor: pointer; text-decoration: underline; text-decoration-color: rgba(125, 42, 28, .35); }
+.x { background: none; border: 0; color: var(--ink-faint); cursor: pointer; font-size: 1rem; padding: 0 .2rem; }
+.x:hover { color: var(--seal); }
+
+/* ---- aspects: handwritten slips --------------------------------------------------------- */
+.aspect {
+  font-family: var(--display); font-style: italic; font-size: 1.05rem;
+  display: inline-flex; align-items: center; gap: .35rem; flex-wrap: wrap;
+  padding: .12rem .55rem; border-radius: 2px;
+  background: rgba(255, 250, 235, .5); border: 1px dashed rgba(90, 60, 30, .35);
+}
+:root[data-theme="cavern"] .aspect { background: rgba(255, 240, 210, .05); }
+.aspect.fact { border-style: solid; border-color: var(--moss); }
+.aspect.truth { border: 2px solid var(--brass); background: rgba(196, 154, 69, .15); }
+.aspect-list { list-style: none; padding: 0; margin: .3rem 0; display: grid; gap: .35rem; }
+.aspect-list li { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.invokes { display: inline-flex; gap: 2px; }
+.pip { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--brass); display: inline-block; }
+.pip.on { background: var(--brass); box-shadow: 0 0 4px rgba(196, 154, 69, .6); }
+.tag { font-size: .72rem; font-family: var(--body); font-style: normal; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); border: 1px solid var(--rule); padding: 0 .3rem; border-radius: 2px; }
+.boost { border-style: dotted; }
+
+/* ---- fate point tokens: brass coins ---------------------------------------------------- */
+.fp { display: inline-flex; align-items: center; gap: .3rem; }
+.coin {
+  display: inline-grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%;
+  font-family: var(--display); font-size: .95rem; color: #2b1b08;
+  background: radial-gradient(circle at 35% 30%, #f3d68e, var(--brass-hi) 45%, var(--brass) 80%);
+  border: 1px solid #6d5020; box-shadow: 0 1px 2px var(--shadow);
+}
+.coin.big { width: 2.3rem; height: 2.3rem; font-size: 1.25rem; }
+
+/* ---- dice ------------------------------------------------------------------------------- */
+.dice { display: inline-flex; gap: 4px; }
+.die {
+  display: inline-grid; place-items: center; width: 1.7rem; height: 1.7rem;
+  font: 700 1.1rem/1 var(--body); color: var(--ink);
+  background: linear-gradient(145deg, #fbf3df, #dcc79c); border: 1px solid #8c6f45; border-radius: 4px;
+  box-shadow: 0 1px 2px var(--shadow);
+}
+:root[data-theme="cavern"] .die { background: linear-gradient(145deg, #3b342a, #24201a); border-color: #6b5a3e; }
+.die.plus { color: var(--moss); }
+.die.minus { color: var(--seal); }
+.die.fresh { animation: tumble .5s ease-out; }
+@keyframes tumble { 0% { transform: rotate(-200deg) scale(.4); opacity: 0; } 100% { transform: none; opacity: 1; } }
+
+.outcome { font-family: var(--display-sc); letter-spacing: .05em; padding: 0 .45rem; border-radius: 2px; }
+.outcome.fumble { color: #fbeee0; background: var(--seal); }
+.outcome.tie { color: var(--ink); background: rgba(140, 106, 44, .25); }
+.outcome.succeed { color: #f1f4e6; background: var(--moss); }
+.outcome.excel { color: #2b1b08; background: linear-gradient(90deg, var(--brass-hi), #f3d68e); }
+
+/* ---- log: the expedition journal -------------------------------------------------------- */
+.log { list-style: none; margin: 0; padding: 0; max-height: 75vh; overflow-y: auto; }
+.log li { padding: .55rem .2rem .6rem; border-bottom: 1px solid var(--rule); }
+.log li:first-child { animation: ink-in .6s ease-out; }
+@keyframes ink-in { from { background: rgba(196, 154, 69, .25); } to { background: transparent; } }
+.log .meta { font-size: .78rem; color: var(--ink-faint); display: flex; gap: .5rem; flex-wrap: wrap; }
+.log .line { margin: .15rem 0; }
+.log .system { font-style: italic; color: var(--ink-soft); }
+.log ul.choices { margin: .2rem 0 .2rem 1rem; padding: 0; font-size: .92rem; }
+.log details summary { cursor: pointer; color: var(--seal); font-size: .9rem; }
+.mods { font-size: .9rem; color: var(--ink-soft); }
+
+/* ---- character sheet -------------------------------------------------------------------- */
+.sheet { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1rem; }
+@media (max-width: 900px) { .sheet { grid-template-columns: 1fr; } }
+.sheet .name-input { font-family: var(--display); font-size: 1.9rem; width: 100%; background: transparent; }
+.sheet .hc-input { font-family: var(--display); font-style: italic; font-size: 1.25rem; width: 100%; }
+.sheet .aspect-input { font-family: var(--display); font-style: italic; font-size: 1.08rem; width: 100%; }
+.ladder-row { display: grid; grid-template-columns: 7.5rem 1fr; gap: .4rem; align-items: center; padding: .2rem 0; border-bottom: 1px dotted var(--rule); }
+.ladder-row .rank { font-family: var(--display); color: var(--ink-soft); }
+.skill-chip { font-family: var(--display); padding: 0 .45rem; border: 1px solid var(--rule); border-radius: 2px; background: rgba(255, 250, 235, .45); }
+:root[data-theme="cavern"] .skill-chip { background: rgba(255, 240, 210, .05); }
+.skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: .25rem .8rem; }
+.skill-grid label { display: flex; justify-content: space-between; align-items: center; gap: .3rem; border-bottom: 1px dotted var(--rule); }
+.skill-grid select { border: 0; background: transparent; font-family: var(--display); }
+.stunt { display: grid; gap: .2rem; padding: .4rem 0; border-bottom: 1px dotted var(--rule); }
+.stunt input { font-family: var(--display); font-weight: 600; }
+.stunt textarea { min-height: 2.6em; }
+.cons { display: grid; grid-template-columns: 6.5rem 1fr auto; gap: .4rem; align-items: center; padding: .25rem 0; }
+.cons .sev { font-family: var(--display-sc); }
+.cons .sev small { display: block; font-family: var(--body); color: var(--ink-faint); font-size: .72rem; letter-spacing: 0; }
+.cons.recovering input { text-decoration: line-through; text-decoration-color: var(--moss); }
+.checks { list-style: none; padding: 0; margin: .4rem 0; font-size: .9rem; }
+.checks li { padding: .1rem 0 .1rem 1.3rem; position: relative; }
+.checks li::before { position: absolute; left: 0; }
+.checks .warn { color: var(--seal); } .checks .warn::before { content: "✗"; }
+.checks .info { color: var(--ink-soft); } .checks .info::before { content: "•"; }
+.checks .ok { color: var(--moss); } .checks .ok::before { content: "✓"; }
+
+/* ---- party cards -------------------------------------------------------------------------- */
+.pc-card h3 { margin: 0; }
+.pc-card .hc { font-family: var(--display); font-style: italic; color: var(--ink-soft); }
+.cons-pills { display: flex; gap: .3rem; flex-wrap: wrap; font-size: .85rem; }
+.cons-pill { border: 1px solid var(--seal); color: var(--seal); padding: 0 .35rem; border-radius: 2px; }
+.cons-pill.recovering { border-color: var(--moss); color: var(--moss); }
+
+/* ---- D'ni tools -------------------------------------------------------------------------- */
+.dni-num { font-family: "Dni", serif; font-size: 3rem; line-height: 1.1; color: var(--ink); letter-spacing: .05em; }
+.dni-table { border-collapse: collapse; }
+.dni-table td, .dni-table th { border: 1px solid var(--rule); padding: .1rem .5rem; text-align: center; }
+.dni-table td .dni { font-size: 1.8rem; }
+.dni-script { font-family: "Dni", serif; font-size: 2.2rem; line-height: 1.3; word-break: break-word; min-height: 1.4em; }
+.clock { font-family: var(--display); font-size: 1.4rem; }
+.alphabet { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: .3rem; }
+.alphabet div { border: 1px solid var(--rule); padding: .2rem; text-align: center; border-radius: 2px; }
+.alphabet .dni { font-size: 1.7rem; display: block; }
+
+.timeline { list-style: none; padding: 0; margin: 0; border-left: 2px solid var(--brass); }
+.timeline li { padding: .3rem 0 .6rem 1rem; position: relative; }
+.timeline li::before { content: ""; position: absolute; left: -7px; top: .65rem; width: 12px; height: 12px; border-radius: 50%; background: var(--paper); border: 2px solid var(--brass); }
+
+/* ---- rules reference ----------------------------------------------------------------------- */
+.ref table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+.ref th, .ref td { border-bottom: 1px solid var(--rule); padding: .25rem .4rem; text-align: left; vertical-align: top; }
+.ref th { font-family: var(--display-sc); font-weight: 400; color: var(--ink-soft); }
+
+/* ---- toasts ---------------------------------------------------------------------------------- */
+#toasts { position: fixed; bottom: 1rem; right: 1rem; display: grid; gap: .4rem; z-index: 50; max-width: min(420px, calc(100vw - 32px)); }
+.toast { background: var(--leather); color: #f6ead0; border: 1px solid var(--brass); padding: .5rem .8rem; border-radius: 3px; box-shadow: 0 3px 10px var(--shadow); font-size: .95rem; }
+.toast.error { border-color: #e07a5f; }
+
+.invite { font-family: ui-monospace, Menlo, monospace; font-size: .85rem; width: 100%; }
+details.fold > summary { cursor: pointer; font-family: var(--display); color: var(--seal); }
+.empty { color: var(--ink-faint); font-style: italic; }
+.badge { display: inline-block; min-width: 1.3em; text-align: center; font-size: .75rem; background: var(--seal); color: #fbeee0; border-radius: 999px; padding: 0 .3rem; }
+.stack > input:not([type=checkbox]):not([type=hidden]), .stack > select { width: 100%; }
+
+@media print {
+  .masthead, .colophon, #toasts, button, details.fold > summary { display: none !important; }
+  body { background: #fff; box-shadow: none; font-size: 12pt; }
+  .page { box-shadow: none; border-color: #999; break-inside: avoid; }
+  input, textarea, select { border: 0 !important; background: none !important; }
+}

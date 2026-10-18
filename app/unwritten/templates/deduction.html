@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="deduction" data-keep-focus hx-get="/c/{{ ctx.cid }}/deduction/frag" hx-trigger="sse:deduction, deduction from:body, refresh" hx-swap="innerHTML">
+  {% include "partials/deduction_body.html" %}
+</div>
+{% endblock %}

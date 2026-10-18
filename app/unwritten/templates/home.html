@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Journals{% endblock %}
+{% block mainclass %}narrow{% endblock %}
+{% block content %}
+<h1>Your Journals</h1>
+<p class="muted">Each journal is one campaign table. Game Masters start one and share its invite link; explorers sign in with Google and follow the link to join.</p>
+
+<section class="page stack">
+  {% if camps %}
+  <ul class="aspect-list">
+    {% for c in camps %}
+    <li><a class="aspect" href="/c/{{ c.id }}">{{ c.name }}</a>
+      <span class="tag">{{ "Game Master" if c.role == "gm" else "Explorer" }}</span></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">No journals yet. Start one below, or open the invite link your GM sent you.</p>
+  {% endif %}
+</section>
+
+<div class="grid two" style="margin-top:1rem">
+  {% if may_create %}
+  <form class="page stack" hx-post="/campaigns">
+    <h3 class="sc">Begin a new journal</h3>
+    <label class="field">Campaign name <input name="name" placeholder="The Age of Er’cana" required maxlength="80"></label>
+    <button class="btn brass">Write the first page</button>
+    <p class="small muted">You will be its Game Master.</p>
+  </form>
+  {% endif %}
+  <form class="page stack" hx-post="/profile">
+    <h3 class="sc">How the table knows you</h3>
+    <label class="field">Display name <input name="name" value="{{ ctx.user.name }}" maxlength="60"></label>
+    <button class="btn plain">Save</button>
+    <p class="small muted">Signed in as {{ ctx.email }}.</p>
+  </form>
+</div>
+
+<details class="fold" style="margin-top:1.5rem"><summary>What’s new</summary>
+  <ul class="small">{% for v, d, t in changes %}<li><strong>{{ v }}</strong> ({{ d }}): {{ t }}</li>{% endfor %}</ul>
+</details>
+{% endblock %}

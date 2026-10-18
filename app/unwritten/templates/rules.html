@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Rules{% endblock %}
+{% block content %}
+<p class="muted">A table-side summary of the mechanics in our own words. The rulebook has the full rules, examples and advice.</p>
+<div class="grid two ref">
+  <section class="page">
+    <h2 class="sc">Rolling</h2>
+    <p>Roll four Fate dice (each −, blank or +), add them up, and add your skill. Anything not on your sheet is Mediocre (+0). Then subtract the opposition: a fixed difficulty, or someone else’s roll. The difference is your <strong>shifts</strong>.</p>
+    <table><tr><th>Shifts</th><th>Outcome</th></tr>
+      <tr><td>negative</td><td><span class="outcome fumble">Fumble</span></td></tr>
+      <tr><td>0</td><td><span class="outcome tie">Tie</span></td></tr>
+      <tr><td>1–2</td><td><span class="outcome succeed">Success</span></td></tr>
+      <tr><td>3+</td><td><span class="outcome excel">Excel</span></td></tr></table>
+    <h3>The ladder</h3>
+    <table>{% for v in range(8, -3, -1) %}<tr><td>{{ "%+d" % v }}</td><td>{{ rules.LADDER[v] }}</td></tr>{% endfor %}</table>
+  </section>
+
+  <section class="page">
+    <h2 class="sc">The four actions</h2>
+    <p class="small muted">There is no attack action and there are no stress tracks: Unwritten solves problems with wits, not weapons.</p>
+    <table>
+      {% for k, label in rules.ACTIONS.items() %}<tr><th colspan="2">{{ label }}</th></tr>
+        {% for oc in rules.OUTCOMES %}<tr><td><span class="outcome {{ oc }}">{{ "Success" if oc == "succeed" else oc|capitalize }}</span></td><td>{{ rules.OUTCOME_TEXT[k][oc] | join(" ") }}</td></tr>{% endfor %}
+      {% endfor %}
+    </table>
+  </section>
+
+  <section class="page">
+    <h2 class="sc">Aspects &amp; fate points</h2>
+    <ul>
+      <li><strong>Invoke:</strong> after rolling, spend a fate point on a relevant aspect for +2 or a reroll. Several aspects can each be invoked once per roll; free invokes (from advantages) can stack on one aspect.</li>
+      <li><strong>Compel:</strong> an aspect complicates your life. Accept and gain a fate point, or pay one to avoid it.</li>
+      <li><strong>Declare a detail:</strong> spend a fate point to add a convenient story detail justified by your aspects (GM may veto).</li>
+      <li><strong>Boosts:</strong> one-use, short-lived invokes. They can’t be compelled or paid for, but can be promoted to a full aspect.</li>
+      <li><strong>Refresh:</strong> each session fate points refill up to refresh (extras kept); each chapter they reset to it.</li>
+    </ul>
+    <h3>Costs</h3>
+    <p class="small">Minor: {{ rules.MINOR_COSTS | join("; ") }}.</p>
+    <p class="small">Serious: {{ rules.SERIOUS_COSTS | join("; ") }}.</p>
+  </section>
+
+  <section class="page">
+    <h2 class="sc">Consequences</h2>
+    <table><tr><th>Slot</th><th>Shifts</th><th>Heal vs</th><th>Sacrifice</th></tr>
+      {% for k in rules.CONSEQUENCE_ORDER %}{% set c = rules.CONSEQUENCES[k] %}<tr><td>{{ c.label }}</td><td>{{ c.shifts }}</td><td>{{ ladder(c.recover) }}</td><td>+{{ c.sacrifice }} FP</td></tr>{% endfor %}</table>
+    <ul class="small">
+      <li>You take one from an opponent’s excelled advantage, from succeeding at a serious cost, or by sacrificing when you’re out of fate points (the GM gets a free invoke).</li>
+      <li>A consequence with no open slot rolls up to the next open one; with none left you’re <strong>overwhelmed</strong> and out of the scene.</li>
+      <li>Recovery: succeed at an overcome against the listed difficulty (+1 if treating yourself) to mark it recovering. Recovering minors clear at scene end; minors and moderates at the next session; all at a new chapter.</li>
+      <li>Dangerous actions: fumble one and you’re overwhelmed.</li>
+    </ul>
+  </section>
+
+  <section class="page">
+    <h2 class="sc">Characters</h2>
+    <ul>
+      <li>High concept, four journey aspects, and three consequence slots (minor, moderate, severe).</li>
+      <li>Skills: one Great (+4), two Good (+3), three Fair (+2), four Adequate (+1). Afterwards no rank may hold more skills than the rank below it.</li>
+      <li>Three free stunts or resources; up to two more at one refresh each. Refresh starts at 3 and never drops below 1.</li>
+      <li>Skills: {{ rules.SKILLS | join(", ") }}.</li>
+    </ul>
+    <h3>Teamwork</h3>
+    <p class="small">The highest-rated helper rolls, +1 for each helper with at least Adequate in a similar skill; everyone shares any cost. Or stack advantages and pass the free invokes to one person.</p>
+  </section>
+
+  <section class="page">
+    <h2 class="sc">Deductions</h2>
+    <ol class="small">
+      <li>Frame the question; each participant gives a reason they can help.</li>
+      <li>Three rounds: everyone rolls a skill vs Good (+3), later vs the previous round’s winning total. The best success wins: +2 progress on an excel, +1 on a success, +1 and a minor cost on a tie. The winner declares a fact (a step toward the answer, not the answer).</li>
+      <li>With 3+ progress everyone rolls once more; the highest declares the truth as an aspect: 3 progress no free invokes, 4–5 one, 6 two. The facts fold into it. With less, the question stays open.</li>
+    </ol>
+    <h3>Discover</h3>
+    <p class="small">Ask one question per shift. When you run out you must change the situation (an advantage, a helper, time away, a new angle) to dig again.</p>
+  </section>
+
+  <section class="page">
+    <h2 class="sc">Milestones</h2>
+    {% for k, m in rules.MILESTONES.items() %}
+      <h3>{{ m.label }} <span class="small muted">({{ m.when|lower }})</span></h3>
+      <ul class="small">{% for c in m.choices %}<li>{{ c }}</li>{% endfor %}</ul>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

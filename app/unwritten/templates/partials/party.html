@@ -1,0 +1,30 @@
+<header><h2 class="sc">Explorers</h2><a class="small" href="/c/{{ ctx.cid }}/party">all sheets →</a></header>
+{% if party.pcs %}
+<div class="stack">
+{% for c in party.pcs %}{% set d = c.data %}
+  <div class="pc-card">
+    <div class="row">
+      <h3><a href="/c/{{ ctx.cid }}/ch/{{ c.id }}">{{ d.name }}</a></h3>
+      <span class="small faint">{{ party.names.get(c.owner_email, "") }}</span>
+      <span class="spacer"></span>
+      <span class="fp" title="Fate points (refresh {{ rules.refresh(d) }})">
+        {% if ctx.can_edit(c) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ c.id }}/op" hx-vals='{"op":"fp","delta":-1}'>−</button>{% endif %}
+        <span class="coin">{{ d.fate_points }}</span>
+        {% if ctx.can_edit(c) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ c.id }}/op" hx-vals='{"op":"fp","delta":1}'>+</button>{% endif %}
+        <span class="small faint">/ {{ rules.refresh(d) }}</span>
+      </span>
+    </div>
+    {% if d.high_concept %}<div class="hc">{{ d.high_concept }}</div>{% endif %}
+    {% set cons = d.consequences | selectattr("text") | list %}
+    {% if cons %}<div class="cons-pills">{% for s in cons %}<span class="cons-pill {{ 'recovering' if s.recovering }}" title="{{ s.severity }}{{ ', recovering' if s.recovering }}">{{ s.text }}</span>{% endfor %}</div>{% endif %}
+  </div>
+{% endfor %}
+</div>
+{% else %}<p class="empty small">No explorers yet. <a href="/c/{{ ctx.cid }}/party">Create a character</a>.</p>{% endif %}
+{% if ctx.is_gm and party.npcs %}
+<h3 style="margin-top:.8rem">NPCs</h3>
+<ul class="aspect-list">{% for c in party.npcs %}<li><a href="/c/{{ ctx.cid }}/ch/{{ c.id }}">{{ c.data.name }}</a>
+  {% if c.data.hidden %}<span class="tag">hidden</span>{% endif %}
+  {% set top = c.data.skills.items() | sort(attribute=1, reverse=True) | list %}
+  <span class="small muted">{% for k, v in top[:3] %}{{ k }} +{{ v }}{{ ", " if not loop.last }}{% endfor %}</span></li>{% endfor %}</ul>
+{% endif %}

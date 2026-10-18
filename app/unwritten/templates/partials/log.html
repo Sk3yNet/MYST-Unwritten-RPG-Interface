@@ -1,0 +1,70 @@
+{% if not log %}<p class="empty">The journal’s first page is blank. Roll some dice.</p>{% endif %}
+<ul class="log">
+{% for e in log %}{% set d = e.data %}
+  <li>
+    <div class="meta"><span>{{ e.ts | dni_stamp }}</span><span>{{ e.ts | utc_stamp }}</span></div>
+    {% if e.kind == "roll" %}
+      {% set r = rules.Roll.from_dict(d.roll) %}{% set s = r.summary() %}
+      <div class="line"><strong>{{ d.who }}</strong> · {{ s.action_label }} with {{ r.skill }} ({{ "%+d" % r.skill_value }}){% if d.intent %}: <em>{{ d.intent }}</em>{% endif %}</div>
+      <div class="row">
+        <span class="dice">{% for x in r.dice %}<span class="die {{ 'plus' if x > 0 else ('minus' if x < 0 else '') }}">{{ "+" if x > 0 else ("−" if x < 0 else " ") }}</span>{% endfor %}</span>
+        <span>= <strong>{{ s.total_label }}</strong>{% if s.has_opposition %} vs {{ s.opposition_label }} → {{ "%+d" % s.shifts }} shift{{ "s" if s.shifts|abs != 1 }}{% endif %}</span>
+        {% if s.has_opposition %}<span class="outcome {{ s.outcome }}">{{ s.outcome_label }}</span>{% endif %}
+        {% if r.dangerous %}<span class="tag">dangerous</span>{% endif %}
+      </div>
+      {% set extras = [] %}
+      {% if r.stunt_bonus %}{% set _ = extras.append("stunt %+d" % r.stunt_bonus) %}{% endif %}
+      {% if r.teamwork %}{% set _ = extras.append("teamwork +%d" % r.teamwork) %}{% endif %}
+      {% for m in r.modifiers %}{% set _ = extras.append(("FP: " if m.kind == "invoke" else ("free: " if m.kind == "free" else "boost: ")) ~ m.label ~ " +2") %}{% endfor %}
+      {% for x in d.rerolls %}{% set _ = extras.append("reroll (" ~ x.label ~ ")") %}{% endfor %}
+      {% if extras %}<div class="mods">{{ extras | join(" · ") }}</div>{% endif %}
+      {% if s.has_opposition %}
+        <ul class="choices">{% for l in s.lines %}<li>{{ l }}</li>{% endfor %}</ul>
+        {% if s.questions %}
+          <div class="row small">Questions: {% for i in range(s.questions) %}<span class="pip {{ 'on' if i >= d.questions_used }}"></span>{% endfor %}
+            {% if d.questions_used < s.questions %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/question">ask one</button>{% endif %}
+            {% if d.questions_used %}<button class="link small" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/question" hx-vals='{"op":"undo"}'>undo</button>{% endif %}
+          </div>
+        {% endif %}
+        {% if s.outcome in ("fumble", "tie") %}
+        <details><summary>Costs to choose from</summary>
+          <ul class="choices small">{% for c in (rules.SERIOUS_COSTS if s.outcome == "fumble" else rules.MINOR_COSTS) %}<li>{{ c }}</li>{% endfor %}</ul>
+        </details>
+        {% endif %}
+      {% endif %}
+      {% if ctx.is_gm or e.email == ctx.email %}
+      <details><summary>Invoke an aspect</summary>
+        <form class="stack small" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/invoke" style="margin:.3rem 0">
+          <div class="row">
+            <select name="source" required>
+              <option value="fp">Spend a fate point</option>
+              {% for a in ctx.camp.scene.aspects if a.free %}<option value="free:{{ a.id }}">Free invoke: {{ a.text }} ({{ a.free }})</option>{% endfor %}
+              {% for b in ctx.camp.scene.boosts %}<option value="boost:{{ b.id }}">Boost: {{ b.text or "unnamed" }}</option>{% endfor %}
+            </select>
+            <select name="effect"><option value="plus2">+2</option><option value="reroll">Reroll</option></select>
+          </div>
+          <input name="aspect" placeholder="Aspect invoked (for a fate point) — and say how it helps!" list="aspects-{{ e.id }}">
+          <datalist id="aspects-{{ e.id }}">{% for a in ctx.camp.scene.aspects %}<option value="{{ a.text }}">{% endfor %}</datalist>
+          <div><button class="btn tiny">Invoke</button></div>
+        </form>
+      </details>
+      {% endif %}
+    {% elif e.kind == "compel" %}
+      <div class="line">⚖ Compel on <strong>{{ d.who }}</strong>: <span class="aspect">{{ d.aspect }}</span></div>
+      {% if d.text %}<div class="line"><em>{{ d.text }}</em></div>{% endif %}
+      {% if d.status == "pending" %}
+        <div class="row">
+          <button class="btn tiny brass" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/compel" hx-vals='{"op":"accept"}'>Accept (+1 FP)</button>
+          <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/compel" hx-vals='{"op":"refuse"}'>Buy off (−1 FP)</button>
+          {% if ctx.is_gm or e.email == ctx.email %}<button class="link small" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/compel" hx-vals='{"op":"withdraw"}'>withdraw</button>{% endif %}
+        </div>
+      {% else %}<div class="small muted">{{ {"accepted": "Accepted: +1 fate point.", "refused": "Bought off for a fate point.", "withdrawn": "Withdrawn."}[d.status] }}</div>{% endif %}
+    {% elif e.kind == "milestone" %}{% set m = rules.MILESTONES[d.level] %}
+      <div class="line">✦ <strong>{{ m.label }}</strong> for every explorer. Each may {{ "choose one" if d.level == "minor" else "" }}:</div>
+      <ul class="choices">{% for c in m.choices %}<li>{{ c }}</li>{% endfor %}</ul>
+    {% else %}
+      <div class="line {{ 'system' if d.system }}">{% if d.by %}<strong>{{ d.by }}:</strong> {% endif %}{{ d.text }}</div>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>

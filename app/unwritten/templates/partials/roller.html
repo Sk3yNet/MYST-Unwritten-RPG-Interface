@@ -1,0 +1,46 @@
+{% set rc = roll_char or (mine[0] if mine else none) %}
+<header><h2 class="sc">Roll the Fate dice</h2></header>
+{% if not mine and not ctx.is_gm %}
+<p class="empty">Create your explorer on the <a href="/c/{{ ctx.cid }}/party">Explorers</a> page to roll.</p>
+{% else %}
+<form class="stack" hx-post="/c/{{ ctx.cid }}/roll">
+  <div class="row">
+    <label class="field" style="flex:1">Who
+      <select name="character_id" hx-get="/c/{{ ctx.cid }}/frag/roller" hx-trigger="change" hx-target="#roller" hx-swap="innerHTML" hx-include="this">
+        {% for c in mine %}<option value="{{ c.id }}" {{ "selected" if rc and c.id == rc.id }}>{{ c.data.name }}{{ " (NPC)" if c.kind == "npc" }}</option>{% endfor %}
+        {% if ctx.is_gm %}<option value="" {{ "selected" if not rc }}>Someone else (custom)</option>{% endif %}
+      </select>
+    </label>
+    <label class="field">Action
+      <select name="action">{% for k, v in rules.ACTIONS.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select>
+    </label>
+  </div>
+  {% if rc %}
+  <label class="field">Skill
+    <select name="skill">
+      {% for k, v in rc.data.skills.items() | sort(attribute=1, reverse=True) %}<option value="{{ k }}">{{ k }} — {{ ladder(v) }}</option>{% endfor %}
+      <option value="">Mediocre (+0), no skill</option>
+      <optgroup label="Unlisted skills (+0)">{% for k in rules.SKILLS if k not in rc.data.skills %}<option value="{{ k }}">{{ k }}</option>{% endfor %}</optgroup>
+    </select>
+  </label>
+  {% else %}
+  <div class="row">
+    <label class="field" style="flex:1">Name <input name="who" placeholder="Night watchman"></label>
+    <label class="field" style="flex:1">Skill <input name="skill" placeholder="Notice"></label>
+    <label class="field">Rating <input type="number" name="skill_value" value="2" min="-2" max="12"></label>
+  </div>
+  {% endif %}
+  <input name="intent" placeholder="What are you trying to accomplish?" maxlength="200">
+  <div class="row">
+    <label class="field">Opposition <input type="number" name="opposition" placeholder="—" min="-4" max="12" title="Passive difficulty or the opposing roll's total. Leave blank for none."></label>
+    <label class="field">Stunt <input type="number" name="stunt_bonus" value="0" min="-4" max="6"></label>
+    <label class="field">Helpers <input type="number" name="teamwork" value="0" min="0" max="6" title="Teamwork: +1 per helper with at least Adequate in a similar skill"></label>
+    <label class="small" title="Fumbling a dangerous action leaves you overwhelmed"><input type="checkbox" name="dangerous" value="1"> dangerous</label>
+  </div>
+  <div class="row">
+    <button class="btn brass" style="font-size:1.15rem">Roll 4dF</button>
+    {% if rc %}<span class="fp small muted"><span class="coin">{{ rc.data.fate_points }}</span> fate points</span>{% endif %}
+  </div>
+  <p class="small faint" style="margin:0">Difficulties: Mediocre 0 · Adequate 1 · Fair 2 · Good 3 · Great 4 · Superb 5 · Fantastic 6</p>
+</form>
+{% endif %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid table-grid">
+  <div class="stack">
+    <section class="page" id="scene" data-keep-focus hx-get="/c/{{ ctx.cid }}/frag/scene" hx-trigger="sse:scene, scene from:body, refresh" hx-swap="innerHTML">
+      {% include "partials/scene.html" %}
+    </section>
+    <section class="page" id="party" hx-get="/c/{{ ctx.cid }}/frag/party" hx-trigger="sse:party, party from:body, refresh" hx-swap="innerHTML">
+      {% include "partials/party.html" %}
+    </section>
+  </div>
+  <div class="stack">
+    <section class="page" id="roller" data-keep-focus hx-get="/c/{{ ctx.cid }}/frag/roller" hx-trigger="sse:party, party from:body, sse:scene, scene from:body, refresh" hx-vals='js:{character_id: (document.querySelector("#roller select[name=character_id]") || {}).value || ""}' hx-swap="innerHTML">
+      {% include "partials/roller.html" %}
+    </section>
+    <section class="page stack">
+      <h3 class="sc">Compel an aspect</h3>
+      <form class="stack" hx-post="/c/{{ ctx.cid }}/compel" hx-on::after-request="if(event.detail.successful) this.reset()">
+        <div class="row">
+          <select name="character_id" required>
+            <option value="">Explorer…</option>
+            {% for c in party.pcs %}<option value="{{ c.id }}">{{ c.data.name }}</option>{% endfor %}
+          </select>
+          <input name="aspect" placeholder="Aspect being compelled" required style="flex:1">
+        </div>
+        <input name="text" placeholder="The complication (e.g. the bet turns out riskier than expected)">
+        <div><button class="btn plain">Offer the compel</button> <span class="small muted">Accept: +1 fate point. Buy off: −1.</span></div>
+      </form>
+    </section>
+    <section class="page">
+      <form class="row" hx-post="/c/{{ ctx.cid }}/note" hx-on::after-request="if(event.detail.successful) this.reset()">
+        <input name="text" placeholder="Write in the journal…" style="flex:1" maxlength="1000">
+        <button class="btn plain">Write</button>
+      </form>
+    </section>
+  </div>
+  <div class="log-col">
+    <section class="page">
+      <header><h2 class="sc">Expedition Journal</h2><span class="small faint">rolls, compels &amp; notes, newest first</span></header>
+      <div id="log" hx-get="/c/{{ ctx.cid }}/frag/log" hx-trigger="sse:log, log from:body, refresh" hx-swap="innerHTML">
+        {% include "partials/log.html" %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

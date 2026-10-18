@@ -1,0 +1,119 @@
+{% set d = ch.data %}{% set base = "/c/%d/ch/%d" % (ctx.cid, ch.id) %}
+{% macro text(name, value, cls="", ph="", maxlength=120) -%}
+  {%- if editable -%}<input class="{{ cls }}" name="{{ name }}" value="{{ value }}" placeholder="{{ ph }}" maxlength="{{ maxlength }}" hx-post="{{ base }}/field" hx-trigger="change">
+  {%- elif value %}<span class="{{ cls }}">{{ value }}</span>{% else %}<span class="empty">—</span>{% endif -%}
+{%- endmacro %}
+{% macro area(name, value, ph="") -%}
+  {%- if editable -%}<textarea name="{{ name }}" placeholder="{{ ph }}" hx-post="{{ base }}/field" hx-trigger="change">{{ value }}</textarea>
+  {%- elif value %}<p style="white-space:pre-wrap;margin:.2rem 0">{{ value }}</p>{% endif -%}
+{%- endmacro %}
+{% macro op(label, vals, cls="btn tiny plain", confirm="") -%}
+  <button type="button" class="{{ cls }}" hx-post="{{ base }}/op" hx-vals='{{ vals | tojson }}' {% if confirm %}hx-confirm="{{ confirm }}"{% endif %}>{{ label }}</button>
+{%- endmacro %}
+
+<div class="sheet">
+  <div class="stack">
+    <section class="page stack">
+      <div class="ornament">❦</div>
+      {{ text("name", d.name, "name-input", "Name") }}
+      <label class="field">High concept {{ text("high_concept", d.high_concept, "hc-input", "Cartographer of Forgotten Ages") }}</label>
+      <h3 class="sc" style="margin-top:.6rem">Journey aspects</h3>
+      {% for j in d.journey %}
+        <div>{{ text("journey.%d" % loop.index0, j, "aspect-input", ["A belief or drive", "Someone important to you", "A trouble or tangle", "Something from your past"][loop.index0] if loop.index0 < 4 else "") }}</div>
+      {% endfor %}
+    </section>
+
+    <section class="page">
+      <h3 class="sc">Skills</h3>
+      {% set cols = rules.skill_columns(d.skills) %}
+      {% for r in range(8, 0, -1) if cols.get(r) or r <= 5 %}
+      <div class="ladder-row"><span class="rank">{{ ladder(r) }}</span>
+        <span class="row" style="gap:.3rem">{% for s in cols.get(r, []) %}<span class="skill-chip">{{ s }}</span>{% endfor %}</span></div>
+      {% endfor %}
+      {% if editable %}
+      <details class="fold" style="margin-top:.6rem" {{ "open" if not d.skills }}><summary>Set ratings</summary>
+        <div class="skill-grid" style="margin-top:.4rem">
+          {% for s in rules.SKILLS %}
+          <label>{{ s }}
+            <select name="skill.{{ s }}" hx-post="{{ base }}/field" hx-trigger="change">
+              {% for v in range(0, 7) %}<option value="{{ v }}" {{ "selected" if d.skills.get(s, 0) == v }}>{{ "—" if v == 0 else "+%d" % v }}</option>{% endfor %}
+            </select>
+          </label>
+          {% endfor %}
+        </div>
+        <p class="small muted">Start with one Great (+4), two Good (+3), three Fair (+2) and four Adequate (+1). Later, never rank more skills at a level than at the level below.</p>
+      </details>
+      {% endif %}
+    </section>
+  </div>
+
+  <div class="stack">
+    <section class="page">
+      <header><h3 class="sc">Stunts</h3>{% if editable %}<span class="spacer"></span>{{ op("+ stunt", {"op": "add_stunt"}) }}{% endif %}</header>
+      {% for s in d.stunts %}
+      <div class="stunt">
+        <div class="row">{{ text("stunts.%d.name" % loop.index0, s.name, "", "Ear for Old Machines") }}
+          {% if editable %}<span class="spacer"></span>{{ op("×", {"op": "del_stunt", "i": loop.index0}, "x", "Remove this stunt?") }}{% endif %}</div>
+        {{ area("stunts.%d.text" % loop.index0, s.text, "When [trigger], I can [effect].") }}
+      </div>
+      {% else %}<p class="empty small">None yet. Three are free; each extra costs a refresh.</p>{% endfor %}
+
+      <header style="margin-top:.8rem"><h3 class="sc">Resources</h3>{% if editable %}<span class="spacer"></span>{{ op("+ resource", {"op": "add_resource"}) }}{% endif %}</header>
+      {% for s in d.resources %}
+      <div class="stunt">
+        <div class="row">{{ text("resources.%d.name" % loop.index0, s.name, "", "My Workshop in the Harbor District") }}
+          {% if editable %}<span class="spacer"></span>{{ op("×", {"op": "del_resource", "i": loop.index0}, "x", "Remove this resource?") }}{% endif %}</div>
+        {{ area("resources.%d.text" % loop.index0, s.text, "A person, place or thing; works only when you can reach it.") }}
+      </div>
+      {% else %}<p class="empty small">Resources are stunts tied to a place, person or thing.</p>{% endfor %}
+    </section>
+
+    <section class="page">
+      <h3 class="sc">Consequences</h3>
+      {% for s in d.consequences %}{% set info = rules.CONSEQUENCES[s.severity] %}
+      <div class="cons {{ 'recovering' if s.recovering }}">
+        <span class="sev">{{ info.label }} <small>{{ info.shifts }} shifts · heal vs {{ ladder(info.recover) }}</small></span>
+        {{ text("consequences.%d.text" % loop.index0, s.text, "", "") }}
+        <span class="row" style="gap:.2rem">
+          {% if editable and s.text %}{{ op("recovering ✓" if s.recovering else "recovering?", {"op": "recover", "i": loop.index0}) }}
+            {{ op("clear", {"op": "clear", "i": loop.index0}) }}{% elif s.recovering %}<span class="tag">recovering</span>{% endif %}
+          {% if editable and loop.index0 >= 3 %}{{ op("×", {"op": "del_slot", "i": loop.index0}, "x", "Remove this extra slot?") }}{% endif %}
+        </span>
+      </div>
+      {% endfor %}
+      {% if editable %}
+      <details class="fold" style="margin-top:.5rem"><summary>Take a consequence or make a sacrifice</summary>
+        <form class="stack small" hx-post="{{ base }}/op" hx-on::after-request="if(event.detail.successful) this.reset()" style="margin-top:.4rem">
+          <div class="row">
+            <select name="severity">{% for k in rules.CONSEQUENCE_ORDER %}<option value="{{ k }}">{{ rules.CONSEQUENCES[k].label }}</option>{% endfor %}</select>
+            <input name="text" placeholder="Twisted Ankle" required style="flex:1">
+          </div>
+          <div class="row">
+            <button class="btn tiny" name="op" value="take">Take it (cost / excelled advantage)</button>
+            <button class="btn tiny seal" name="op" value="sacrifice" title="Out of fate points? Gain 1/2/3 FP; the GM gets a free invoke on it.">Sacrifice for fate points</button>
+          </div>
+          <p class="muted" style="margin:0">A taken consequence rolls up to the next open slot; with none open you are overwhelmed. A sacrifice gives 1, 2 or 3 fate points. Healing it is an overcome roll (+1 harder on yourself), then it heals with time.</p>
+        </form>
+        <div class="row small" style="margin-top:.4rem">Extra slot from a stunt: {% for k in rules.CONSEQUENCE_ORDER %}{{ op("+ " ~ k, {"op": "add_slot", "severity": k}) }}{% endfor %}</div>
+      </details>
+      {% endif %}
+    </section>
+
+    <section class="page stack">
+      <h3 class="sc">Notes</h3>
+      {{ area("notes", d.notes, "Gear, contacts, the story so far…") }}
+      {% if editable %}
+      <div class="row small muted">
+        <label>Base refresh <input type="number" name="refresh_base" value="{{ d.refresh_base }}" min="1" max="20" hx-post="{{ base }}/field" hx-trigger="change"></label>
+        <label>Fate points <input type="number" name="fate_points" value="{{ d.fate_points }}" min="0" max="20" hx-post="{{ base }}/field" hx-trigger="change"></label>
+        <label>Banked skill points <input type="number" name="skill_points_banked" value="{{ d.skill_points_banked }}" min="0" max="20" hx-post="{{ base }}/field" hx-trigger="change"></label>
+      </div>
+      <div class="row">
+        {% if ch.kind == "npc" and ctx.is_gm %}{{ op("Reveal to players" if d.hidden else "Hide from players", {"op": "hide"}) }}{% endif %}
+        <span class="spacer"></span>
+        {{ op("Delete character", {"op": "delete"}, "btn tiny seal", "Delete " ~ d.name ~ " for good?") }}
+      </div>
+      {% endif %}
+    </section>
+  </div>
+</div>

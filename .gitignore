@@ -1,0 +1,18 @@
+# Purchased rulebooks and supplements are never committed: this repository is public.
+*.pdf
+*.zip
+sources/
+private/
+
+# Local data and secrets
+*.sqlite
+*.sqlite-*
+.env
+data/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/

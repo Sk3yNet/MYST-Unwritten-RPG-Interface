@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ ch.data.name }}{% endblock %}
+{% block content %}
+<div class="row" style="margin-bottom:.5rem">
+  <a href="/c/{{ ctx.cid }}/party">← Explorers</a>
+  <span class="spacer"></span>
+  <span class="small muted">{{ "NPC" if ch.kind == "npc" else "Explorer" }}{% if owner %} · kept by {{ owner }}{% endif %}</span>
+  <a class="btn tiny plain" href="/c/{{ ctx.cid }}/ch/{{ ch.id }}/export">Export</a>
+  <button class="btn tiny plain" onclick="window.print()">Print</button>
+</div>
+<div id="sheet-meta" hx-get="/c/{{ ctx.cid }}/ch/{{ ch.id }}/meta" hx-trigger="sse:ch-{{ ch.id }}, ch-{{ ch.id }} from:body" hx-swap="innerHTML">
+  {% include "partials/sheet_meta.html" %}
+</div>
+<div id="sheet" data-keep-focus hx-get="/c/{{ ctx.cid }}/ch/{{ ch.id }}/frag" hx-trigger="sse:ch-{{ ch.id }}, ch-{{ ch.id }} from:body, refresh" hx-swap="innerHTML">
+  {% include "partials/sheet_body.html" %}
+</div>
+{% endblock %}

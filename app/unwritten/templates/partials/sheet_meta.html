@@ -1,0 +1,11 @@
+{% set d = ch.data %}{% set checks = rules.check_character(d) %}
+<section class="page row" style="margin-bottom:1rem;align-items:flex-start">
+  <div class="fp" title="Fate points">
+    {% if editable %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ ch.id }}/op" hx-vals='{"op":"fp","delta":-1}' aria-label="Spend a fate point">−</button>{% endif %}
+    <span class="coin big">{{ d.fate_points }}</span>
+    {% if editable %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ ch.id }}/op" hx-vals='{"op":"fp","delta":1}' aria-label="Gain a fate point">+</button>{% endif %}
+    <span class="small muted">fate points · refresh <strong>{{ rules.refresh(d) }}</strong> · stunts {{ rules.stunt_count(d) }}/{{ rules.FREE_STUNTS }} free{% if d.skill_points_banked %} · <strong>{{ d.skill_points_banked }}</strong> skill point(s) banked{% endif %}</span>
+  </div>
+  <span class="spacer"></span>
+  {% if ch.kind == "pc" and checks %}<ul class="checks" style="margin:0;max-width:34rem">{% for c in checks %}<li class="{{ c.level }}">{{ c.text }}</li>{% endfor %}</ul>{% endif %}
+</section>

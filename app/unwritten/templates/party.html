@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid two">
+  <section class="page" id="party" hx-get="/c/{{ ctx.cid }}/frag/party" hx-trigger="sse:party, party from:body" hx-swap="innerHTML">
+    {% include "partials/party.html" %}
+  </section>
+  <div class="stack">
+    <form class="page stack" hx-post="/c/{{ ctx.cid }}/characters">
+      <h3 class="sc">Create an explorer</h3>
+      <label class="field">Name <input name="name" placeholder="Rosalind Ortega" maxlength="80"></label>
+      <input type="hidden" name="kind" value="pc">
+      <div><button class="btn brass">Start a character sheet</button></div>
+      <p class="small muted">Quick start needs only a name, a high concept and your Great (+4) skill; fill in the rest as you play.</p>
+    </form>
+    {% if ctx.is_gm %}
+    <form class="page stack" hx-post="/c/{{ ctx.cid }}/characters">
+      <h3 class="sc">Create an NPC</h3>
+      <label class="field">Name <input name="name" placeholder="The Curator" maxlength="80"></label>
+      <input type="hidden" name="kind" value="npc">
+      <div><button class="btn">Add NPC</button> <span class="small muted">Hidden from players until you reveal it.</span></div>
+    </form>
+    {% endif %}
+    <details class="page fold"><summary>Import a character (JSON)</summary>
+      <form class="stack" hx-post="/c/{{ ctx.cid }}/characters/import" style="margin-top:.5rem">
+        <textarea name="json" placeholder='Paste the file a sheet’s “Export” button saved'></textarea>
+        <div><button class="btn plain">Import</button></div>
+      </form>
+    </details>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}D’ni Lore{% endblock %}
+{% block head %}<script src="/static/dni.js?v={{ VERSION }}" defer></script>{% endblock %}
+{% block content %}
+<div class="grid two">
+  <section class="page stack">
+    <h2 class="sc">The cavern clock</h2>
+    <div class="clock" id="dni-now">…</div>
+    <div class="small muted" id="dni-now-detail"></div>
+    <p class="small muted">A yahr (D’ni day) lasts about 30 h 14 m and is told in 25 bells (pahrtahvotee) of about 72½ minutes. Ten vaileetee of 29 yahrtee make a hahr, one surface year.</p>
+  </section>
+
+  <section class="page stack">
+    <h2 class="sc">Numbers in base 25</h2>
+    <div class="row">
+      <label class="field">Surface number <input type="number" id="num-in" value="326" min="0" max="999999999" style="width:9em"></label>
+      <div class="dni-num" id="num-out" aria-live="polite"></div>
+    </div>
+    <div class="small muted" id="num-explain"></div>
+    <label class="field">Or type D’ni digits (font keys <span class="mono">0–9 ) ! @ # $ % ^ &amp; * ( [ ] \ { }</span>)
+      <input id="num-keys" class="mono" placeholder="#1"></label>
+    <div class="small" id="num-back"></div>
+    <details class="fold"><summary>Digits 0–24</summary>
+      <table class="dni-table" style="margin-top:.4rem">
+        <tr><th>+</th>{% for b in range(5) %}<th>{{ b }}</th>{% endfor %}</tr>
+        {% for a in range(0, 25, 5) %}<tr><th>{{ a }}</th>{% for b in range(5) %}<td title="{{ a + b }}"><span class="dni">{{ dni.DIGIT_KEYS[a + b] }}</span></td>{% endfor %}</tr>{% endfor %}
+      </table>
+    </details>
+  </section>
+
+  <section class="page stack">
+    <h2 class="sc">Surface ⇄ D’ni dates</h2>
+    <label class="field">Surface date &amp; time (your local time) <input type="datetime-local" id="greg-in"></label>
+    <div class="clock" id="greg-out"></div>
+    <hr>
+    <div class="row">
+      <label class="field">Hahr <input type="number" id="d-hahr" value="9658" style="width:6em"></label>
+      <label class="field">Vailee <select id="d-vailee">{% for v in dni.VAILEETEE %}<option value="{{ loop.index }}">{{ loop.index }}. {{ v }}</option>{% endfor %}</select></label>
+      <label class="field">Yahr <input type="number" id="d-yahr" value="1" min="1" max="29"></label>
+      <label class="field">Bell <input type="number" id="d-bell" value="1" min="1" max="25"></label>
+    </div>
+    <div id="dni-back" class="clock"></div>
+    <p class="small muted">Uses the community conversion (Leefo 1, 9654 DE = 21 April 1998). Published timelines differ from it by up to a yahr.</p>
+  </section>
+
+  <section class="page stack">
+    <h2 class="sc">D’ni script</h2>
+    <label class="field">Transcribed D’ni (e.g. <em>shorah b’shehm</em>) <input id="script-in" value="shorah b'shehm"></label>
+    <div class="dni-script" id="script-out"></div>
+    <div class="small muted">Font keys: <span class="mono" id="script-keys"></span></div>
+    <details class="fold"><summary>The alphabet</summary>
+      <div class="alphabet" style="margin-top:.4rem">
+        {% for key, tr, ex in dni.ALPHABET %}<div><span class="dni">{{ key }}</span><strong>{{ tr }}</strong> <span class="small muted">{{ ex }}</span></div>{% endfor %}
+      </div>
+      <p class="small muted">Write by sound, not by English spelling: “phone” is <em>fon</em>, “knight” is <em>nít</em>.</p>
+    </details>
+  </section>
+</div>
+
+{% if timeline is not none %}
+<section class="page stack" style="margin-top:1rem">
+  <header><h2 class="sc">Campaign timeline</h2><span class="small muted">events of your story with both calendars{{ "; GM-only entries are marked" if ctx.is_gm }}</span></header>
+  <div id="timeline" hx-get="/c/{{ ctx.cid }}/timeline/frag" hx-trigger="sse:timeline, timeline from:body" hx-swap="innerHTML">
+    {% include "partials/timeline.html" %}
+  </div>
+  {% if ctx.is_gm %}
+  <form class="stack" hx-post="/c/{{ ctx.cid }}/timeline" hx-on::after-request="if(event.detail.successful) this.reset()">
+    <div class="row">
+      <input type="date" name="greg" required>
+      <input name="title" placeholder="The explorers first link to the Flooded Archive" required style="flex:1" maxlength="160">
+      <label class="small"><input type="checkbox" name="gm_only" value="1"> GM only</label>
+    </div>
+    <textarea name="body" placeholder="Details (optional)"></textarea>
+    <div><button class="btn tiny">Add event</button></div>
+  </form>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Join {{ camp.name }}{% endblock %}
+{% block mainclass %}narrow{% endblock %}
+{% block content %}
+<section class="page stack" style="text-align:center;margin-top:2rem">
+  <div class="ornament">❦ ❦ ❦</div>
+  <h1>{{ camp.name }}</h1>
+  <p>{{ gm_name }} invites you to join this table as an explorer.</p>
+  {% if role %}
+    <p>You’re already part of it.</p>
+    <p><a class="btn brass" href="/c/{{ camp.id }}">Open the journal</a></p>
+  {% else %}
+    <p class="muted small">You’ll join as <strong>{{ ctx.user.name }}</strong> ({{ ctx.email }}). You can change your display name on the Journals page.</p>
+    <p><button class="btn brass" hx-post="/join/{{ token }}">Touch the linking panel</button></p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% if timeline %}
+<ul class="timeline">{% for t in timeline %}
+  <li><div class="row"><strong>{{ t.greg }}</strong>{% if t.dni %}<span class="muted">· {{ t.dni.vailee_name }} {{ t.dni.yahr }}, {{ t.dni.hahr }} DE <span class="dni small">{{ dni.to_font(t.dni.hahr) }}</span></span>{% endif %}
+    {% if t.gm_only %}<span class="tag">GM only</span>{% endif %}
+    {% if ctx.is_gm %}<button class="x" hx-post="/c/{{ ctx.cid }}/timeline/{{ t.id }}/delete" hx-confirm="Delete this event?">×</button>{% endif %}</div>
+    <div>{{ t.title }}</div>{% if t.body %}<div class="small muted" style="white-space:pre-wrap">{{ t.body }}</div>{% endif %}</li>
+{% endfor %}</ul>
+{% else %}<p class="empty small">No events yet.</p>{% endif %}

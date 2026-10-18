@@ -1,0 +1,103 @@
+{% set base = "/c/%d/deduction" % ctx.cid %}
+{% set my_ids = mine | map(attribute="id") | map("string") | list %}
+<div class="grid two">
+<section class="page stack">
+{% if not ded %}
+  <h2 class="sc">Deduction</h2>
+  <p>When an open question is central to the story, the GM can hand it to the explorers: over three rounds they roll to establish facts, then whoever rolls highest declares the truth, which becomes an aspect.</p>
+  {% if ctx.is_gm %}
+  <form class="stack" hx-post="{{ base }}/start">
+    <label class="field">The question <input name="question" placeholder="Who sealed the library, and why?" required maxlength="300"></label>
+    <div><button class="btn brass">Frame the deduction</button></div>
+  </form>
+  {% else %}<p class="empty">No deduction is under way. Your GM starts one.</p>{% endif %}
+{% else %}{% set d = ded.data %}
+  <header><h2 class="sc">Deduction</h2><span class="tag">{{ {"join": "gathering", "round": "round %d of 3" % d.round, "reveal": "reveal the truth", "truth": "declare the truth", "failed": "unresolved"}.get(d.stage, d.stage) }}</span></header>
+  <p class="aspect" style="font-size:1.25rem">“{{ d.question }}”</p>
+  <div class="row"><span>Progress</span>{% for i in range(6) %}<span class="pip {{ 'on' if i < d.progress }}" title="{{ i + 1 }}"></span>{% endfor %}
+    <span class="small muted">3 to answer · 4–5: one free invoke · 6: two</span></div>
+  {% if d.stage in ("round",) %}<p class="small">Opposition this round: <strong>{{ ladder(d.opposition) }}</strong></p>{% endif %}
+
+  <h3>Participants</h3>
+  {% if d.participants %}
+  <ul class="aspect-list">{% for p in d.participants %}{% set r = d.rolls.get(p.char_id|string) %}
+    <li><strong>{{ p.name }}</strong>{% if p.reason %} <span class="aspect small">{{ p.reason }}</span>{% endif %}
+      {% if r %}<span class="dice">{% for x in r.dice %}<span class="die {{ 'plus' if x > 0 else ('minus' if x < 0 else '') }}">{{ "+" if x > 0 else ("−" if x < 0 else " ") }}</span>{% endfor %}</span>
+        {{ r.skill }} → <strong>{{ ladder(r.total) }}</strong>{% if r.bonus %} <span class="small muted">(incl. +{{ r.bonus }})</span>{% endif %}
+        {% if (p.char_id|string) in my_ids %}
+          <button class="btn tiny plain" hx-post="{{ base }}/boost" hx-vals='{"character_id": {{ p.char_id }}, "source": "fp"}' title="Invoke an aspect for a fate point">+2 (FP)</button>
+          <button class="btn tiny plain" hx-post="{{ base }}/boost" hx-vals='{"character_id": {{ p.char_id }}, "source": "free"}' title="Use a free invoke (remove it on the scene board)">+2 (free)</button>
+        {% endif %}
+      {% elif d.stage in ("round", "reveal") and (p.char_id|string) in my_ids %}
+        {% set c = mine | selectattr("id", "equalto", p.char_id) | first %}
+        <form class="row" hx-post="{{ base }}/roll" style="display:inline-flex">
+          <input type="hidden" name="character_id" value="{{ p.char_id }}">
+          <select name="skill">{% for k, v in c.data.skills.items() | sort(attribute=1, reverse=True) %}<option value="{{ k }}">{{ k }} +{{ v }}</option>{% endfor %}<option value="">Mediocre +0</option></select>
+          <button class="btn tiny brass">Roll</button>
+        </form>
+      {% elif d.stage in ("round", "reveal") %}<span class="small faint">considering…</span>{% endif %}
+    </li>{% endfor %}</ul>
+  {% else %}<p class="empty small">Nobody has joined yet.</p>{% endif %}
+
+  {% if d.stage == "join" %}
+    {% set joinable = mine | rejectattr("id", "in", d.participants | map(attribute="char_id") | list) | list %}
+    {% if joinable %}
+    <form class="row" hx-post="{{ base }}/join">
+      <select name="character_id">{% for c in joinable %}<option value="{{ c.id }}">{{ c.data.name }}</option>{% endfor %}</select>
+      <input name="reason" placeholder="Why can you help? (an aspect, a skill…)" style="flex:1" maxlength="160">
+      <button class="btn tiny">Join</button>
+    </form>
+    {% endif %}
+    {% if ctx.is_gm %}<div><button class="btn brass" hx-post="{{ base }}/begin">Begin the first round</button></div>{% endif %}
+  {% endif %}
+
+  {% for h in d.history if h.facts_due %}{% for who in h.facts_due if who in my_ids %}
+    <form class="stack page" hx-post="{{ base }}/fact" style="border-color:var(--moss)">
+      <strong>Round {{ h.round }}: {{ (d.participants | selectattr("char_id", "equalto", who|int) | first).name }} won. Declare a fact.</strong>
+      <span class="small muted">An objective truth that follows from the skill used: a step toward the answer, not the answer itself.</span>
+      <input type="hidden" name="character_id" value="{{ who }}">
+      <div class="row"><input name="text" required placeholder="The seal was added long after the library was built" style="flex:1"><button class="btn tiny">Declare</button></div>
+    </form>
+  {% endfor %}{% endfor %}
+
+  {% if d.stage == "truth" %}
+    {% for who in d.revealer %}{% set p = d.participants | selectattr("char_id", "equalto", who|int) | first %}
+      <p><strong>{{ p.name }}</strong> rolled highest and declares the truth, taking every fact into account.</p>
+      {% if who in my_ids %}
+      <form class="row" hx-post="{{ base }}/truth">
+        <input type="hidden" name="character_id" value="{{ who }}">
+        <input name="text" required placeholder="The Archivists Hid a Forbidden Book Here" style="flex:1"><button class="btn brass">Declare the truth</button>
+      </form>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if ctx.is_gm %}
+  <div class="row" style="margin-top:.6rem">
+    {% if d.stage == "round" %}<button class="btn" hx-post="{{ base }}/close" {{ "disabled" if not d.rolls }}>Close round {{ d.round }}</button>{% endif %}
+    {% if d.stage == "reveal" %}<button class="btn" hx-post="{{ base }}/close" {{ "disabled" if not d.rolls }}>Close the reveal</button>{% endif %}
+    {% if d.stage == "failed" %}<button class="btn" hx-post="{{ base }}/archive">File it away</button>{% endif %}
+    <span class="spacer"></span>
+    <button class="btn tiny seal" hx-post="{{ base }}/cancel" hx-confirm="Abandon this deduction? Its facts stop being aspects.">Abandon</button>
+  </div>
+  {% endif %}
+  {% if d.stage == "reveal" %}<p class="small muted">Three or more progress: everyone rolls once more, no opposition. Highest declares the truth.</p>{% endif %}
+  {% if d.stage == "failed" %}<p class="small muted">Fewer than 3 progress: the question stays open. The facts remain true but are no longer aspects.</p>{% endif %}
+{% endif %}
+</section>
+
+<section class="page">
+  <h3 class="sc">The record</h3>
+  {% if ded and ded.data.history %}
+  <ol>{% for h in ded.data.history %}
+    <li>Round {{ h.round }} vs {{ ladder(h.opposition) }}:
+      {% if h.winners %}{% for w in h.winners %}{{ h.rolls[w].name }}{{ ", " if not loop.last }}{% endfor %} won (+{{ h.progress }}){% if h.cost %}, <em>the group pays a minor cost</em>{% endif %}{% else %}no one succeeded{% endif %}.
+      {% for f in h.get("facts", []) %}<div class="aspect fact small">{{ f }}</div>{% endfor %}
+    </li>{% endfor %}</ol>
+  {% endif %}
+  {% if past %}
+  <h3 style="margin-top:1rem">Past deductions</h3>
+  <ul>{% for p in past %}<li>“{{ p.data.question }}” — {% if p.data.truth %}<span class="aspect truth small">{{ p.data.truth }}</span>{% else %}<em>{{ p.data.stage }}</em>{% endif %}</li>{% endfor %}</ul>
+  {% elif not (ded and ded.data.history) %}<p class="empty small">Nothing recorded yet.</p>{% endif %}
+</section>
+</div>
