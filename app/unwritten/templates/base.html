@@ -13,25 +13,28 @@
   <script src="/static/app.js?v={{ VERSION }}" defer></script>
   {% block head %}{% endblock %}
 </head>
-<body hx-swap="none" {% if ctx and ctx.camp %}hx-ext="sse" sse-connect="/live/c/{{ ctx.camp.id }}"{% endif %}>
+<body hx-swap="none" {% if ctx and ctx.camp %}data-cid="{{ ctx.camp.id }}" hx-ext="sse" sse-connect="/live/c/{{ ctx.camp.id }}"{% endif %}>
 <header class="masthead">
   <a class="brand" href="/"><span class="dni" title="Shorah: peace">Sora</span><span class="brand-text">Unwritten Table</span></a>
   {% if ctx and ctx.camp %}
   <nav class="tabs">
     <span class="camp-name">{{ ctx.camp.name }}</span>
     {% set c = ctx.camp.id %}
-    {% for key, href, label in [("table", "/c/%d" % c, "The Table"), ("party", "/c/%d/party" % c, "Explorers"),
+    {% set gm_tabs = [("run", "/c/%d/run" % c, "GM Screen")] if ctx.is_gm else [] %}
+    {% for key, href, label in gm_tabs + [("me", "/c/%d/me" % c, "My Explorer"), ("table", "/c/%d" % c, "The Table"),
+                                ("party", "/c/%d/party" % c, "Sheets"),
                                 ("deduction", "/c/%d/deduction" % c, "Deduction"), ("dni", "/c/%d/dni" % c, "D’ni Lore"),
                                 ("rules", "/c/%d/rules" % c, "Rules")] %}
       <a href="{{ href }}" class="{{ 'on' if tab == key }}">{{ label }}</a>
     {% endfor %}
-    {% if ctx.is_gm %}<a href="/c/{{ c }}/gm" class="{{ 'on' if tab == 'gm' }}">GM’s Desk</a>{% endif %}
+    {% if ctx.is_gm %}<a href="/c/{{ c }}/guide" class="{{ 'on' if tab == 'guide' }}">GM Guide</a><a href="/c/{{ c }}/gm" class="{{ 'on' if tab == 'gm' }}">Desk</a>{% endif %}
   </nav>
   {% else %}
   <nav class="tabs">
     <a href="/" class="{{ 'on' if not tab }}">Journals</a>
     <a href="/dni" class="{{ 'on' if tab == 'dni' }}">D’ni Lore</a>
     <a href="/rules" class="{{ 'on' if tab == 'rules' }}">Rules</a>
+    <a href="/guide" class="{{ 'on' if tab == 'guide' }}">GM Guide</a>
   </nav>
   {% endif %}
   <span class="spacer"></span>
@@ -42,6 +45,9 @@
 <main class="{% block mainclass %}{% endblock %}">
 {% block content %}{% endblock %}
 </main>
+{% if ctx and ctx.camp %}
+<div id="handout" hx-get="/c/{{ ctx.camp.id }}/handout/current" hx-trigger="load, sse:handout, handout from:body" hx-swap="innerHTML"></div>
+{% endif %}
 <div id="toasts" aria-live="polite"></div>
 <footer class="colophon">Unwritten Table v{{ VERSION }} · a fan-made table companion for <em>Unwritten: Adventures in the Ages of MYST and Beyond</em>. Game mechanics: Fate Core (OGL). Myst, D’ni and Unwritten are © Cyan, Inc.; bring your own book.</footer>
 </body>

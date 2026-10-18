@@ -1,0 +1,6 @@
+<header><h3 class="sc">The scene</h3>{% if scene.name %}<span class="aspect small" style="font-style:normal">{{ scene.name }}</span>{% endif %}</header>
+{% if scene.notes %}<p class="small muted">{{ scene.notes }}</p>{% endif %}
+{% if scene.aspects %}<ul class="aspect-list">{% for a in scene.aspects %}<li><span class="aspect {{ a.tag }}">{{ a.text }}</span>
+  <span class="invokes">{% for _ in range(a.free) %}<span class="pip on" title="free invoke"></span>{% endfor %}</span></li>{% endfor %}</ul>
+{% else %}<p class="empty small">No situation aspects yet.</p>{% endif %}
+{% if scene.boosts %}<div class="row small">Boosts: {% for b in scene.boosts %}<span class="aspect boost">{{ b.text or "boost" }}</span>{% endfor %}</div>{% endif %}

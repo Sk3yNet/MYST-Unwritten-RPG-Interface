@@ -38,7 +38,7 @@ def setup_table(c):
     cid = int(r.headers["HX-Redirect"].rsplit("/", 1)[1])
     page = get(c, f"/c/{cid}/gm", GM).text
     token = re.search(r"/join/([\w-]+)", page).group(1)
-    assert post(c, f"/join/{token}", P1).headers["HX-Redirect"] == f"/c/{cid}"
+    assert post(c, f"/join/{token}", P1).headers["HX-Redirect"] == f"/c/{cid}/me"
     r = post(c, f"/c/{cid}/characters", P1, {"name": "Rosa", "kind": "pc"})
     chid = int(r.headers["HX-Redirect"].rsplit("/", 1)[1])
     return cid, chid

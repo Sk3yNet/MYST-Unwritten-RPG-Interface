@@ -1,0 +1,14 @@
+{% set avail = available %}
+{% if avail %}
+<form class="stack" hx-post="/c/{{ ctx.cid }}/module" hx-confirm="Load this adventure? Map progress and requests reset; your characters and journal stay.">
+  {% for slug, m in avail.items() %}
+  <label class="module-card {{ 'broken' if m.data.error }}">
+    <input type="radio" name="slug" value="{{ slug }}" {{ "disabled" if m.data.error }} {{ "checked" if ctx.camp.state.module == slug }}>
+    <span><strong>{{ m.title }}</strong>{% if m.data.players %} <span class="small faint">· {{ m.data.players }}</span>{% endif %}<br>
+      {% if m.data.error %}<span class="small" style="color:var(--seal)">Can’t load: {{ m.data.error }}</span>
+      {% else %}<span class="small muted">{{ m.data.summary }}</span>{% endif %}</span>
+  </label>
+  {% endfor %}
+  <div><button class="btn brass">Load adventure</button></div>
+</form>
+{% else %}<p class="empty">No adventures found in the campaigns folder.</p>{% endif %}

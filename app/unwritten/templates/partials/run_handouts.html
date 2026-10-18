@@ -1,0 +1,29 @@
+<header><h2 class="sc">Handouts</h2></header>
+{% set cur = state.handout %}
+{% if cur %}<div class="callout row small">Showing <strong>{{ cur.caption or cur.key }}</strong> to {{ "everyone" if cur.to == "all" else cur.to }}
+  <span class="spacer"></span><button class="btn tiny seal" hx-post="/c/{{ ctx.cid }}/handout/clear">Take it down</button></div>{% endif %}
+{% if handouts %}
+<ul class="handout-list">
+{% for h in handouts %}
+  <li>
+    <details><summary><strong>{{ h.caption or h.name }}</strong> <span class="small faint">{{ "uploaded" if h.key.startswith("u:") else "" }}{% if h.key in state.shown %} · shown{% endif %}</span></summary>
+      {% if h.gm_notes %}<p class="small muted">{{ h.gm_notes }}</p>{% endif %}
+      <form class="row small" hx-post="/c/{{ ctx.cid }}/handout/push">
+        <input type="hidden" name="key" value="{{ h.key }}">
+        <select name="to"><option value="all">Everyone</option>{% for c in party.pcs %}<option value="{{ c.owner_email }}">{{ c.data.name }} only</option>{% endfor %}</select>
+        <select name="effect">{% for k, v in effects.items() %}<option value="{{ k }}" {{ "selected" if k == h.effect }}>{{ v }}</option>{% endfor %}</select>
+        <button class="btn tiny brass">Show</button>
+        {% if h.key.startswith("u:") %}<button type="button" class="x" hx-post="/c/{{ ctx.cid }}/handout/delete" hx-vals='{"id":"{{ h.key[2:] }}"}' hx-confirm="Delete this upload?">×</button>{% endif %}
+      </form>
+    </details>
+  </li>
+{% endfor %}
+</ul>
+{% endif %}
+<details class="fold small" style="margin-top:.5rem"><summary>Upload an image or video</summary>
+  <form class="stack" hx-post="/c/{{ ctx.cid }}/handout/upload" hx-encoding="multipart/form-data" hx-on::after-request="if(event.detail.successful) this.reset()" style="margin-top:.4rem">
+    <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,video/mp4,video/webm" required>
+    <input name="caption" placeholder="Caption players will see">
+    <div><button class="btn tiny">Upload</button> <span class="faint">PNG, JPG, GIF, WebP, MP4 or WebM, up to 20 MB</span></div>
+  </form>
+</details>

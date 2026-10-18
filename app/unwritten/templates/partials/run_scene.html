@@ -1,0 +1,21 @@
+{% if not mscene %}
+  <h2 class="sc">{{ mod.title }}</h2>
+  <div class="gm-notes">{{ mod.data.gm_intro | default("") | md }}</div>
+  <p class="small muted">Pick the first scene above and press <strong>Start scene</strong>.</p>
+{% else %}{% set s = mscene %}
+  <header><h2 class="sc">{{ s.title }}</h2><span class="small faint">{{ s.chapter }}</span></header>
+  {% if s.goal %}<p><strong>Goal:</strong> {{ s.goal }}</p>{% endif %}
+  {% if s.read_aloud %}<h4 class="small muted label">Read aloud</h4><blockquote class="read-aloud">{{ s.read_aloud }}</blockquote>{% endif %}
+  {% if s.gm_notes %}<h4 class="small muted label">GM notes</h4><div class="gm-notes">{{ s.gm_notes | md }}</div>{% endif %}
+  {% if s.aspects %}<h4 class="small muted label">Scene aspects</h4><div class="row">{% for a in s.aspects %}<span class="aspect small">{{ a }}</span>{% endfor %}</div>{% endif %}
+  {% if npcs %}<h4 class="small muted label">People here</h4>
+    {% for n in npcs %}<details class="small"><summary><strong>{{ n.data.name }}</strong> — <em>{{ n.data.high_concept }}</em></summary>
+      <div>{% for a in n.data.journey if a %}<span class="aspect small">{{ a }}</span> {% endfor %}</div>
+      <div class="muted">{% for k, v in n.data.skills.items() | sort(attribute=1, reverse=True) %}{{ k }} +{{ v }}{{ ", " if not loop.last }}{% endfor %}</div>
+      {% if n.data.notes %}<p>{{ n.data.notes }}</p>{% endif %}
+      <a href="/c/{{ ctx.cid }}/ch/{{ n.id }}">sheet</a>{% if n.data.hidden %} · <span class="tag">hidden from players</span>{% endif %}
+    </details>{% endfor %}{% endif %}
+  {% if s.compel_ideas %}<h4 class="small muted label">Compel ideas</h4><ul class="small">{% for c in s.compel_ideas %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
+  {% if s.if_stuck %}<details class="fold small"><summary>If they’re stuck</summary><ul>{% for c in s.if_stuck %}<li>{{ c }}</li>{% endfor %}</ul></details>{% endif %}
+  {% if s.ends_when %}<p class="small"><strong>Scene ends when:</strong> {{ s.ends_when }}</p>{% endif %}
+{% endif %}

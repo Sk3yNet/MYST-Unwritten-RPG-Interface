@@ -72,3 +72,65 @@ document.addEventListener("htmx:sseOpen", () => {
   }
   window.__sseOpened = true;
 });
+
+// ---- maps: click an area ---------------------------------------------------------------------------------------
+document.addEventListener("click", (e) => {
+  const hot = e.target.closest && e.target.closest("[data-hot]");
+  if (!hot) return;
+  const svg = hot.closest("svg.map-svg");
+  const cid = document.body.dataset.cid;
+  const map = svg.dataset.map, area = hot.dataset.hot;
+  if (svg.classList.contains("gm")) {
+    htmx.ajax("GET", `/c/${cid}/run/area/${map}/${area}`, { target: "#area-panel", swap: "innerHTML" });
+  } else if (hot.classList.contains("revealed")) {
+    htmx.ajax("GET", `/c/${cid}/me/area/${map}/${area}`, { target: "#area-panel", swap: "innerHTML" });
+  } else if (hot.classList.contains("frontier")) {
+    if (hot.classList.contains("pending")) { toast("Already asked: waiting on the GM."); return; }
+    const holder = document.querySelector("[data-my-char]");
+    if (!holder) { toast("Create your explorer first."); return; }
+    const title = hot.querySelector("title");
+    if (confirm(`Ask the GM to let you explore “${title ? title.textContent : "this area"}”?`)) {
+      htmx.ajax("POST", `/c/${cid}/map/request`, { values: { map, area, character_id: holder.dataset.myChar }, swap: "none" })
+        .then(() => toast("Asked the GM."));
+    }
+  }
+});
+document.addEventListener("keydown", (e) => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-hot]")) {
+    e.preventDefault();
+    e.target.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  }
+});
+
+// ---- suggestions: set up the roller ----------------------------------------------------------------------------
+function prefillRoll(skill, action) {
+  const r = document.getElementById("roller");
+  if (!r) return;
+  const sk = r.querySelector("select[name=skill]");
+  if (sk && [...sk.options].some((o) => o.value === skill)) sk.value = skill;
+  const act = r.querySelector("select[name=action]");
+  const a = action === "advantage" ? "create" : action;
+  if (act && [...act.options].some((o) => o.value === a)) act.value = a;
+  r.scrollIntoView({ behavior: "smooth", block: "center" });
+  r.classList.remove("glow"); void r.offsetWidth; r.classList.add("glow");
+  const intent = r.querySelector("input[name=intent]");
+  if (intent) intent.focus();
+}
+
+// ---- handouts: the GM pushes, players see it full-screen until they close it ---------------------------------
+function dismissHandout(btn) {
+  const o = btn.closest(".handout-overlay");
+  try { sessionStorage.setItem("handout-" + document.body.dataset.cid, o.dataset.seq); } catch (e) {}
+  o.remove();
+}
+document.addEventListener("htmx:afterSwap", (e) => {
+  if (e.detail.target.id !== "handout") return;
+  const o = e.detail.target.querySelector(".handout-overlay");
+  if (!o) return;
+  let seen = null;
+  try { seen = sessionStorage.getItem("handout-" + document.body.dataset.cid); } catch (err) {}
+  if (seen === o.dataset.seq) o.remove();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { const b = document.querySelector(".handout-overlay .handout-close"); if (b) b.click(); }
+});

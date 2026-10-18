@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Handouts{% endblock %}
+{% block content %}
+<h1>Handouts</h1>
+<p class="muted">Everything the GM has shown you, to look at again.</p>
+<div class="grid three">
+{% for h in items %}
+  <figure class="page" style="margin:0">
+    {% if h.inline %}<div class="gallery-media">{{ h.inline | safe }}</div>
+    {% elif h.type.startswith("video/") %}<video class="gallery-media" src="/c/{{ ctx.cid }}/media/{{ h.key }}" controls muted playsinline></video>
+    {% else %}<img class="gallery-media" src="/c/{{ ctx.cid }}/media/{{ h.key }}" alt="{{ h.caption }}">{% endif %}
+    <figcaption class="small">{{ h.caption or h.name }}</figcaption>
+  </figure>
+{% else %}<p class="empty">Nothing yet.</p>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+<header><h2 class="sc">What could you do?</h2></header>
+{% for r in rolls %}
+<div class="callout">
+  <strong>The GM calls for a roll:</strong> explore <em>{{ r.label }}</em>.
+  <div class="small">{{ rules.ACTIONS[r.action] }} vs <strong>{{ ladder(r.difficulty) }}</strong>{% if r.skills %} · try {{ r.skills | join(" or ") }}{% endif %}</div>
+  <form class="row" hx-post="/c/{{ ctx.cid }}/roll" style="margin-top:.35rem">
+    <input type="hidden" name="character_id" value="{{ ch.id }}"><input type="hidden" name="request_id" value="{{ r.id }}">
+    <input type="hidden" name="action" value="{{ r.action }}"><input type="hidden" name="opposition" value="{{ r.difficulty }}">
+    <input type="hidden" name="intent" value="Explore {{ r.label }}">
+    <select name="skill">
+      {% for s in r.skills %}<option value="{{ s }}">{{ s }} ({{ "%+d" % ch.data.skills.get(s, 0) }})</option>{% endfor %}
+      {% for s, v in ch.data.skills.items() | sort(attribute=1, reverse=True) if s not in r.skills %}<option value="{{ s }}">{{ s }} ({{ "%+d" % v }})</option>{% endfor %}
+    </select>
+    <button class="btn brass tiny">Roll</button>
+  </form>
+</div>
+{% endfor %}
+{% if sugg %}
+<ul class="suggestions">
+  {% for s in sugg if s.kind != "roll" %}
+  <li class="sugg k-{{ s.kind }}">
+    <div><strong>{{ s.title }}</strong></div>
+    {% if s.detail %}<div class="small muted">{{ s.detail }}</div>{% endif %}
+    {% if s.skill and s.action %}<button class="link small" onclick="prefillRoll('{{ s.skill }}', '{{ s.action }}')">set up the roll</button>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}<p class="empty small">Make your character to get suggestions.</p>{% endif %}
+<p class="small faint" style="margin:.4rem 0 0">Ideas, not rules: describe what you do, and the GM will say whether to roll.</p>

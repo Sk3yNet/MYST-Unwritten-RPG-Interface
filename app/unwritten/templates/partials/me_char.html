@@ -1,0 +1,27 @@
+{% set d = ch.data %}
+<div class="ornament">❦</div>
+<h2 style="margin:0">{{ d.name }}</h2>
+{% if d.high_concept %}<div class="hc aspect" style="margin:.3rem 0">{{ d.high_concept }}</div>{% endif %}
+<div class="row" style="margin:.5rem 0">
+  <span class="fp">
+    {% if ctx.can_edit(ch) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ ch.id }}/op" hx-vals='{"op":"fp","delta":-1}' title="Spend a fate point">−</button>{% endif %}
+    <span class="coin big">{{ d.fate_points }}</span>
+    {% if ctx.can_edit(ch) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ ch.id }}/op" hx-vals='{"op":"fp","delta":1}' title="Gain a fate point">+</button>{% endif %}
+  </span>
+  <span class="small muted">fate points · refresh {{ rules.refresh(d) }}</span>
+</div>
+{% set js = d.journey | select | list %}
+{% if js %}<h3 class="sc">Aspects</h3>
+<ul class="aspect-list">{% for a in js %}<li><span class="aspect">{{ a }}</span></li>{% endfor %}</ul>{% endif %}
+<h3 class="sc">Skills</h3>
+{% set cols = rules.skill_columns(d.skills) %}
+{% if cols %}{% for r, names in cols.items() %}
+  <div class="ladder-row"><span class="rank">{{ ladder(r) }}</span><span class="row" style="gap:.3rem">{% for s in names %}<span class="skill-chip">{{ s }}</span>{% endfor %}</span></div>
+{% endfor %}{% else %}<p class="empty small">No skills yet.</p>{% endif %}
+{% set st = d.stunts + d.resources %}
+{% if st %}<h3 class="sc" style="margin-top:.6rem">Stunts &amp; resources</h3>
+  {% for s in st if s.name or s.text %}<details class="small"><summary><strong>{{ s.name or "Unnamed" }}</strong></summary><p style="margin:.2rem 0 .4rem">{{ s.text }}</p></details>{% endfor %}{% endif %}
+<h3 class="sc" style="margin-top:.6rem">Consequences</h3>
+{% for s in d.consequences %}<div class="row small"><span class="tag">{{ rules.CONSEQUENCES[s.severity].label }}</span>
+  {% if s.text %}<span class="cons-pill {{ 'recovering' if s.recovering }}">{{ s.text }}</span>{% else %}<span class="faint">open</span>{% endif %}</div>{% endfor %}
+<p class="small" style="margin-top:.6rem"><a href="/c/{{ ctx.cid }}/ch/{{ ch.id }}">Full sheet →</a></p>

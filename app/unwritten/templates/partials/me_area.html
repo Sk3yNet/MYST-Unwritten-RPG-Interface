@@ -1,0 +1,5 @@
+<header><h3 class="sc">{{ area.name }}</h3></header>
+{% if area.read_aloud %}<p class="read-aloud">{{ area.read_aloud }}</p>{% endif %}
+{% if area.aspects %}<div class="row">{% for a in area.aspects %}<span class="aspect small">{{ a }}</span>{% endfor %}</div>{% endif %}
+{% if area.hooks %}<h4 class="small muted" style="margin:.5rem 0 .2rem">Things to try</h4>
+<ul class="small">{% for h in area.hooks %}{% set t = h.text if h is mapping else h %}<li>{{ t }}{% if h is mapping and h.skill %} <button class="link small" onclick="prefillRoll('{{ h.skill }}', '{{ h.action }}')">roll {{ h.skill }}</button>{% endif %}</li>{% endfor %}</ul>{% endif %}

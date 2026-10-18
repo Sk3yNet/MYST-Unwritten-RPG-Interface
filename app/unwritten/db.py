@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 CREATE TABLE IF NOT EXISTS campaigns (
     id INTEGER PRIMARY KEY, name TEXT NOT NULL, gm_email TEXT NOT NULL, invite TEXT NOT NULL UNIQUE,
-    scene TEXT NOT NULL DEFAULT '{}', created REAL NOT NULL
+    scene TEXT NOT NULL DEFAULT '{}', created REAL NOT NULL, state TEXT NOT NULL DEFAULT '{}'
 );
 CREATE TABLE IF NOT EXISTS members (
     campaign_id INTEGER NOT NULL, email TEXT NOT NULL, role TEXT NOT NULL, joined REAL NOT NULL,
@@ -40,6 +40,9 @@ CREATE TABLE IF NOT EXISTS timeline (
 """
 
 EMPTY_SCENE = {"name": "", "aspects": [], "boosts": [], "notes": "", "next_id": 1}
+# Adventure play state: loaded module, current scene, fog of war, inspect requests, pushed handouts.
+EMPTY_STATE = {"module": None, "scene_id": None, "map_id": None, "revealed": {}, "here": {}, "requests": [],
+               "next_req": 1, "handout": None, "handout_seq": 0, "shown": {}, "uploads": []}
 
 
 class DB:
@@ -52,6 +55,11 @@ class DB:
         self.conn.row_factory = aiosqlite.Row
         await self.conn.execute("PRAGMA journal_mode=WAL")
         await self.conn.executescript(SCHEMA)
+        # Databases created before the adventure features lack campaigns.state.
+        async with self.conn.execute("PRAGMA table_info(campaigns)") as cur:
+            cols = {r[1] for r in await cur.fetchall()}
+        if "state" not in cols:
+            await self.conn.execute("ALTER TABLE campaigns ADD COLUMN state TEXT NOT NULL DEFAULT '{}'")
         await self.conn.commit()
 
     async def close(self) -> None:
@@ -104,6 +112,7 @@ class DB:
             return None
         c = dict(row)
         c["scene"] = {**EMPTY_SCENE, **json.loads(c["scene"])}
+        c["state"] = {**json.loads(json.dumps(EMPTY_STATE)), **json.loads(c.get("state") or "{}")}
         return c
 
     async def campaign_by_invite(self, token: str) -> dict | None:
@@ -120,6 +129,9 @@ class DB:
 
     async def save_scene(self, cid: int, scene: dict) -> None:
         await self._run("UPDATE campaigns SET scene=? WHERE id=?", json.dumps(scene), cid)
+
+    async def save_state(self, cid: int, state: dict) -> None:
+        await self._run("UPDATE campaigns SET state=? WHERE id=?", json.dumps(state), cid)
 
     async def campaigns_for(self, email: str) -> list[dict]:
         rows = await self._all("SELECT c.id, c.name, c.gm_email, m.role FROM campaigns c JOIN members m "

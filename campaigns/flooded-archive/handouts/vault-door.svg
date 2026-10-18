@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <radialGradient id="vd-stone" cx=".45" cy=".4"><stop offset="0" stop-color="#b8b0a2"/><stop offset="1" stop-color="#6e675c"/></radialGradient>
+    <filter id="vd-rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/>
+      <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .25 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+  </defs>
+  <rect width="600" height="600" fill="#2a2520"/>
+  <circle cx="300" cy="300" r="270" fill="#f3d68e" opacity=".18"/>
+  <circle cx="300" cy="300" r="255" fill="url(#vd-stone)" stroke="#2a2520" stroke-width="8"/>
+  <circle cx="300" cy="300" r="255" fill="#000" filter="url(#vd-rough)"/>
+  <circle cx="300" cy="300" r="215" fill="none" stroke="#4a443b" stroke-width="3"/>
+  <g stroke="#4a443b" stroke-width="2">
+    <line x1="300" y1="45" x2="300" y2="85"/><line x1="300" y1="515" x2="300" y2="555"/>
+    <line x1="45" y1="300" x2="85" y2="300"/><line x1="515" y1="300" x2="555" y2="300"/>
+  </g>
+  <!-- Three dials, each showing a D'ni digit (D'ni font keys) -->
+  <g font-family="Dni, serif" font-size="58" fill="#2a2520" text-anchor="middle">
+    <circle cx="190" cy="290" r="62" fill="#d8cdb8" stroke="#2a2520" stroke-width="5"/>
+    <circle cx="300" cy="290" r="62" fill="#d8cdb8" stroke="#2a2520" stroke-width="5"/>
+    <circle cx="410" cy="290" r="62" fill="#d8cdb8" stroke="#2a2520" stroke-width="5"/>
+    <text x="190" y="310">0</text><text x="300" y="310">0</text><text x="410" y="310">0</text>
+  </g>
+  <g fill="#2a2520"><path d="M190 218 l-8 -14 h16 z"/><path d="M300 218 l-8 -14 h16 z"/><path d="M410 218 l-8 -14 h16 z"/></g>
+</svg>

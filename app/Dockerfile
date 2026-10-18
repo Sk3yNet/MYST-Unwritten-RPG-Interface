@@ -1,10 +1,12 @@
+# Build context: the repository root (see docker-compose.yml), so the adventures in campaigns/ ship with the app.
 FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 CAMPAIGNS_DIR=/srv/campaigns
 WORKDIR /srv
-COPY requirements.txt .
+COPY app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY unwritten ./unwritten
+COPY app/unwritten ./unwritten
+COPY campaigns ./campaigns
 
 RUN useradd --uid 10001 --create-home app && mkdir -p /data && chown app /data
 USER app

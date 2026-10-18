@@ -16,6 +16,11 @@ IM Fell English and EB Garamond are under the SIL Open Font License.
 
 | For | Feature |
 | --- | --- |
+| Players | **My Explorer** screen: your character at a glance, the map with fog of war, the area you’re in, scene aspects, **suggested actions** (built from the area’s hooks, free invokes, unexplored edges, injuries, your best skills and fate points; “set up the roll” fills in the roller), the GM’s roll calls, and a full-screen overlay for anything the GM shows. |
+| GM | **GM Screen**: load an adventure, start scenes (sets the scene board, shows the map, reveals starting areas), read-aloud text, GM notes, NPC cards, compel ideas from your players’ own aspects, “if they’re stuck” hints. |
+| GM | **Fog of war**: click any area to reveal or hide it and to read its secrets. Players tap a fogged edge to ask to explore it; you reveal, **call for a roll** (a success reveals it automatically), or say not yet. |
+| GM | **Handouts**: show an adventure’s images and animations, or your own uploads (images, GIF, MP4/WebM up to 20 MB), to everyone or one player, with an effect (fade, linking ripple, slow reveal, flash). Players can revisit what they’ve been shown. |
+| GM | **GM Guide** for first-time GMs: running a session with the app, setting difficulties, costs, compels, what to do when things go sideways. |
 | Everyone | **Live table**: rolls, compels, aspects and fate points update on every screen at once (Server-Sent Events). |
 | Players | **Character sheet** with rule checks: the starting skill pyramid, skill columns, refresh (3 free stunts/resources, −1 per extra, never below 1), four journey aspects, consequence slots with recovery difficulty. Export/import as JSON, print. |
 | Players | **Fate roller**: 4dF + skill + stunt + teamwork vs opposition. Outcome (fumble/tie/success/excel) with the options for each action (Overcome, Advantage create/take, Discover, Oppose), Discover question counter, cost lists, dangerous actions. **Invoke** after the roll for +2 or a reroll, paid with a fate point, a free invoke or a boost (one fate-point invoke per aspect per roll). |
@@ -26,6 +31,16 @@ IM Fell English and EB Garamond are under the SIL Open Font License.
 | Table | **Deductions**: frame a question, players join with a reason, three rounds vs Good (+3) and then the previous winning total, progress tracking, winners declare facts (placed as aspects), the reveal roll, and the truth aspect with 0–2 free invokes. |
 | Table | **D’ni lore**: a live cavern clock (hahr, vailee, yahr, bell), surface⇄D’ni date conversion, base-25 numbers in D’ni numerals, a transcription→D’ni script writer, the alphabet, and a **campaign timeline** with both calendars (GM-only entries allowed). |
 | Table | **Rules quick reference** in our own words; a “cavern” dark theme next to the parchment one. |
+
+## Adventures
+
+Adventures live in [`campaigns/`](campaigns/README.md), one folder each: a `campaign.yaml` (chapters, scenes, maps,
+areas, NPCs, handouts) plus SVG maps and handouts. The GM picks one on the **Desk**. Players never receive adventure
+content directly: hidden map areas are stripped from their copy of the map on the server, GM notes and secrets stay on
+the GM Screen, and a handout is served to a player only after it’s been shown to them.
+
+Included: **The Flooded Archive**, a starter adventure for 2–5 explorers (two chapters, five scenes, two maps, four
+handouts including two animated ones). New adventures follow the format in `campaigns/README.md`.
 
 ## How people join
 
@@ -43,7 +58,7 @@ Internet ─► Cloudflare ─► cloudflared ─► nginx ─(auth_request)─�
                                            └─► app (FastAPI + htmx, SQLite in a volume)
 ```
 
-No host ports are published: the Cloudflare tunnel is the only way in, and nginx checks every request (including the
+Uploaded handouts are stored next to the database in the volume (`/data/uploads`). No host ports are published: the Cloudflare tunnel is the only way in, and nginx checks every request (including the
 live stream) with oauth2-proxy. Only `/static/` (fonts, CSS, JS) and `/healthz` are public.
 
 1. **Google OAuth client.** In <https://console.cloud.google.com/>, use your existing project or a new one.
@@ -86,6 +101,10 @@ with a browser extension or Playwright’s `extra_http_headers`.
 app/unwritten/rules.py      game mechanics (pure functions, no I/O): ladder, outcomes, refresh, checks, deductions
 app/unwritten/dni.py        base-25 numbers, the D'ni calendar and clock, script transcription
 app/unwritten/main.py       FastAPI routes, permissions, live updates
+app/unwritten/play.py       player screen, GM screen, fog of war, inspect requests, handouts
+app/unwritten/modules.py    adventure loading and fog-of-war map rendering
+app/unwritten/suggest.py    rules-based suggestions for players and GM prompts
+campaigns/                  adventures (see campaigns/README.md)
 app/unwritten/db.py         SQLite storage
 app/unwritten/templates/    Jinja2 pages and htmx fragments
 app/unwritten/static/       CSS, JS (htmx 2 + SSE extension), fonts, dni.js (mirrors dni.py)

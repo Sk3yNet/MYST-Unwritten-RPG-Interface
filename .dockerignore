@@ -1,0 +1,7 @@
+**/__pycache__
+**/.pytest_cache
+**/*.sqlite*
+*.pdf
+*.zip
+.git
+.env

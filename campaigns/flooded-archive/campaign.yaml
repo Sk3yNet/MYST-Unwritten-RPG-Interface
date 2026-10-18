@@ -1,0 +1,363 @@
+# The Flooded Archive: a starter adventure for Unwritten Table. Original fan content.
+# Two chapters, five scenes, two maps; plays in two or three sessions for 2-5 explorers.
+title: The Flooded Archive
+summary: >
+  A tremor floods an Archivists' hall in the lower city. An explorer who went inside three days ago hasn't come
+  back. The search leads through drowned reading rooms, a vault that answers only in D'ni numbers, and a Linking
+  Book to a small, strange Age where the tide is kept by a lighthouse.
+players: 2-5 explorers
+gm_intro: |
+  Welcome to your first adventure! Here's the shape of it:
+
+  * **Chapter 1, Into the Archive** — the explorers search a flooded guild hall for Ilse Varga. They can drain the
+    water (Engineering at the pumps), find the curator's journal, and open a vault whose lock is a D'ni number.
+  * **Chapter 2, Seleshva** — the vault holds a Linking Book. Ilse linked through and is stranded: the Age's
+    tide machinery is failing, and her way home was swept into the sea. The explorers find her camp, learn why the
+    lighthouse keeps the tide, and bring everyone home.
+
+  Nothing here needs combat. Every obstacle can be solved with wits, skills and teamwork.
+  Reveal map areas as the explorers enter them; push handouts when they find something to look at.
+  Use the "If they're stuck" notes freely: a hint is never a failure.
+
+npcs:
+  - name: Ilse Varga
+    high_concept: Restless Surveyor Who Never Turns Back
+    aspects: ["I Can Fix This Myself", "Owes the Archivists a Favor"]
+    skills: {Surveying: 4, Engineering: 3, Survival: 3, Will: 2, Notice: 2}
+    gm_notes: >
+      Stubborn, warm, embarrassed to be rescued. She has three days of notes on the Age's tides and will happily
+      lecture about them. She hid her journal in her camp before trying to swim for the lost Book.
+  - name: Curator Teshan (in absentia)
+    high_concept: Long-Dead D'ni Archivist with a Fondness for Riddles
+    aspects: ["Order Above All", "Kept One Secret Too Many"]
+    skills: {Research: 5, Will: 3}
+    gm_notes: >
+      Never met in person; known through the journal and the vault. Teshan sealed Seleshva's Book away because the
+      Age's keepers asked to be left alone.
+  - name: The Lamplighter
+    high_concept: Last Keeper of Seleshva's Light
+    aspects: ["The Tide Answers to the Lamp", "Wary of Book-Bearers"]
+    skills: {Craft: 4, Empathy: 3, Survival: 3, Deceive: 1}
+    gm_notes: >
+      A native of the Age, old and alone, who tends the lighthouse whose lamp drives the tide machinery. Polite but
+      guarded: the last D'ni visitors made promises and never returned. Earned trust (Rapport, Empathy, keeping a
+      promise) turns them into an ally.
+
+maps:
+  - id: archive
+    name: The Archivists' Hall, Lower Ward
+    file: maps/archive.svg
+    start_revealed: [landing]
+    areas:
+      - id: landing
+        name: The Flooded Landing
+        teaser: Harbor stairs
+        shape: [80, 470, 220, 170]
+        read_aloud: >
+          Stone stairs descend from the harbor walk straight into black water. The lake's orange glow ripples across
+          a carved archway; beyond it, the hall breathes cold air that smells of wet paper.
+        gm_notes: Water is knee-deep and rising slowly. Ilse's rope is tied off at the arch and leads inside.
+        hooks:
+          - {text: "Follow the rope tied to the arch", skill: Notice, action: discover}
+          - {text: "Gauge how fast the water is rising", skill: Surveying, action: discover}
+        secrets: ["The rope is Ilse's: her initials are knotted into the end.", "The water rises about a hand's width an hour."]
+        aspects: ["Knee-Deep and Rising"]
+        exits: [hall, pump]
+      - id: hall
+        name: The Reading Hall
+        teaser: A wide, dark hall
+        shape: [300, 380, 300, 260]
+        read_aloud: >
+          Long stone tables stand in rows like boats at anchor, ledgers floating between them. Pillars carved with
+          coiled shells hold up a ceiling lost in darkness.
+        gm_notes: Floating ledgers are the Archive's visitor logs. Ilse signed in three days ago.
+        hooks:
+          - {text: "Fish out a floating ledger and read it", skill: Research, action: discover}
+          - {text: "Climb a table to see across the hall", skill: Athletics, action: advantage}
+        secrets: ["Ilse's last entry: 'Teshan's study, then the vault. The answer's in his hand.'"]
+        aspects: ["Floating Ledgers", "Shell-Carved Pillars"]
+        exits: [landing, stacks, study]
+      - id: pump
+        name: The Pump Room
+        teaser: A low doorway, humming
+        shape: [80, 230, 220, 240]
+        read_aloud: >
+          Brass gears the size of cart wheels sit half-submerged. A faint hum comes from somewhere inside them, as if
+          the machine is asleep, not dead.
+        gm_notes: >
+          Restarting the pumps (Engineering, Overcome vs Good +3; teamwork helps) drains the Archive and removes
+          "Knee-Deep and Rising". A fumble at a serious cost might restart them so violently they flood the stacks.
+        hooks:
+          - {text: "Restart the pumps", skill: Engineering, action: overcome}
+          - {text: "Trace the pipes to see where they lead", skill: Notice, action: discover}
+        secrets: ["A missing valve wheel lies in the Reading Hall's water."]
+        aspects: ["Sleeping Brass Giants"]
+        discover: {difficulty: 1, skills: [Notice, Engineering], action: discover}
+        exits: [landing, study]
+      - id: stacks
+        name: The Collapsed Stacks
+        teaser: Leaning shelves
+        shape: [600, 420, 260, 220]
+        read_aloud: >
+          Shelves have fallen against one another like dominoes, leaving a crawlspace of wet spines and cracked
+          stone. Something glints at the far end.
+        gm_notes: A crawl through the stacks reaches the vault's back wall (dangerous action, Athletics vs Fair +2).
+        hooks:
+          - {text: "Crawl through toward the glint", skill: Athletics, action: overcome}
+          - {text: "Rescue a waterlogged book", skill: Craft, action: advantage}
+        secrets: ["The glint is Ilse's lamp, dropped as she backed out."]
+        aspects: ["Domino Shelves"]
+        discover: {difficulty: 2, skills: [Notice, Athletics], action: overcome}
+        exits: [hall, vault]
+      - id: study
+        name: The Curator's Study
+        teaser: A door marked with a quill
+        shape: [330, 170, 220, 210]
+        read_aloud: >
+          A dry room, sealed tight against the flood. A desk, a chair pushed back as if someone just stood up, and a
+          journal left open under a stone paperweight.
+        gm_notes: Push the "Teshan's journal" handout when they read it. It holds the vault's answer, written in words.
+        hooks:
+          - {text: "Read the open journal", skill: Research, action: discover}
+          - {text: "Search the desk for anything hidden", skill: Intrusion, action: discover}
+        secrets: ["The vault answers to the hahr of the Archive's founding: 6177.", "Teshan sealed the Book at the keepers' request."]
+        aspects: ["Dry as a Tomb"]
+        handouts: [journal]
+        discover: {difficulty: 2, skills: [Notice, Intrusion], action: discover}
+        exits: [hall, pump, vault]
+      - id: vault
+        name: The Sealed Vault
+        teaser: A round stone door
+        shape: [620, 170, 240, 250]
+        read_aloud: >
+          A circular door of grey stone fills the far wall. Three dials sit in its face, each carved with D'ni
+          numerals, and a seam of light leaks around the edge.
+        gm_notes: >
+          The dials take three D'ni digits: 6177 = 9·625 + 22·25 + 2, so 9, 22, 2. The D'ni Lore page's number tool
+          converts it; let them use it! Push the "Vault door" handout.
+        hooks:
+          - {text: "Study the dials", skill: Research, action: discover}
+          - {text: "Listen to the mechanism as you turn a dial", skill: Finesse, action: advantage}
+        secrets: ["Wrong combinations do nothing harmful; three wrong tries in a row jam it for a scene."]
+        aspects: ["Three Patient Dials"]
+        handouts: [vault-door]
+        discover: {difficulty: 3, skills: [Research, Notice], action: discover}
+        exits: [study, stacks, alcove]
+      - id: alcove
+        name: The Linking Alcove
+        teaser: Light behind the vault
+        shape: [660, 40, 180, 130]
+        read_aloud: >
+          Behind the door, a single pedestal. On it, a slim Linking Book lies open, its panel showing waves under a
+          violet sky and a white tower turning its light.
+        gm_notes: Push the animated "Linking panel" handout. Touching it links to Seleshva (chapter 2).
+        hooks:
+          - {text: "Look closely at the panel", skill: Notice, action: discover}
+          - {text: "Touch the panel", skill: Will, action: overcome}
+        aspects: ["A Book Left Open"]
+        handouts: [linking]
+        exits: [vault]
+
+  - id: seleshva
+    name: The Age of Seleshva
+    file: maps/seleshva.svg
+    start_revealed: [pier]
+    areas:
+      - id: pier
+        name: The Arrival Pier
+        teaser: A stone pier
+        shape: "70,430 280,400 300,620 90,650"
+        read_aloud: >
+          You arrive on a stone pier slick with spray. The sea is the color of a bruise; the tide is going out, and
+          not slowly. A violet sun hangs low and does not seem to move.
+        gm_notes: The linking stone that should hold the return Book is empty. Ilse's boot prints lead inland.
+        hooks:
+          - {text: "Follow the boot prints", skill: Survival, action: discover}
+          - {text: "Read the tide", skill: Surveying, action: discover}
+        secrets: ["The return Book was washed off the pier; it's in the tide pools."]
+        aspects: ["Spray-Slick Stone", "No Way Back (Yet)"]
+        exits: [reeds]
+      - id: reeds
+        name: The Glass Reeds
+        teaser: Glittering grass
+        shape: "290,330 560,300 560,560 300,580"
+        read_aloud: >
+          Reeds of something like glass ring softly in the wind, a thousand small bells. Paths have been trodden
+          through them, some by boots, some by something smaller.
+        gm_notes: The reeds ring louder when someone is near. Stealth through them is hard (Good +3).
+        hooks:
+          - {text: "Listen to where the ringing moves", skill: Notice, action: advantage}
+          - {text: "Move quietly through the reeds", skill: Stealth, action: overcome}
+        aspects: ["Ringing Glass Reeds"]
+        discover: {difficulty: 1, skills: [Notice, Survival], action: discover}
+        exits: [pier, camp, pools]
+      - id: camp
+        name: Ilse's Camp
+        teaser: Smoke on the ridge
+        shape: [330, 90, 250, 200]
+        read_aloud: >
+          A tarp lean-to on a ridge, a cold fire ring, and sheets of notes pinned under stones, covered in tide
+          tables and sketches of a tower.
+        gm_notes: Ilse is not here (she's at the tide pools); her notes say the lighthouse lamp drives the tide.
+        hooks:
+          - {text: "Read Ilse's tide notes", skill: Research, action: discover}
+          - {text: "Work out where she went", skill: Survival, action: discover}
+        secrets: ["Ilse's last note: 'Book's in the third pool. Low tide at the bell. Going in.'"]
+        aspects: ["Notes Pinned Under Stones"]
+        discover: {difficulty: 2, skills: [Notice, Survival], action: discover}
+        exits: [reeds, lighthouse]
+      - id: pools
+        name: The Tide Pools
+        teaser: Wet rocks below
+        shape: [560, 430, 250, 200]
+        read_aloud: >
+          The retreating sea has left a staircase of pools, each with brass rings set in its floor. In the third,
+          something rectangular glints. Someone is sitting on the rocks above it, soaked and shivering.
+        gm_notes: >
+          Ilse is here, with a twisted ankle (minor consequence). The Book is wedged under a brass ring; reaching it
+          before the tide turns is a challenge for the group (Athletics, Engineering, Survival).
+        hooks:
+          - {text: "Help Ilse up the rocks", skill: Medicine, action: overcome}
+          - {text: "Pry the Book from under the ring", skill: Engineering, action: overcome}
+        aspects: ["The Tide Will Turn", "Brass Rings Underwater"]
+        discover: {difficulty: 2, skills: [Notice, Athletics], action: overcome}
+        exits: [reeds, lighthouse]
+      - id: lighthouse
+        name: The Lighthouse
+        teaser: A white tower
+        shape: [720, 90, 220, 260]
+        read_aloud: >
+          A white tower of fitted stone, its lamp turning even in daylight. Gears inside it tick like a clock, and
+          their sound carries down to the sea.
+        gm_notes: >
+          The Lamplighter lives here. The lamp's gears are failing; that's why the tide is wild. Fixing them
+          (Engineering or Craft, Great +4, or a deduction) calms the sea and wins the Lamplighter's trust.
+        hooks:
+          - {text: "Knock and introduce yourselves", skill: Rapport, action: advantage}
+          - {text: "Study the lamp's gears", skill: Engineering, action: discover}
+        aspects: ["The Lamp Turns the Tide", "Ticking Like a Clock"]
+        handouts: [lighthouse]
+        discover: {difficulty: 3, skills: [Surveying, Notice], action: discover}
+        exits: [camp, pools]
+
+handouts:
+  - id: linking
+    file: handouts/linking.svg
+    caption: The Linking panel shows Seleshva
+    effect: link
+    gm_notes: Animated. Push it when someone looks into the Book, and again when they touch it.
+  - id: vault-door
+    file: handouts/vault-door.svg
+    caption: The vault door's three dials
+    effect: reveal
+  - id: journal
+    file: handouts/journal.svg
+    caption: A page from Curator Teshan's journal
+    effect: fade
+  - id: lighthouse
+    file: handouts/lighthouse.svg
+    caption: Seleshva's lighthouse at the edge of the tide
+    effect: fade
+    gm_notes: Animated lamp beam.
+
+chapters:
+  - title: "Chapter 1: Into the Archive"
+    summary: Find Ilse's trail through the flooded hall and open the vault.
+    scenes:
+      - id: arrival
+        title: The Flooded Landing
+        map: archive
+        reveal: [landing]
+        read_aloud: >
+          The message came by way of a Messenger: Ilse Varga went into the old Archivists' hall in the Lower Ward
+          three days ago, right before the tremor, and hasn't come out. When you reach the harbor stairs, the water
+          has already swallowed the bottom steps.
+        goal: Get inside and pick up Ilse's trail.
+        gm_notes: >
+          Start with a quick round of introductions: each player describes their explorer arriving. Then ask "What do
+          you do?" Reveal the Reading Hall or the Pump Room when they head that way.
+        aspects: ["Knee-Deep and Rising"]
+        compel_ideas:
+          - "Someone curious wades ahead alone and loses their footing (compel a reckless or curious aspect)."
+          - "An explorer who owes the Archivists something is recognized by a nervous guild member watching from the harbor."
+        if_stuck:
+          - "Point out Ilse's rope tied off at the arch."
+          - "Let the water rise a little: urgency moves people."
+        ends_when: The explorers are inside and know Ilse headed for the curator's study.
+      - id: drain
+        title: Draining the Archive
+        map: archive
+        read_aloud: >
+          Deeper in, the hall is a maze of half-sunk tables and floating paper. Somewhere to the west, machinery hums.
+        goal: Restart the pumps or find another way to the study; learn the vault's secret.
+        gm_notes: >
+          Two paths: restart the pumps (Engineering, Overcome vs Good +3) to drain the hall, or push on through the
+          water (each move through deep water is an Athletics overcome vs Fair +2). The journal in the study holds
+          the vault's answer.
+        aspects: ["Floating Ledgers"]
+        handouts: [journal]
+        compel_ideas:
+          - "A book lover can't leave a drowning book behind (compel to slow them down)."
+        if_stuck:
+          - "The hum from the pump room grows louder when they're near."
+          - "A floating ledger opens to Ilse's sign-in: 'Teshan's study, then the vault.'"
+        ends_when: The explorers stand before the vault knowing (or guessing) the hahr 6177.
+      - id: vault
+        title: The Vault's Question
+        map: archive
+        reveal: [vault]
+        read_aloud: >
+          The round door waits, three dials in its face. Light seeps around its edge like a held breath.
+        goal: Open the vault.
+        gm_notes: >
+          The answer is the founding hahr, 6177, written in D'ni digits: 9, 22, 2. Let players use the D'ni Lore page.
+          A deduction works well here if they're unsure ("What number does the vault want?").
+        handouts: [vault-door, linking]
+        aspects: ["Three Patient Dials"]
+        if_stuck:
+          - "Remind them the journal mentions 'the hahr of our founding'."
+          - "Offer a deduction: three rounds of reasoning, the winner states the answer."
+        ends_when: The vault opens and someone looks into the Linking Book.
+
+  - title: "Chapter 2: Seleshva"
+    summary: Find Ilse, recover the return Book, and settle the tide.
+    scenes:
+      - id: shore
+        title: The Glass Shore
+        map: seleshva
+        reveal: [pier]
+        read_aloud: >
+          The world folds and settles. Salt wind, a violet sun, and the sound of a thousand glass bells. The pier
+          beneath you is empty: no return Book on its stone.
+        goal: Find Ilse and the missing return Book.
+        gm_notes: >
+          New Age, new chapter: fate points reset to refresh (use New chapter on the scene board). Push the "linking"
+          handout as they arrive. Ilse's camp and the tide pools are the two leads.
+        handouts: [linking]
+        aspects: ["No Way Back (Yet)", "A Violet Sun That Will Not Set"]
+        compel_ideas:
+          - "Someone who can't resist a mystery is drawn to the ringing reeds instead of the trail."
+        if_stuck:
+          - "Smoke rises from a ridge to the north (Ilse's camp)."
+          - "Boot prints lead into the reeds."
+        ends_when: They find Ilse at the tide pools.
+      - id: light
+        title: The Keeper's Light
+        map: seleshva
+        read_aloud: >
+          The tide turns with a groan of distant gears. Up on its rock, the lighthouse lamp stutters, and the sea
+          answers it.
+        goal: Recover the Book before the tide returns, and set the lamp right.
+        gm_notes: >
+          A challenge: one explorer frees the Book (Engineering), one keeps Ilse safe (Medicine/Athletics), one
+          reaches the lighthouse (Rapport with the Lamplighter, then Engineering on the gears). A deduction answers
+          "Why does the lamp control the tide?" Push the lighthouse handout when they see it up close.
+        handouts: [lighthouse]
+        aspects: ["The Tide Will Turn", "The Lamp Turns the Tide"]
+        npcs: ["The Lamplighter", "Ilse Varga"]
+        compel_ideas:
+          - "Ilse insists on fixing the gears herself, with her bad ankle (her 'I Can Fix This Myself')."
+          - "The Lamplighter mistakes a Book-bearer for the visitors who broke their promise."
+        if_stuck:
+          - "The Lamplighter offers a trade: fix the lamp, and they'll show you where the pools are shallowest."
+        ends_when: Everyone is safe, the tide is calm, and the explorers decide what to promise the Lamplighter.

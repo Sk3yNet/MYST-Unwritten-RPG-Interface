@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ ch.data.name if ch else "My Explorer" }}{% endblock %}
+{% block content %}
+{% if not ch %}
+<section class="page stack" style="max-width:640px;margin:2rem auto;text-align:center">
+  <h2 class="sc">Your explorer awaits</h2>
+  {% if ctx.is_gm %}<p>No explorers have joined yet. This screen shows what each player sees; open it again once they've made characters.</p>
+  {% else %}<p>Create your character to see your screen.</p>
+  <form hx-post="/c/{{ ctx.cid }}/characters" class="row" style="justify-content:center">
+    <input name="name" placeholder="Your explorer’s name" maxlength="80"><input type="hidden" name="kind" value="pc">
+    <button class="btn brass">Begin</button></form>{% endif %}
+</section>
+{% else %}
+{% if mine|length > 1 %}<div class="row small" style="margin-bottom:.5rem">{{ "Viewing as" if ctx.is_gm else "Explorer" }}:
+  {% for c in mine %}<a class="btn tiny {{ 'brass' if c.id == ch.id else 'plain' }}" href="?ch={{ c.id }}">{{ c.data.name }}</a>{% endfor %}</div>{% endif %}
+<div class="grid me-grid" data-my-char="{{ ch.id }}">
+  <section class="page" id="me-char" hx-get="/c/{{ ctx.cid }}/me/frag/char?ch={{ ch.id }}" hx-trigger="sse:party, party from:body, sse:ch-{{ ch.id }}" hx-swap="innerHTML">
+    {% include "partials/me_char.html" %}
+  </section>
+  <div class="stack">
+    <section class="page" id="me-map" hx-get="/c/{{ ctx.cid }}/me/frag/map?ch={{ ch.id }}" hx-trigger="load, sse:map, map from:body, sse:requests, requests from:body" hx-swap="innerHTML">
+      <p class="empty">Unrolling the map…</p>
+    </section>
+    <section class="page" id="area-panel">{% if area %}{% set map_id = map_id %}{% include "partials/me_area.html" %}{% else %}<p class="empty small">Tap a discovered area on the map to read about it, or a <strong>?</strong> to ask to explore it.</p>{% endif %}</section>
+    <section class="page" id="me-scene" hx-get="/c/{{ ctx.cid }}/me/frag/scene?ch={{ ch.id }}" hx-trigger="sse:scene, scene from:body" hx-swap="innerHTML">
+      {% include "partials/me_scene.html" %}
+    </section>
+  </div>
+  <div class="stack">
+    <section class="page" id="me-suggest" data-keep-focus hx-get="/c/{{ ctx.cid }}/me/frag/suggest?ch={{ ch.id }}" hx-trigger="sse:requests, requests from:body, sse:scene, scene from:body, sse:map, map from:body, sse:party, party from:body, sse:log, refresh" hx-swap="innerHTML">
+      {% include "partials/me_suggest.html" %}
+    </section>
+    <section class="page" id="roller" data-keep-focus>
+      {% set roll_char = ch %}{% include "partials/roller.html" %}
+    </section>
+    <p class="small"><a href="/c/{{ ctx.cid }}/handouts">Handouts you’ve seen →</a> · <a href="/c/{{ ctx.cid }}">The Table &amp; journal →</a></p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

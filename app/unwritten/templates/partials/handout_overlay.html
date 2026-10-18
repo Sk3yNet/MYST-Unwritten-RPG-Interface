@@ -1,0 +1,10 @@
+<div class="handout-overlay fx-{{ cur.effect }}" data-seq="{{ cur.seq }}" role="dialog" aria-label="{{ cur.caption }}">
+  <div class="handout-fx"></div>
+  <figure class="handout-figure">
+    {% if inline %}<div class="handout-media">{{ inline | safe }}</div>
+    {% elif h.type.startswith("video/") %}<video class="handout-media" src="/c/{{ ctx.cid }}/media/{{ h.key }}" autoplay loop muted playsinline controls></video>
+    {% else %}<img class="handout-media" src="/c/{{ ctx.cid }}/media/{{ h.key }}" alt="{{ cur.caption }}">{% endif %}
+    {% if cur.caption %}<figcaption>{{ cur.caption }}</figcaption>{% endif %}
+  </figure>
+  <button type="button" class="btn plain handout-close" onclick="dismissHandout(this)">Close</button>
+</div>

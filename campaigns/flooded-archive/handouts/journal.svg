@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 720">
+  <defs>
+    <filter id="jn-age"><feTurbulence type="fractalNoise" baseFrequency=".02" numOctaves="3" seed="11"/>
+      <feColorMatrix values="0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .12  0 0 0 .35 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+  </defs>
+  <rect width="560" height="720" fill="#2a1d12"/>
+  <rect x="30" y="24" width="500" height="672" fill="#ecdcb8" transform="rotate(-1.5 280 360)"/>
+  <rect x="30" y="24" width="500" height="672" fill="#000" filter="url(#jn-age)" transform="rotate(-1.5 280 360)"/>
+  <g transform="rotate(-1.5 280 360)" fill="#3a2816" font-family="IM Fell English, Georgia, serif">
+    <text x="70" y="90" font-size="26" font-style="italic">from the hand of Teshan, Curator</text>
+    <line x1="70" y1="104" x2="480" y2="104" stroke="#8c6a2c" stroke-width="1"/>
+    <g font-size="21">
+      <text x="70" y="150">The keepers of the white tower have asked</text>
+      <text x="70" y="182">that their Age be left in peace, and I have</text>
+      <text x="70" y="214">given my word. The Book is sealed behind</text>
+      <text x="70" y="246">the round door, and the door will answer</text>
+      <text x="70" y="278">only to one who knows our beginning:</text>
+      <text x="100" y="330" font-style="italic">the hahr in which this Hall was founded,</text>
+      <text x="100" y="362" font-style="italic">written as the Guild writes it.</text>
+      <text x="70" y="414">Any Archivist knows it. It is carved above</text>
+      <text x="70" y="446">the Reading Hall’s door: six thousand,</text>
+      <text x="70" y="478">one hundred and seventy-seven.</text>
+      <text x="70" y="540">Let no one pass who has not first</text>
+      <text x="70" y="572">learned to count as we count.</text>
+    </g>
+    <text x="70" y="640" font-family="Dni, serif" font-size="30">teSan</text>
+    <path d="M330 620 q40 -30 80 0 t80 0" fill="none" stroke="#3a2816" stroke-width="1.5"/>
+  </g>
+  <circle cx="460" cy="160" r="38" fill="#6b4a24" opacity=".18"/>
+</svg>

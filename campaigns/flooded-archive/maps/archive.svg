@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700">
+  <defs>
+    <filter id="ar-ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3"/>
+    </filter>
+    <pattern id="ar-water" width="40" height="16" patternUnits="userSpaceOnUse">
+      <path d="M0 8 q10 -6 20 0 t20 0" fill="none" stroke="#5a7d86" stroke-width="1.4" opacity=".7"/>
+    </pattern>
+    <pattern id="ar-floor" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M0 30 L30 30 L30 0" fill="none" stroke="#8a6f45" stroke-width=".6" opacity=".35"/>
+    </pattern>
+  </defs>
+
+  <!-- Base layer (always visible): the parchment, frame, title and compass. No room shapes here. -->
+  <rect x="0" y="0" width="1000" height="700" fill="#e8d6ae"/>
+  <rect x="14" y="14" width="972" height="672" fill="none" stroke="#6b4a24" stroke-width="3"/>
+  <rect x="22" y="22" width="956" height="656" fill="none" stroke="#6b4a24" stroke-width="1"/>
+  <g font-family="IM Fell English, Georgia, serif" fill="#3a2816">
+    <text x="40" y="62" font-size="30">The Archivists’ Hall</text>
+    <text x="42" y="88" font-size="17" font-style="italic">Lower Ward, beneath the harbor walk</text>
+  </g>
+  <g transform="translate(925,620)" stroke="#6b4a24" fill="none" stroke-width="1.5">
+    <circle r="30"/><path d="M0 -38 L7 0 L0 38 L-7 0 Z" fill="#c49a45"/><path d="M-38 0 L0 -6 L38 0 L0 6 Z"/>
+    <text y="-42" text-anchor="middle" font-size="14" fill="#3a2816" stroke="none" font-family="Georgia, serif">N</text>
+  </g>
+
+  <g filter="url(#ar-ink)" stroke-linecap="round" stroke-linejoin="round">
+  <!-- The Flooded Landing -->
+  <g data-area="landing">
+    <rect x="80" y="470" width="220" height="170" fill="url(#ar-water)" stroke="#3a2816" stroke-width="6"/>
+    <rect x="80" y="470" width="220" height="170" fill="#7a9aa0" opacity=".18"/>
+    <g stroke="#3a2816" stroke-width="2">
+      <line x1="95" y1="600" x2="175" y2="600"/><line x1="95" y1="585" x2="175" y2="585"/>
+      <line x1="95" y1="570" x2="175" y2="570"/><line x1="95" y1="555" x2="175" y2="555"/>
+    </g>
+    <path d="M300 520 a 22 22 0 0 0 0 50" fill="none" stroke="#3a2816" stroke-width="4"/>
+    <path d="M190 520 C 230 515, 260 540, 300 545" fill="none" stroke="#8c6a2c" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="190" y="500" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Flooded Landing</text>
+  </g>
+
+  <!-- The Reading Hall -->
+  <g data-area="hall">
+    <rect x="300" y="380" width="300" height="260" fill="url(#ar-water)" stroke="#3a2816" stroke-width="6"/>
+    <rect x="300" y="380" width="300" height="260" fill="#7a9aa0" opacity=".12"/>
+    <g fill="#c9b285" stroke="#3a2816" stroke-width="2">
+      <rect x="335" y="440" width="90" height="22" transform="rotate(-4 380 451)"/>
+      <rect x="470" y="440" width="90" height="22"/>
+      <rect x="335" y="510" width="90" height="22"/>
+      <rect x="470" y="515" width="90" height="22" transform="rotate(6 515 526)"/>
+      <rect x="400" y="580" width="90" height="22"/>
+    </g>
+    <g fill="#e8d6ae" stroke="#3a2816" stroke-width="2.5">
+      <circle cx="320" cy="400" r="9"/><circle cx="580" cy="400" r="9"/><circle cx="320" cy="620" r="9"/><circle cx="580" cy="620" r="9"/>
+    </g>
+    <g fill="#f3ead2" stroke="#6b5236" stroke-width="1"><rect x="440" y="480" width="14" height="10" transform="rotate(20 447 485)"/><rect x="365" y="560" width="14" height="10" transform="rotate(-15 372 565)"/></g>
+    <text x="450" y="420" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Reading Hall</text>
+  </g>
+
+  <!-- The Pump Room -->
+  <g data-area="pump">
+    <rect x="80" y="230" width="220" height="240" fill="url(#ar-floor)" stroke="#3a2816" stroke-width="6"/>
+    <g fill="none" stroke="#8c6a2c" stroke-width="3">
+      <circle cx="150" cy="330" r="38"/><circle cx="150" cy="330" r="10" fill="#8c6a2c"/>
+      <circle cx="230" cy="380" r="28"/><circle cx="230" cy="380" r="8" fill="#8c6a2c"/>
+    </g>
+    <g stroke="#8c6a2c" stroke-width="3">
+      <line x1="150" y1="292" x2="150" y2="368"/><line x1="112" y1="330" x2="188" y2="330"/>
+      <line x1="230" y1="352" x2="230" y2="408"/><line x1="202" y1="380" x2="258" y2="380"/>
+    </g>
+    <path d="M100 440 H 280 M 280 440 V 470" fill="none" stroke="#5a7d86" stroke-width="7"/>
+    <text x="190" y="262" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Pump Room</text>
+  </g>
+
+  <!-- The Collapsed Stacks -->
+  <g data-area="stacks">
+    <rect x="600" y="420" width="260" height="220" fill="url(#ar-floor)" stroke="#3a2816" stroke-width="6"/>
+    <g stroke="#6b4a24" stroke-width="9">
+      <line x1="625" y1="470" x2="700" y2="610" /><line x1="660" y1="460" x2="740" y2="600"/>
+      <line x1="700" y1="455" x2="780" y2="590"/><line x1="745" y1="450" x2="830" y2="585"/>
+    </g>
+    <circle cx="830" cy="470" r="6" fill="#f3d68e" stroke="#8c6a2c" stroke-width="2"/>
+    <text x="730" y="455" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Collapsed Stacks</text>
+  </g>
+
+  <!-- The Curator's Study -->
+  <g data-area="study">
+    <rect x="330" y="170" width="220" height="210" fill="url(#ar-floor)" stroke="#3a2816" stroke-width="6"/>
+    <rect x="390" y="250" width="100" height="45" fill="#b08a55" stroke="#3a2816" stroke-width="2"/>
+    <rect x="420" y="258" width="34" height="24" fill="#f3ead2" stroke="#3a2816" stroke-width="1"/>
+    <circle cx="440" cy="315" r="11" fill="#c9b285" stroke="#3a2816" stroke-width="2"/>
+    <g stroke="#6b4a24" stroke-width="5"><line x1="345" y1="190" x2="345" y2="360"/><line x1="535" y1="190" x2="535" y2="360"/></g>
+    <text x="440" y="210" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Curator’s Study</text>
+  </g>
+
+  <!-- The Sealed Vault -->
+  <g data-area="vault">
+    <rect x="620" y="170" width="240" height="250" fill="url(#ar-floor)" stroke="#3a2816" stroke-width="6"/>
+    <circle cx="740" cy="300" r="70" fill="#cbb68c" stroke="#3a2816" stroke-width="5"/>
+    <circle cx="740" cy="300" r="56" fill="none" stroke="#6b4a24" stroke-width="1.5"/>
+    <g fill="#e8d6ae" stroke="#3a2816" stroke-width="2">
+      <circle cx="712" cy="285" r="12"/><circle cx="740" cy="285" r="12"/><circle cx="768" cy="285" r="12"/>
+    </g>
+    <path d="M670 300 a 70 70 0 0 1 140 0" fill="none" stroke="#f3d68e" stroke-width="2" opacity=".8"/>
+    <text x="740" y="200" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Sealed Vault</text>
+  </g>
+
+  <!-- The Linking Alcove -->
+  <g data-area="alcove">
+    <rect x="660" y="40" width="180" height="130" fill="url(#ar-floor)" stroke="#3a2816" stroke-width="6"/>
+    <rect x="730" y="95" width="40" height="40" fill="#b08a55" stroke="#3a2816" stroke-width="2"/>
+    <rect x="736" y="100" width="28" height="20" fill="#6c5a8c" stroke="#3a2816" stroke-width="1"/>
+    <circle cx="750" cy="110" r="22" fill="#b39ddb" opacity=".25"/>
+    <text x="750" y="70" font-family="IM Fell English, Georgia, serif" font-size="17" fill="#3a2816" text-anchor="middle">Linking Alcove</text>
+  </g>
+  </g>
+</svg>

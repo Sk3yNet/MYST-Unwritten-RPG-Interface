@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="lh-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1e1636"/><stop offset=".6" stop-color="#6a4a8e"/><stop offset="1" stop-color="#d995b8"/>
+    </linearGradient>
+    <radialGradient id="lh-glow"><stop offset="0" stop-color="#fff3c4" stop-opacity="1"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#lh-sky)"/>
+  <circle cx="160" cy="330" r="46" fill="#f0c7e6" opacity=".85"/>
+  <g fill="#fff" opacity=".7"><circle cx="90" cy="60" r="1.5"/><circle cx="300" cy="40" r="1.2"/><circle cx="650" cy="70" r="1.5"/><circle cx="720" cy="150" r="1"/></g>
+  <!-- Sea -->
+  <rect y="340" width="800" height="160" fill="#262c52"/>
+  <g fill="none" stroke="#8090cc" stroke-width="2" opacity=".6">
+    <path d="M-40 370 q25 -9 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;50 0" dur="3s" repeatCount="indefinite"/></path>
+    <path d="M-40 410 q25 -9 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0">
+      <animateTransform attributeName="transform" type="translate" values="50 0;0 0" dur="3.6s" repeatCount="indefinite"/></path>
+    <path d="M-40 450 q25 -9 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;50 0" dur="4.2s" repeatCount="indefinite"/></path>
+  </g>
+  <!-- Rock and tower -->
+  <path d="M470 345 Q520 290 600 300 Q680 290 720 345 Z" fill="#2a2520"/>
+  <path d="M570 310 L582 140 L618 140 L630 310 Z" fill="#f2ecdd" stroke="#2a2520" stroke-width="3"/>
+  <g stroke="#b9ad96" stroke-width="2"><line x1="576" y1="250" x2="624" y2="250"/><line x1="579" y1="200" x2="621" y2="200"/></g>
+  <rect x="580" y="112" width="40" height="30" fill="#f3d68e" stroke="#2a2520" stroke-width="3"/>
+  <path d="M574 112 L600 90 L626 112 Z" fill="#2a2520"/>
+  <g transform="translate(600 127)">
+    <path d="M0 -6 L-700 -70 L-700 70 L0 6 Z" fill="#fff3c4" opacity=".22">
+      <animateTransform attributeName="transform" type="rotate" values="0;360" dur="8s" repeatCount="indefinite"/></path>
+    <circle r="40" fill="url(#lh-glow)">
+      <animate attributeName="r" values="34;44;34" dur="2s" repeatCount="indefinite"/></circle>
+  </g>
+</svg>

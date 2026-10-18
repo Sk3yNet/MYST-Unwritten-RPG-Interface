@@ -1,0 +1,9 @@
+{% if not mod %}
+  <h2 class="sc">The Map</h2><p class="empty">No adventure is under way yet.</p>
+{% elif not map_id %}
+  <h2 class="sc">The Map</h2><p class="empty">The GM hasn’t unrolled a map yet.</p>
+{% else %}
+  <header><h2 class="sc">{{ mod.maps[map_id].name }}</h2><span class="small faint">fog lifts as you explore</span></header>
+  <div class="map-wrap">{{ svg | safe }}</div>
+  <p class="small muted map-legend"><span class="key frontier"></span> unexplored: tap to ask the GM · <span class="key revealed"></span> discovered: tap to read</p>
+{% endif %}

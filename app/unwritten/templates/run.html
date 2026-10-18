@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}GM Screen{% endblock %}
+{% block content %}
+{% if not mod %}
+<section class="page stack" style="max-width:760px;margin:1rem auto">
+  <h1>Your GM Screen</h1>
+  <p>Load an adventure to run it from here: scene notes, the map with fog of war, players’ requests to explore, and handouts to show.</p>
+  {% include "partials/module_picker.html" %}
+  <p class="small muted">New to running games? Read the <a href="/c/{{ ctx.cid }}/guide">GM Guide</a> first; it takes ten minutes.</p>
+</section>
+{% else %}
+<div class="row run-bar page">
+  <strong class="sc">{{ mod.title }}</strong>
+  <form class="row" hx-post="/c/{{ ctx.cid }}/run/scene">
+    <select name="scene_id">
+      {% for chap in mod.data.chapters %}<optgroup label="{{ chap.title }}">
+        {% for s in chap.scenes %}<option value="{{ s.id }}" {{ "selected" if s.id == state.scene_id }}>{{ s.title }}</option>{% endfor %}
+      </optgroup>{% endfor %}
+    </select>
+    <button class="btn brass tiny" title="Sets the scene board, shows its map and reveals its starting areas">Start scene</button>
+  </form>
+  <span class="spacer"></span>
+  <form class="row" hx-post="/c/{{ ctx.cid }}/map/show">
+    <select name="map">{% for mid, m in mod.maps.items() %}<option value="{{ mid }}" {{ "selected" if mid == state.map_id }}>{{ m.name }}</option>{% endfor %}</select>
+    <button class="btn tiny plain">Show players this map</button>
+  </form>
+  <a class="btn tiny plain" href="/c/{{ ctx.cid }}/me" target="_blank" title="What your players see">Player view ↗</a>
+</div>
+
+<div class="grid run-grid">
+  <div class="stack">
+    <section class="page" id="run-scene" hx-get="/c/{{ ctx.cid }}/run/frag/scene" hx-trigger="sse:state, state from:body" hx-swap="innerHTML">
+      {% include "partials/run_scene.html" %}
+    </section>
+    <section class="page" id="run-compels" hx-get="/c/{{ ctx.cid }}/run/frag/compels" hx-trigger="sse:party" hx-swap="innerHTML" data-keep-focus>
+      {% include "partials/run_compels.html" %}
+    </section>
+  </div>
+  <div class="stack">
+    <section class="page">
+      <div class="row">
+        {% for mid, m in mod.maps.items() %}<a class="btn tiny {{ 'brass' if mid == map_id else 'plain' }}" href="?map={{ mid }}">{{ m.name }}</a>{% endfor %}
+      </div>
+      <div id="run-map" hx-get="/c/{{ ctx.cid }}/run/frag/map{{ '?map=' ~ map_id if request.query_params.get('map') else '' }}" hx-trigger="sse:map, map from:body, sse:requests, requests from:body" hx-swap="innerHTML">
+        {% include "partials/run_map.html" %}
+      </div>
+    </section>
+    <section class="page" id="area-panel" data-keep-focus><p class="empty small">Click any area on the map for its notes, secrets and controls. Lighter fog is what players can’t see yet.</p></section>
+  </div>
+  <div class="stack">
+    <section class="page" id="run-requests" data-keep-focus hx-get="/c/{{ ctx.cid }}/run/frag/requests" hx-trigger="sse:requests, requests from:body, sse:log" hx-swap="innerHTML">
+      {% include "partials/run_requests.html" %}
+    </section>
+    <section class="page" id="run-handouts" data-keep-focus hx-get="/c/{{ ctx.cid }}/run/frag/handouts" hx-trigger="sse:handouts, handouts from:body, sse:handout" hx-swap="innerHTML">
+      {% include "partials/run_handouts.html" %}
+    </section>
+    <details class="page fold"><summary>Quick GM tips</summary>
+      <dl class="small">{% for t, d in tips %}<dt><strong>{{ t }}</strong></dt><dd style="margin:0 0 .5rem">{{ d }}</dd>{% endfor %}</dl>
+      <a href="/c/{{ ctx.cid }}/guide">The full GM Guide →</a>
+    </details>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

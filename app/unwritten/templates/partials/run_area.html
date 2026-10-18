@@ -1,0 +1,35 @@
+<header><h3 class="sc">{{ area.name }}</h3>
+  {% if revealed %}<span class="tag">revealed</span>{% else %}<span class="tag" style="color:var(--seal)">hidden</span>{% endif %}
+  {% if here %}<span class="tag">party is here</span>{% endif %}
+  <span class="spacer"></span>
+  {% if revealed %}
+    {% if not here %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/map/here" hx-vals='{"map":"{{ map_id }}","area":"{{ area.id }}"}'>Party is here</button>{% endif %}
+    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/map/hide" hx-vals='{"map":"{{ map_id }}","area":"{{ area.id }}"}' hx-confirm="Hide {{ area.name }} again?">Hide</button>
+  {% else %}
+    <button class="btn tiny brass" hx-post="/c/{{ ctx.cid }}/map/reveal" hx-vals='{"map":"{{ map_id }}","area":"{{ area.id }}"}'>Reveal</button>
+  {% endif %}
+</header>
+{% if area.teaser %}<p class="small faint">Players see it from afar as: “{{ area.teaser }}”</p>{% endif %}
+{% if area.read_aloud %}<h4 class="small muted label">Read aloud</h4><blockquote class="read-aloud">{{ area.read_aloud }}</blockquote>{% endif %}
+{% if area.gm_notes %}<h4 class="small muted label">GM notes</h4><div class="gm-notes">{{ area.gm_notes | md }}</div>{% endif %}
+{% if area.secrets %}<h4 class="small muted label">Secrets (answers for Discover questions)</h4><ul class="small">{% for s in area.secrets %}<li>{{ s }}</li>{% endfor %}</ul>{% endif %}
+{% if area.hooks %}<h4 class="small muted label">Players may try</h4><ul class="small">{% for h in area.hooks %}<li>{{ h.text if h is mapping else h }}{% if h is mapping and h.skill %} <span class="faint">({{ h.skill }})</span>{% endif %}</li>{% endfor %}</ul>{% endif %}
+{% if area.aspects %}<h4 class="small muted label">Aspects here</h4><div class="row">{% for a in area.aspects %}<span class="aspect small">{{ a }}</span>
+  <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/run/aspect" hx-vals='{{ {"text": a} | tojson }}' title="Put it on the scene board">place</button>{% endfor %}</div>{% endif %}
+{% if handouts %}<h4 class="small muted label">Handouts</h4>
+  {% for h in handouts %}<form class="row small" hx-post="/c/{{ ctx.cid }}/handout/push"><input type="hidden" name="key" value="{{ h.key }}"><input type="hidden" name="effect" value="{{ h.effect }}">
+    <span>{{ h.caption }}</span><button class="btn tiny brass">Show everyone</button></form>{% endfor %}{% endif %}
+{% if not revealed %}
+<details class="fold small" style="margin-top:.5rem" {{ "open" if area.discover }}><summary>Call for a roll to reveal it</summary>
+  {% set d = area.discover or {} %}
+  <form class="row" hx-post="/c/{{ ctx.cid }}/map/call" style="margin-top:.3rem">
+    <input type="hidden" name="map" value="{{ map_id }}"><input type="hidden" name="area" value="{{ area.id }}">
+    <select name="action">{% for k, v in rules.ACTIONS.items() if k != "oppose" %}<option value="{{ k }}" {{ "selected" if k == (d.action or "discover") or (d.action == "advantage" and k == "create") }}>{{ v }}</option>{% endfor %}</select>
+    <label>vs <input type="number" name="difficulty" value="{{ d.difficulty if d.difficulty is not none else 2 }}" min="-2" max="8"></label>
+    <input name="skills" value="{{ (d.skills or []) | join(', ') }}" placeholder="Notice, Surveying" style="width:11rem">
+    <select name="character_id"><option value="">anyone</option>{% for c in pcs %}<option value="{{ c.id }}">{{ c.data.name }}</option>{% endfor %}</select>
+    <button class="btn tiny">Call</button>
+  </form>
+  <p class="faint" style="margin:.2rem 0 0">A success or excel reveals it automatically.</p>
+</details>
+{% endif %}

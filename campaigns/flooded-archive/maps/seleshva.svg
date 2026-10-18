@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700">
+  <defs>
+    <filter id="se-ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="9" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3"/>
+    </filter>
+    <pattern id="se-sea" width="46" height="18" patternUnits="userSpaceOnUse">
+      <path d="M0 9 q11.5 -7 23 0 t23 0" fill="none" stroke="#4d5f86" stroke-width="1.3" opacity=".6"/>
+    </pattern>
+    <pattern id="se-reed" width="14" height="22" patternUnits="userSpaceOnUse">
+      <path d="M3 22 L5 4 M9 22 L8 8" stroke="#6f8f8a" stroke-width="1.2" fill="none"/>
+      <circle cx="5" cy="4" r="1.3" fill="#cfe7e3"/>
+    </pattern>
+  </defs>
+
+  <!-- Base layer: parchment, sea, frame, title, compass. -->
+  <rect x="0" y="0" width="1000" height="700" fill="#e8d6ae"/>
+  <rect x="0" y="0" width="1000" height="700" fill="url(#se-sea)"/>
+  <rect x="14" y="14" width="972" height="672" fill="none" stroke="#6b4a24" stroke-width="3"/>
+  <rect x="22" y="22" width="956" height="656" fill="none" stroke="#6b4a24" stroke-width="1"/>
+  <g font-family="IM Fell English, Georgia, serif" fill="#3a2816">
+    <text x="40" y="62" font-size="30">The Age of Seleshva</text>
+    <text x="42" y="88" font-size="17" font-style="italic">as surveyed by the explorers</text>
+  </g>
+  <g transform="translate(925,620)" stroke="#6b4a24" fill="none" stroke-width="1.5">
+    <circle r="30"/><path d="M0 -38 L7 0 L0 38 L-7 0 Z" fill="#9c7fc8"/><path d="M-38 0 L0 -6 L38 0 L0 6 Z"/>
+    <text y="-42" text-anchor="middle" font-size="14" fill="#3a2816" stroke="none" font-family="Georgia, serif">N</text>
+  </g>
+
+  <g filter="url(#se-ink)" stroke-linecap="round" stroke-linejoin="round">
+  <!-- The Arrival Pier -->
+  <g data-area="pier">
+    <path d="M70,430 L280,400 L300,620 L90,650 Z" fill="#d9c69c" stroke="#3a2816" stroke-width="3" stroke-dasharray="10 6"/>
+    <rect x="130" y="470" width="120" height="34" fill="#b9a988" stroke="#3a2816" stroke-width="3" transform="rotate(-8 190 487)"/>
+    <rect x="115" y="500" width="34" height="120" fill="#b9a988" stroke="#3a2816" stroke-width="3" transform="rotate(-8 132 560)"/>
+    <circle cx="190" cy="485" r="9" fill="#e8d6ae" stroke="#3a2816" stroke-width="2"/>
+    <text x="185" y="445" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Arrival Pier</text>
+  </g>
+
+  <!-- The Glass Reeds -->
+  <g data-area="reeds">
+    <path d="M290,330 L560,300 L560,560 L300,580 Z" fill="#dfe6d2" stroke="#3a2816" stroke-width="3" stroke-dasharray="10 6"/>
+    <path d="M290,330 L560,300 L560,560 L300,580 Z" fill="url(#se-reed)"/>
+    <path d="M300 520 C 360 480, 420 470, 480 420 S 545 360, 555 340" fill="none" stroke="#8c6a2c" stroke-width="2" stroke-dasharray="5 5"/>
+    <text x="430" y="355" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Glass Reeds</text>
+  </g>
+
+  <!-- Ilse's Camp -->
+  <g data-area="camp">
+    <rect x="330" y="90" width="250" height="200" rx="40" fill="#d9c69c" stroke="#3a2816" stroke-width="3" stroke-dasharray="10 6"/>
+    <path d="M420 210 L455 160 L490 210 Z" fill="#a98b5f" stroke="#3a2816" stroke-width="2.5"/>
+    <circle cx="520" cy="215" r="12" fill="none" stroke="#3a2816" stroke-width="2"/>
+    <path d="M515 200 q5 -12 0 -24 q-5 -10 3 -20" fill="none" stroke="#8a8a8a" stroke-width="1.5" opacity=".7"/>
+    <g fill="#f3ead2" stroke="#6b5236" stroke-width="1"><rect x="380" y="235" width="16" height="12"/><rect x="402" y="240" width="16" height="12" transform="rotate(10 410 246)"/></g>
+    <text x="455" y="130" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Ilse’s Camp</text>
+  </g>
+
+  <!-- The Tide Pools -->
+  <g data-area="pools">
+    <rect x="560" y="430" width="250" height="200" rx="30" fill="#cfc2a0" stroke="#3a2816" stroke-width="3" stroke-dasharray="10 6"/>
+    <g fill="#9fb4c8" stroke="#3a2816" stroke-width="2">
+      <ellipse cx="610" cy="480" rx="32" ry="20"/><ellipse cx="680" cy="530" rx="36" ry="22"/><ellipse cx="755" cy="585" rx="40" ry="24"/>
+    </g>
+    <g fill="none" stroke="#c49a45" stroke-width="2.5"><circle cx="610" cy="480" r="8"/><circle cx="680" cy="530" r="9"/><circle cx="755" cy="585" r="10"/></g>
+    <rect x="745" y="578" width="16" height="11" fill="#6c5a8c" stroke="#3a2816" stroke-width="1"/>
+    <text x="690" y="460" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Tide Pools</text>
+  </g>
+
+  <!-- The Lighthouse -->
+  <g data-area="lighthouse">
+    <path d="M720,90 L940,90 L940,350 L720,350 Z" fill="#d9c69c" stroke="#3a2816" stroke-width="3" stroke-dasharray="10 6"/>
+    <path d="M815 320 L830 170 L850 170 L865 320 Z" fill="#f5f0e3" stroke="#3a2816" stroke-width="3"/>
+    <rect x="826" y="150" width="28" height="22" fill="#f3d68e" stroke="#3a2816" stroke-width="2"/>
+    <path d="M840 160 L760 130 L760 190 Z" fill="#f3d68e" opacity=".35"/>
+    <g stroke="#3a2816" stroke-width="1.5"><line x1="822" y1="230" x2="858" y2="230"/><line x1="819" y1="270" x2="861" y2="270"/></g>
+    <text x="830" y="125" font-family="IM Fell English, Georgia, serif" font-size="18" fill="#3a2816" text-anchor="middle">Lighthouse</text>
+  </g>
+  </g>
+</svg>

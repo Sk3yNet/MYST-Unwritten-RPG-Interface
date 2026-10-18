@@ -11,6 +11,12 @@
 </section>
 
 <section class="page stack" style="margin-top:1rem">
+  <h2 class="sc">Adventure</h2>
+  <p class="small muted">Pick the adventure this table is playing. Run it from the <a href="/c/{{ ctx.cid }}/run">GM Screen</a>.</p>
+  {% include "partials/module_picker.html" %}
+</section>
+
+<section class="page stack" style="margin-top:1rem">
   <h2 class="sc">At the table</h2>
   <ul class="aspect-list">{% for m in members %}
     <li><strong>{{ m.name or m.email }}</strong> <span class="small muted">{{ m.email }}</span> <span class="tag">{{ "GM" if m.role == "gm" else "explorer" }}</span>

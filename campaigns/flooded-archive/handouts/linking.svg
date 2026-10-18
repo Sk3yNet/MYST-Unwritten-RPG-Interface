@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 440">
+  <defs>
+    <linearGradient id="lk-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b1d4a"/><stop offset=".55" stop-color="#7d5aa6"/><stop offset="1" stop-color="#e3a6c8"/>
+    </linearGradient>
+    <linearGradient id="lk-sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3d4a7a"/><stop offset="1" stop-color="#1c2240"/>
+    </linearGradient>
+    <radialGradient id="lk-glow"><stop offset="0" stop-color="#fff6d0" stop-opacity=".9"/><stop offset="1" stop-color="#fff6d0" stop-opacity="0"/></radialGradient>
+    <clipPath id="lk-panel"><rect x="120" y="70" width="400" height="280" rx="6"/></clipPath>
+    <filter id="lk-shimmer"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.06" numOctaves="2" seed="2">
+      <animate attributeName="seed" values="1;2;3;4;5;6;7;8" dur="1.6s" repeatCount="indefinite"/></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" scale="6"/></filter>
+  </defs>
+  <!-- The open book -->
+  <rect x="0" y="0" width="640" height="440" fill="#1a120b"/>
+  <path d="M40 30 Q320 60 600 30 L600 420 Q320 390 40 420 Z" fill="#e9d8b4" stroke="#5b3518" stroke-width="6"/>
+  <line x1="320" y1="45" x2="320" y2="405" stroke="#b8925a" stroke-width="2"/>
+  <!-- The linking panel -->
+  <g clip-path="url(#lk-panel)" filter="url(#lk-shimmer)">
+    <rect x="120" y="70" width="400" height="190" fill="url(#lk-sky)"/>
+    <circle cx="210" cy="215" r="30" fill="#f0c7e6" opacity=".9"/>
+    <rect x="120" y="250" width="400" height="100" fill="url(#lk-sea)"/>
+    <g fill="none" stroke="#9fb0e6" stroke-width="2" opacity=".7">
+      <path d="M100 275 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0">
+        <animateTransform attributeName="transform" type="translate" values="0 0;-40 0" dur="2.4s" repeatCount="indefinite"/></path>
+      <path d="M100 305 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0">
+        <animateTransform attributeName="transform" type="translate" values="-20 0;-60 0" dur="3.1s" repeatCount="indefinite"/></path>
+      <path d="M100 335 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0">
+        <animateTransform attributeName="transform" type="translate" values="0 0;-40 0" dur="2.7s" repeatCount="indefinite"/></path>
+    </g>
+    <!-- The white tower -->
+    <path d="M410 260 L418 160 L432 160 L440 260 Z" fill="#f5f0e3" stroke="#3a2816" stroke-width="2"/>
+    <rect x="414" y="148" width="22" height="14" fill="#f3d68e"/>
+    <g transform="translate(425 155)">
+      <path d="M0 0 L-260 -40 L-260 40 Z" fill="#fff6d0" opacity=".28">
+        <animateTransform attributeName="transform" type="rotate" values="0;360" dur="6s" repeatCount="indefinite"/></path>
+      <circle r="30" fill="url(#lk-glow)"/>
+    </g>
+  </g>
+  <rect x="120" y="70" width="400" height="280" rx="6" fill="none" stroke="#3a2816" stroke-width="4"/>
+  <!-- The panel's inviting glow -->
+  <rect x="120" y="70" width="400" height="280" rx="6" fill="#ffffff" opacity="0">
+    <animate attributeName="opacity" values="0;.12;0" dur="4s" repeatCount="indefinite"/></rect>
+</svg>

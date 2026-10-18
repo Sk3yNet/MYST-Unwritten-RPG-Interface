@@ -1,0 +1,27 @@
+<header><h2 class="sc">Requests</h2></header>
+{% set open = state.requests | selectattr("status", "in", ["pending", "roll", "failed"]) | list %}
+{% if open %}
+<ul class="req-list">
+{% for r in open | reverse %}{% set a = mod.area(r.map, r.area) %}
+  <li class="req {{ r.status }}">
+    <div>{% if r.who %}<strong>{{ r.who }}</strong> wants to explore{% else %}Roll call to explore{% endif %} <em>{{ r.label }}</em>
+      <span class="small faint">({{ a.name if a else r.area }})</span></div>
+    {% if r.status == "pending" %}
+      <div class="row small">
+        <button class="btn tiny brass" hx-post="/c/{{ ctx.cid }}/request/{{ r.id }}" hx-vals='{"op":"reveal"}'>Reveal</button>
+        <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/request/{{ r.id }}" hx-vals='{"op":"roll"}' title="{% if a.discover %}{{ rules.ACTIONS.get(a.discover.action, 'Discover') }} vs {{ ladder(a.discover.difficulty) }}{% else %}Discover vs Fair (+2){% endif %}">Call for a roll</button>
+        <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/request/{{ r.id }}" hx-vals='{"op":"deny"}'>Not yet</button>
+      </div>
+      {% if a.discover %}<div class="small faint">Suggested: {{ rules.ACTIONS.get(a.discover.action, a.discover.action) }} vs {{ ladder(a.discover.difficulty) }} with {{ a.discover.skills | join(" or ") }}</div>{% endif %}
+    {% elif r.status == "roll" %}
+      <div class="small">Waiting on a roll: {{ rules.ACTIONS[r.action] }} vs {{ ladder(r.difficulty) }}{% if r.skills %} ({{ r.skills | join(" / ") }}){% endif %}</div>
+      <div class="row small"><button class="link" hx-post="/c/{{ ctx.cid }}/request/{{ r.id }}" hx-vals='{"op":"reveal"}'>reveal anyway</button> · <button class="link" hx-post="/c/{{ ctx.cid }}/request/{{ r.id }}" hx-vals='{"op":"dismiss"}'>cancel</button></div>
+    {% else %}
+      <div class="small">The roll came up <strong>{{ r.result }}</strong>. Reveal at a cost, or leave it fogged.</div>
+      <div class="row small"><button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/request/{{ r.id }}" hx-vals='{"op":"reveal"}'>Reveal (at a cost)</button>
+        <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/request/{{ r.id }}" hx-vals='{"op":"dismiss"}'>Leave it</button></div>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>
+{% else %}<p class="empty small">No requests. Players tap a <strong>?</strong> on their map to ask to explore.</p>{% endif %}

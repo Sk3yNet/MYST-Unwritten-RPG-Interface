@@ -16,6 +16,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from markupsafe import Markup, escape
 
 from . import dni, rules
 from .config import Settings
@@ -37,6 +38,31 @@ def _local_stamp(ts: float) -> str:
     return datetime.fromtimestamp(ts, timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
 
+def _md(text: str) -> Markup:
+    """Just enough Markdown for adventure notes: paragraphs, * bullets, **bold**, *italics*. Escapes everything else."""
+    html = []
+
+    def inline(t: str) -> str:
+        t = str(escape(t))
+        t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+        return re.sub(r"(?<![*\w])\*(?!\s)(.+?)(?<!\s)\*(?![*\w])", r"<em>\1</em>", t)
+
+    for block in re.split(r"\n\s*\n", str(text or "").strip()):
+        lines = [ln.strip() for ln in block.splitlines() if ln.strip()]
+        if lines and lines[0].startswith(("* ", "- ")):
+            items: list[str] = []
+            for ln in lines:  # a line not starting a new bullet continues the previous one
+                if ln.startswith(("* ", "- ")):
+                    items.append(ln[2:])
+                else:
+                    items[-1] += " " + ln
+            html.append("<ul>" + "".join(f"<li>{inline(i)}</li>" for i in items) + "</ul>")
+        elif lines:
+            html.append(f"<p>{inline(' '.join(lines))}</p>")
+    return Markup("".join(html))
+
+
+templates.env.filters["md"] = _md
 templates.env.filters["dni_stamp"] = _dni_stamp
 templates.env.filters["utc_stamp"] = _local_stamp
 
@@ -241,7 +267,7 @@ async def join(request: Request, token: str):
     ctx.hub.publish(camp["id"], "party")
     await ctx.db.add_log(camp["id"], ctx.email, "note", {"text": f"{ctx.user['name']} joined the table."})
     ctx.hub.publish(camp["id"], "log")
-    return redirect(f"/c/{camp['id']}")
+    return redirect(f"/c/{camp['id']}/me")
 
 
 # =============================================================================================
@@ -347,7 +373,9 @@ async def roll(request: Request, cid: int):
             "who": ch["data"]["name"] if ch else (_txt(f.get("who"), 60) or "GM"),
             "intent": _txt(f.get("intent"), 200), "questions_used": 0, "rerolls": []}
     await ctx.db.add_log(cid, ctx.email, "roll", data)
-    return changed(ctx, "log")
+    from . import play
+    extra = await play.after_roll(ctx, f, r, ch, data)
+    return changed(ctx, "log", *extra)
 
 
 def _invoke_options(ch: dict | None, scene: dict) -> list[str]:
@@ -988,8 +1016,9 @@ async def gm_page(request: Request, cid: int):
     proto = request.headers.get("x-forwarded-proto")
     if proto == "https" and base.startswith("http://"):
         base = "https://" + base[len("http://"):]
+    from . import modules
     return page(request, "gm.html", ctx, tab="gm", members=await ctx.db.members(cid),
-                invite_url=f"{base}/join/{ctx.camp['invite']}")
+                invite_url=f"{base}/join/{ctx.camp['invite']}", available=modules.available())
 
 
 @app.post("/c/{cid}/gm/{op}")
@@ -1012,3 +1041,8 @@ async def gm_op(request: Request, cid: int, op: str):
     else:
         raise HTTPError(404, "Unknown GM action.")
     return redirect(f"/c/{cid}/gm")
+
+
+from . import play  # noqa: E402  (routes that build on the helpers above)
+
+app.include_router(play.router)
