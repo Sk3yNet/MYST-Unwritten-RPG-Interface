@@ -1,4 +1,4 @@
-# Unwritten Table: one Portainer stack, same shape as the Replicant Space client.
+# Unwritten Table: one Portainer stack.
 #
 #   Internet ─► Cloudflare ─► cloudflared ─► nginx ─(auth_request)─► oauth2-proxy (Google: who are you?)
 #                                              │
