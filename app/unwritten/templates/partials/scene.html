@@ -55,8 +55,8 @@
   <div class="row" style="margin-top:.6rem">
     <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/end" hx-confirm="End the scene? Boosts clear and recovering minor consequences heal.">End scene</button>
     <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/end" hx-vals='{"clear": 1}' hx-confirm="End the scene and clear its aspects too?">End &amp; clear aspects</button>
-    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/session" hx-confirm="Start a new session? Fate points refill to refresh (extras kept).">New session</button>
-    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/chapter" hx-confirm="Start a new chapter? Fate points reset to refresh, all recovering consequences heal.">New chapter</button>
+    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/session" hx-confirm="Start a new session? Drama points refill to refresh (extras kept).">New session</button>
+    <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/scene/chapter" hx-confirm="Start a new chapter? Drama points reset to refresh, all recovering consequences heal.">New chapter</button>
   </div>
   <form class="row" hx-post="/c/{{ ctx.cid }}/milestone" style="margin-top:.5rem">
     <select name="level">{% for k, m in rules.MILESTONES.items() %}<option value="{{ k }}">{{ m.label }} ({{ m.when|lower }})</option>{% endfor %}</select>

@@ -3,12 +3,12 @@
 <h2 style="margin:0">{{ d.name }}</h2>
 {% if d.high_concept %}<div class="hc aspect" style="margin:.3rem 0">{{ d.high_concept }}</div>{% endif %}
 <div class="row" style="margin:.5rem 0">
-  <span class="fp">
-    {% if ctx.can_edit(ch) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ ch.id }}/op" hx-vals='{"op":"fp","delta":-1}' title="Spend a fate point">−</button>{% endif %}
-    <span class="coin big">{{ d.fate_points }}</span>
-    {% if ctx.can_edit(ch) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ ch.id }}/op" hx-vals='{"op":"fp","delta":1}' title="Gain a fate point">+</button>{% endif %}
+  <span class="dp">
+    {% if ctx.can_edit(ch) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ ch.id }}/op" hx-vals='{"op":"dp","delta":-1}' title="Spend a drama point">−</button>{% endif %}
+    <span class="coin big">{{ d.drama_points }}</span>
+    {% if ctx.can_edit(ch) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ ch.id }}/op" hx-vals='{"op":"dp","delta":1}' title="Gain a drama point">+</button>{% endif %}
   </span>
-  <span class="small muted">fate points · refresh {{ rules.refresh(d) }}</span>
+  <span class="small muted">drama points · refresh {{ rules.refresh(d) }}</span>
 </div>
 {% set js = d.journey | select | list %}
 {% if js %}<h3 class="sc">Aspects</h3>

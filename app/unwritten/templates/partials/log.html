@@ -15,7 +15,7 @@
       {% set extras = [] %}
       {% if r.stunt_bonus %}{% set _ = extras.append("stunt %+d" % r.stunt_bonus) %}{% endif %}
       {% if r.teamwork %}{% set _ = extras.append("teamwork +%d" % r.teamwork) %}{% endif %}
-      {% for m in r.modifiers %}{% set _ = extras.append(("FP: " if m.kind == "invoke" else ("free: " if m.kind == "free" else "boost: ")) ~ m.label ~ " +2") %}{% endfor %}
+      {% for m in r.modifiers %}{% set _ = extras.append(("DP: " if m.kind == "invoke" else ("free: " if m.kind == "free" else "boost: ")) ~ m.label ~ " +2") %}{% endfor %}
       {% for x in d.rerolls %}{% set _ = extras.append("reroll (" ~ x.label ~ ")") %}{% endfor %}
       {% if extras %}<div class="mods">{{ extras | join(" · ") }}</div>{% endif %}
       {% if s.has_opposition %}
@@ -37,13 +37,13 @@
         <form class="stack small" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/invoke" style="margin:.3rem 0">
           <div class="row">
             <select name="source" required>
-              <option value="fp">Spend a fate point</option>
+              <option value="dp">Spend a drama point</option>
               {% for a in ctx.camp.scene.aspects if a.free %}<option value="free:{{ a.id }}">Free invoke: {{ a.text }} ({{ a.free }})</option>{% endfor %}
               {% for b in ctx.camp.scene.boosts %}<option value="boost:{{ b.id }}">Boost: {{ b.text or "unnamed" }}</option>{% endfor %}
             </select>
             <select name="effect"><option value="plus2">+2</option><option value="reroll">Reroll</option></select>
           </div>
-          <input name="aspect" placeholder="Aspect invoked (for a fate point) — and say how it helps!" list="aspects-{{ e.id }}">
+          <input name="aspect" placeholder="Aspect invoked (for a drama point) — and say how it helps!" list="aspects-{{ e.id }}">
           <datalist id="aspects-{{ e.id }}">{% for a in ctx.camp.scene.aspects %}<option value="{{ a.text }}">{% endfor %}</datalist>
           <div><button class="btn tiny">Invoke</button></div>
         </form>
@@ -54,11 +54,11 @@
       {% if d.text %}<div class="line"><em>{{ d.text }}</em></div>{% endif %}
       {% if d.status == "pending" %}
         <div class="row">
-          <button class="btn tiny brass" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/compel" hx-vals='{"op":"accept"}'>Accept (+1 FP)</button>
-          <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/compel" hx-vals='{"op":"refuse"}'>Buy off (−1 FP)</button>
+          <button class="btn tiny brass" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/compel" hx-vals='{"op":"accept"}'>Accept (+1 DP)</button>
+          <button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/compel" hx-vals='{"op":"refuse"}'>Buy off (−1 DP)</button>
           {% if ctx.is_gm or e.email == ctx.email %}<button class="link small" hx-post="/c/{{ ctx.cid }}/log/{{ e.id }}/compel" hx-vals='{"op":"withdraw"}'>withdraw</button>{% endif %}
         </div>
-      {% else %}<div class="small muted">{{ {"accepted": "Accepted: +1 fate point.", "refused": "Bought off for a fate point.", "withdrawn": "Withdrawn."}[d.status] }}</div>{% endif %}
+      {% else %}<div class="small muted">{{ {"accepted": "Accepted: +1 drama point.", "refused": "Bought off for a drama point.", "withdrawn": "Withdrawn."}[d.status] }}</div>{% endif %}
     {% elif e.kind == "milestone" %}{% set m = rules.MILESTONES[d.level] %}
       <div class="line">✦ <strong>{{ m.label }}</strong> for every explorer. Each may {{ "choose one" if d.level == "minor" else "" }}:</div>
       <ul class="choices">{% for c in m.choices %}<li>{{ c }}</li>{% endfor %}</ul>

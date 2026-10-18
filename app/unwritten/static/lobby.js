@@ -7,65 +7,36 @@
   let audio = null;
 
   // ---- sound: browsers stay silent until the page is clicked, so any click unlocks it --------------------------
+  // The linking sound is a fan-made recording (static/sounds/linking.mp3), decoded once and played through Web Audio.
+  const LINK_SOUND = "/static/sounds/linking.mp3";
+  const LINK_SOUND_MS = 4300;  // until its tail has faded
+  let linkBuffer = null;
+
+  function loadLinkSound() {
+    if (!audio || linkBuffer) return;
+    fetch(LINK_SOUND).then((r) => r.arrayBuffer())
+      .then((b) => new Promise((ok, bad) => audio.decodeAudioData(b, ok, bad)))
+      .then((buf) => { linkBuffer = buf; }).catch(() => {});
+  }
+
   window.unlockAudio = function (test) {
     try {
       audio = audio || new (window.AudioContext || window.webkitAudioContext)();
       if (audio.state === "suspended") audio.resume();
-      if (test === true) linkSound(0.5);
+      loadLinkSound();
+      if (test === true) setTimeout(() => linkSound(0.6), linkBuffer ? 0 : 400);
     } catch (e) {}
   };
   document.addEventListener("pointerdown", () => window.unlockAudio(), { once: true });
 
-  // An original linking sound: a breathy rush that rises and falls, a shimmer gliding up, and a soft low thump.
   function linkSound(volume = 1) {
-    if (!audio) return;
-    const t = audio.currentTime;
-    const out = audio.createGain();
-    out.gain.value = 0.9 * volume;
-    out.connect(audio.destination);
-
-    const len = 2.8;
-    const buf = audio.createBuffer(1, Math.floor(audio.sampleRate * len), audio.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-    const noise = audio.createBufferSource();
-    noise.buffer = buf;
-    const band = audio.createBiquadFilter();
-    band.type = "bandpass"; band.Q.value = 1.4;
-    band.frequency.setValueAtTime(260, t);
-    band.frequency.exponentialRampToValueAtTime(2600, t + 0.9);
-    band.frequency.exponentialRampToValueAtTime(180, t + 2.6);
-    const ng = audio.createGain();
-    ng.gain.setValueAtTime(0.0001, t);
-    ng.gain.exponentialRampToValueAtTime(0.55, t + 0.6);
-    ng.gain.exponentialRampToValueAtTime(0.0001, t + 2.7);
-    noise.connect(band).connect(ng).connect(out);
-    noise.start(t); noise.stop(t + len);
-
-    [[220, 0], [331, 0.05], [440, 0.1]].forEach(([f, d]) => {
-      const o = audio.createOscillator();
-      o.type = "sine";
-      o.frequency.setValueAtTime(f, t + d);
-      o.frequency.exponentialRampToValueAtTime(f * 3.2, t + 1.0);
-      o.frequency.exponentialRampToValueAtTime(f * 0.6, t + 2.4);
-      const g = audio.createGain();
-      g.gain.setValueAtTime(0.0001, t + d);
-      g.gain.exponentialRampToValueAtTime(0.09, t + 0.5);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 2.4);
-      o.connect(g).connect(out);
-      o.start(t + d); o.stop(t + 2.5);
-    });
-
-    const thump = audio.createOscillator();
-    thump.type = "sine";
-    thump.frequency.setValueAtTime(90, t + 1.9);
-    thump.frequency.exponentialRampToValueAtTime(38, t + 2.6);
-    const tg = audio.createGain();
-    tg.gain.setValueAtTime(0.0001, t + 1.9);
-    tg.gain.exponentialRampToValueAtTime(0.7, t + 1.95);
-    tg.gain.exponentialRampToValueAtTime(0.0001, t + 2.7);
-    thump.connect(tg).connect(out);
-    thump.start(t + 1.9); thump.stop(t + 2.8);
+    if (!audio || !linkBuffer) return;
+    const src = audio.createBufferSource();
+    src.buffer = linkBuffer;
+    const gain = audio.createGain();
+    gain.gain.value = volume;
+    src.connect(gain).connect(audio.destination);
+    src.start();
   }
 
   // ---- choosing a book ------------------------------------------------------------------------------------------
@@ -152,11 +123,11 @@
     $("b3-panel").classList.add("playing");
     await wait(4500);
 
-    // 5. The link: the sound, the rush of light, the curtains close.
+    // 5. The link: the sound swells as we fall into the panel, the light peaks with it, and we arrive as it fades.
     linkSound();
     book.classList.add("linking");
     stage.classList.add("linking");
-    await wait(2600);
+    await wait(LINK_SOUND_MS);
     window.location.href = d.dest;
   }
 

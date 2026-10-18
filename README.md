@@ -1,13 +1,14 @@
 # Unwritten Table
 
 A self-hosted, live table companion for **Unwritten: Adventures in the Ages of MYST and Beyond**: character sheets,
-a Fate dice roller, a GM scene board, compels, deductions, milestones, and D’ni tools, all in a parchment-and-brass
+a drama dice roller, a GM scene board, compels, deductions, milestones, and D’ni tools, all in a parchment-and-brass
 journal style. Players and the GM share one live table in the browser.
 
-This is a fan project. It ships **no rulebook text**: the mechanics (Fate Core, Open Game Content) are summarized in
+This is a fan project. It ships **no rulebook text**: the mechanics are summarized in
 our own words, and setting material stays in your own copy of the book. Myst, D’ni and Unwritten are © Cyan, Inc.
 The D’ni font (`app/unwritten/static/fonts/DniFont.ttf`, © 1995 Cyan, Inc.) is the freely distributed one;
-IM Fell English and EB Garamond are under the SIL Open Font License.
+IM Fell English and EB Garamond are under the SIL Open Font License. The linking sound
+(`app/unwritten/static/sounds/linking.mp3`) is a fan-made recording.
 
 > **Never commit the PDFs.** `.gitignore` blocks `*.pdf`, `*.zip`, `sources/` and `private/`, because this repository
 > is public and the books are not licensed for redistribution.
@@ -16,17 +17,17 @@ IM Fell English and EB Garamond are under the SIL Open Font License.
 
 | For | Feature |
 | --- | --- |
-| Players | **My Explorer** screen: your character at a glance, the map with fog of war, the area you’re in, scene aspects, **suggested actions** (built from the area’s hooks, free invokes, unexplored edges, injuries, your best skills and fate points; “set up the roll” fills in the roller), the GM’s roll calls, and a full-screen overlay for anything the GM shows. |
+| Players | **My Explorer** screen: your character at a glance, the map with fog of war, the area you’re in, scene aspects, **suggested actions** (built from the area’s hooks, free invokes, unexplored edges, injuries, your best skills and drama points; “set up the roll” fills in the roller), the GM’s roll calls, and a full-screen overlay for anything the GM shows. |
 | GM | **GM Screen**: load an adventure, start scenes (sets the scene board, shows the map, reveals starting areas), read-aloud text, GM notes, NPC cards, compel ideas from your players’ own aspects, “if they’re stuck” hints. |
 | GM | **Fog of war**: click any area to reveal or hide it and to read its secrets. Players tap a fogged edge to ask to explore it; you reveal, **call for a roll** (a success reveals it automatically), or say not yet. |
 | GM | **Handouts**: show an adventure’s images and animations, or your own uploads (images, GIF, MP4/WebM up to 20 MB), to everyone or one player, with an effect (fade, linking ripple, slow reveal, flash). Players can revisit what they’ve been shown. |
 | GM | **GM Guide** for first-time GMs: running a session with the app, setting difficulties, costs, compels, what to do when things go sideways. |
-| Everyone | **Live table**: rolls, compels, aspects and fate points update on every screen at once (Server-Sent Events). |
+| Everyone | **Live table**: rolls, compels, aspects and drama points update on every screen at once (Server-Sent Events). |
 | Players | **Character sheet** with rule checks: the starting skill pyramid, skill columns, refresh (3 free stunts/resources, −1 per extra, never below 1), four journey aspects, consequence slots with recovery difficulty. Export/import as JSON, print. |
-| Players | **Fate roller**: 4dF + skill + stunt + teamwork vs opposition. Outcome (fumble/tie/success/excel) with the options for each action (Overcome, Advantage create/take, Discover, Oppose), Discover question counter, cost lists, dangerous actions. **Invoke** after the roll for +2 or a reroll, paid with a fate point, a free invoke or a boost (one fate-point invoke per aspect per roll). |
-| Players | **Consequences**: take one (rolls up to the next open slot, or you’re overwhelmed), sacrifice for 1/2/3 fate points, mark recovering. |
-| GM | **Scene board**: situation aspects with free-invoke pips, boosts (promote to aspects), scene notes. **End scene / New session / New chapter** apply the fate point and recovery rules to every explorer. **Milestones** post each level’s choices and bank skill points. |
-| GM | **Compels**: offer one on any explorer’s aspect; the player accepts (+1 FP) or buys it off (−1 FP). |
+| Players | **Drama roller**: four drama dice + skill + stunt + teamwork vs opposition. Outcome (fumble/tie/success/excel) with the options for each action (Overcome, Advantage create/take, Discover, Oppose), Discover question counter, cost lists, dangerous actions. **Invoke** after the roll for +2 or a reroll, paid with a drama point, a free invoke or a boost (one drama-point invoke per aspect per roll). |
+| Players | **Consequences**: take one (rolls up to the next open slot, or you’re overwhelmed), sacrifice for 1/2/3 drama points, mark recovering. |
+| GM | **Scene board**: situation aspects with free-invoke pips, boosts (promote to aspects), scene notes. **End scene / New session / New chapter** apply the drama point and recovery rules to every explorer. **Milestones** post each level’s choices and bank skill points. |
+| GM | **Compels**: offer one on any explorer’s aspect; the player accepts (+1 DP) or buys it off (−1 DP). |
 | GM | **NPCs**: full sheets, hidden from players until revealed; roll for them or for anyone (custom roll). |
 | Table | **Deductions**: frame a question, players join with a reason, three rounds vs Good (+3) and then the previous winning total, progress tracking, winners declare facts (placed as aspects), the reveal roll, and the truth aspect with 0–2 free invokes. |
 | Table | **D’ni lore**: a live cavern clock (hahr, vailee, yahr, bell), surface⇄D’ni date conversion, base-25 numbers in D’ni numerals, a transcription→D’ni script writer, the alphabet, and a **campaign timeline** with both calendars (GM-only entries allowed). |
@@ -55,7 +56,7 @@ Each table has a pre-game lobby: velvet curtains open on a bookshelf of burned b
 adventures you can play, each with its identifier on the spine and its logo on the cover. Players light their
 candle when they're ready (that click also lets their browser play sound). When the GM chooses a Book, every
 screen at the table plays the same scene together: the Book slides off the shelf, opens to its Linking page, its
-preview plays in the panel for a few seconds, the linking sound plays (synthesized in the browser, no audio files),
+preview plays in the panel for a few seconds, the linking sound plays as the view falls into the panel,
 and everyone arrives: players on their own screen, the GM on the GM Screen. Choosing the adventure already under way
 keeps its progress; choosing another starts it fresh. An adventure's `book:` section sets its spine, color, cover
 and preview.
@@ -69,7 +70,7 @@ and preview.
 
 `ALLOWED_EMAIL` / `ALLOWED_DOMAINS` can narrow who may sign in at all, and `GM_EMAILS` who may start campaigns.
 
-## Deploy (Portainer, same shape as the Replicant Space client)
+## Deploy (Portainer)
 
 ```
 Internet ─► Cloudflare ─► cloudflared ─► nginx ─(auth_request)─► oauth2-proxy ─► Google sign-in

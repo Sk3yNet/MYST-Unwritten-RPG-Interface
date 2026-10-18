@@ -5,7 +5,7 @@
 <div class="grid two ref">
   <section class="page">
     <h2 class="sc">Rolling</h2>
-    <p>Roll four Fate dice (each −, blank or +), add them up, and add your skill. Anything not on your sheet is Mediocre (+0). Then subtract the opposition: a fixed difficulty, or someone else’s roll. The difference is your <strong>shifts</strong>.</p>
+    <p>Roll four Drama dice (each −, blank or +), add them up, and add your skill. Anything not on your sheet is Mediocre (+0). Then subtract the opposition: a fixed difficulty, or someone else’s roll. The difference is your <strong>shifts</strong>.</p>
     <table><tr><th>Shifts</th><th>Outcome</th></tr>
       <tr><td>negative</td><td><span class="outcome fumble">Fumble</span></td></tr>
       <tr><td>0</td><td><span class="outcome tie">Tie</span></td></tr>
@@ -26,13 +26,13 @@
   </section>
 
   <section class="page">
-    <h2 class="sc">Aspects &amp; fate points</h2>
+    <h2 class="sc">Aspects &amp; drama points</h2>
     <ul>
-      <li><strong>Invoke:</strong> after rolling, spend a fate point on a relevant aspect for +2 or a reroll. Several aspects can each be invoked once per roll; free invokes (from advantages) can stack on one aspect.</li>
-      <li><strong>Compel:</strong> an aspect complicates your life. Accept and gain a fate point, or pay one to avoid it.</li>
-      <li><strong>Declare a detail:</strong> spend a fate point to add a convenient story detail justified by your aspects (GM may veto).</li>
+      <li><strong>Invoke:</strong> after rolling, spend a drama point on a relevant aspect for +2 or a reroll. Several aspects can each be invoked once per roll; free invokes (from advantages) can stack on one aspect.</li>
+      <li><strong>Compel:</strong> an aspect complicates your life. Accept and gain a drama point, or pay one to avoid it.</li>
+      <li><strong>Declare a detail:</strong> spend a drama point to add a convenient story detail justified by your aspects (GM may veto).</li>
       <li><strong>Boosts:</strong> one-use, short-lived invokes. They can’t be compelled or paid for, but can be promoted to a full aspect.</li>
-      <li><strong>Refresh:</strong> each session fate points refill up to refresh (extras kept); each chapter they reset to it.</li>
+      <li><strong>Refresh:</strong> each session drama points refill up to refresh (extras kept); each chapter they reset to it.</li>
     </ul>
     <h3>Costs</h3>
     <p class="small">Minor: {{ rules.MINOR_COSTS | join("; ") }}.</p>
@@ -42,9 +42,9 @@
   <section class="page">
     <h2 class="sc">Consequences</h2>
     <table><tr><th>Slot</th><th>Shifts</th><th>Heal vs</th><th>Sacrifice</th></tr>
-      {% for k in rules.CONSEQUENCE_ORDER %}{% set c = rules.CONSEQUENCES[k] %}<tr><td>{{ c.label }}</td><td>{{ c.shifts }}</td><td>{{ ladder(c.recover) }}</td><td>+{{ c.sacrifice }} FP</td></tr>{% endfor %}</table>
+      {% for k in rules.CONSEQUENCE_ORDER %}{% set c = rules.CONSEQUENCES[k] %}<tr><td>{{ c.label }}</td><td>{{ c.shifts }}</td><td>{{ ladder(c.recover) }}</td><td>+{{ c.sacrifice }} DP</td></tr>{% endfor %}</table>
     <ul class="small">
-      <li>You take one from an opponent’s excelled advantage, from succeeding at a serious cost, or by sacrificing when you’re out of fate points (the GM gets a free invoke).</li>
+      <li>You take one from an opponent’s excelled advantage, from succeeding at a serious cost, or by sacrificing when you’re out of drama points (the GM gets a free invoke).</li>
       <li>A consequence with no open slot rolls up to the next open one; with none left you’re <strong>overwhelmed</strong> and out of the scene.</li>
       <li>Recovery: succeed at an overcome against the listed difficulty (+1 if treating yourself) to mark it recovering. Recovering minors clear at scene end; minors and moderates at the next session; all at a new chapter.</li>
       <li>Dangerous actions: fumble one and you’re overwhelmed.</li>

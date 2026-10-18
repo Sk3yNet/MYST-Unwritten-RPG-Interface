@@ -83,7 +83,7 @@ def test_sheet_editing_and_permissions(client):
     assert "refresh <strong>2</strong>" in get(client, f"/c/{cid}/ch/{chid}/meta", P1).text
 
 
-def test_roll_invoke_and_fate_points(client):
+def test_roll_invoke_and_drama_points(client):
     cid, chid = setup_table(client)
     post(client, f"/c/{cid}/ch/{chid}/field", P1, {"skill.Research": "4", "high_concept": "Cartographer"})
     r = post(client, f"/c/{cid}/roll", P1, {"character_id": chid, "skill": "Research", "action": "discover",
@@ -92,11 +92,11 @@ def test_roll_invoke_and_fate_points(client):
     log = get(client, f"/c/{cid}/frag/log", P1).text
     assert "Read the ledgers" in log and "Discover" in log
     lid = int(re.search(r"/log/(\d+)/invoke", log).group(1))
-    assert post(client, f"/c/{cid}/log/{lid}/invoke", P1, {"source": "fp", "effect": "plus2",
+    assert post(client, f"/c/{cid}/log/{lid}/invoke", P1, {"source": "dp", "effect": "plus2",
                                                           "aspect": "Cartographer"}).status_code == 200
-    assert get(client, f"/c/{cid}/ch/{chid}/export", P1).json()["fate_points"] == 2
-    # Same aspect twice with fate points on one roll is not allowed.
-    assert post(client, f"/c/{cid}/log/{lid}/invoke", P1, {"source": "fp", "aspect": "Cartographer"}).status_code == 400
+    assert get(client, f"/c/{cid}/ch/{chid}/export", P1).json()["drama_points"] == 2
+    # Same aspect twice with drama points on one roll is not allowed.
+    assert post(client, f"/c/{cid}/log/{lid}/invoke", P1, {"source": "dp", "aspect": "Cartographer"}).status_code == 400
     # Free invoke from the scene board.
     post(client, f"/c/{cid}/scene/aspect", P1, {"text": "Slick with Lake Spray", "free": "1"})
     post(client, f"/c/{cid}/log/{lid}/invoke", P1, {"source": "free:1", "effect": "reroll"})
@@ -112,7 +112,7 @@ def test_compel_accept_and_refuse(client):
     post(client, f"/c/{cid}/compel", GM, {"character_id": chid, "aspect": "Cartographer", "text": "The door hums"})
     lid = int(re.search(r"/log/(\d+)/compel", get(client, f"/c/{cid}/frag/log", P1).text).group(1))
     assert post(client, f"/c/{cid}/log/{lid}/compel", P1, {"op": "accept"}).status_code == 200
-    assert get(client, f"/c/{cid}/ch/{chid}/export", P1).json()["fate_points"] == 4
+    assert get(client, f"/c/{cid}/ch/{chid}/export", P1).json()["drama_points"] == 4
     assert post(client, f"/c/{cid}/log/{lid}/compel", P1, {"op": "refuse"}).status_code == 400
 
 
@@ -121,7 +121,7 @@ def test_consequences_sacrifice_and_overwhelm(client):
     url = f"/c/{cid}/ch/{chid}/op"
     post(client, url, P1, {"op": "sacrifice", "severity": "moderate", "text": "Twisted Ankle"})
     d = get(client, f"/c/{cid}/ch/{chid}/export", P1).json()
-    assert d["fate_points"] == 5 and d["consequences"][1]["text"] == "Twisted Ankle"
+    assert d["drama_points"] == 5 and d["consequences"][1]["text"] == "Twisted Ankle"
     assert post(client, url, P1, {"op": "sacrifice", "severity": "moderate", "text": "Again"}).status_code == 400
     post(client, url, P1, {"op": "take", "severity": "minor", "text": "Winded"})
     post(client, url, P1, {"op": "take", "severity": "minor", "text": "Bruised"})  # rolls up to severe
@@ -153,7 +153,7 @@ def test_deduction_full_run(client, monkeypatch):
     post(client, f"{base}/start", GM, {"question": "Who sealed the library?"})
     post(client, f"{base}/join", P1, {"character_id": chid, "reason": "Reads Old D'ni"})
     post(client, f"{base}/begin", GM)
-    monkeypatch.setattr(rules, "roll_fate_dice", lambda rng=None: [1, 1, 0, 0])  # always +2
+    monkeypatch.setattr(rules, "roll_drama_dice", lambda rng=None: [1, 1, 0, 0])  # always +2
     for rnd in range(3):
         assert post(client, f"{base}/roll", P1, {"character_id": chid, "skill": "Research"}).status_code == 200
         post(client, f"{base}/close", GM)

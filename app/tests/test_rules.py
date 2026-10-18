@@ -32,9 +32,9 @@ def test_dangerous_fumble_mentions_overwhelmed():
     assert "overwhelmed" in r.summary()["lines"][0]
 
 
-def test_dice_are_fate_dice():
+def test_dice_are_drama_dice():
     for _ in range(200):
-        d = rules.roll_fate_dice()
+        d = rules.roll_drama_dice()
         assert len(d) == 4 and set(d) <= {-1, 0, 1}
 
 
@@ -73,17 +73,17 @@ def test_consequence_roll_up_and_overwhelm():
 
 def test_session_and_chapter():
     c = rules.blank_character()
-    c["fate_points"] = 5
+    c["drama_points"] = 5
     c["consequences"][0].update(text="Winded", recovering=True)
     c["consequences"][2].update(text="Trauma", recovering=True)
     rules.start_session(c)
-    assert c["fate_points"] == 5 and c["consequences"][0]["text"] == "" and c["consequences"][2]["text"] == "Trauma"
-    c["fate_points"] = 0
+    assert c["drama_points"] == 5 and c["consequences"][0]["text"] == "" and c["consequences"][2]["text"] == "Trauma"
+    c["drama_points"] = 0
     rules.start_session(c)
-    assert c["fate_points"] == 3
-    c["fate_points"] = 6
+    assert c["drama_points"] == 3
+    c["drama_points"] = 6
     rules.start_chapter(c)
-    assert c["fate_points"] == 3 and c["consequences"][2]["text"] == ""
+    assert c["drama_points"] == 3 and c["consequences"][2]["text"] == ""
 
 
 def test_end_scene_heals_recovering_minor_only():
@@ -104,3 +104,8 @@ def test_deduction_rounds():
     none = rules.deduction_round([{"who": "S", "total": 2}], 3)
     assert none["winners"] == [] and none["next_opposition"] == 3
     assert [rules.deduction_free_invokes(p) for p in (2, 3, 4, 5, 6)] == [None, 0, 1, 1, 2]
+
+
+def test_old_records_keep_their_points():
+    c = rules.normalize_character({"name": "Old", "fate_points": 5})
+    assert c["drama_points"] == 5 and "fate_points" not in c

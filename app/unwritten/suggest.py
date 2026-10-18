@@ -60,7 +60,7 @@ def for_player(ch: dict, scene: dict, area: dict | None = None, frontier_teasers
 
     for a in scene.get("aspects", []):
         if a.get("free"):
-            add(f"Use the free invoke on “{a['text']}”", "+2 or a reroll on a roll where it helps, no fate point needed.",
+            add(f"Use the free invoke on “{a['text']}”", "+2 or a reroll on a roll where it helps, no drama point needed.",
                 kind="invoke")
             break
 
@@ -82,15 +82,15 @@ def for_player(ch: dict, scene: dict, area: dict | None = None, frontier_teasers
         act, idea = SKILL_TIPS[sk]
         add(f"Play to your strength: {sk} ({rules.ladder(v)})", f"{ACTION_WORD[act]}: {idea}.", sk, act, "skill")
 
-    fp = d.get("fate_points", 0)
+    dp = d.get("drama_points", 0)
     aspects = [x for x in [d.get("high_concept", ""), *d.get("journey", [])] if x]
-    if fp == 0:
-        add("You're out of fate points", "Lean into your aspects so the GM can compel them (+1 each), "
-            "or make a sacrifice: take a consequence for 1–3 points.", kind="fp")
+    if dp == 0:
+        add("You're out of drama points", "Lean into your aspects so the GM can compel them (+1 each), "
+            "or make a sacrifice: take a consequence for 1–3 points.", kind="dp")
     elif aspects:
-        add(f"{fp} fate point{'s' if fp != 1 else ''} to spend",
+        add(f"{dp} drama point{'s' if dp != 1 else ''} to spend",
             f"When a roll matters, invoke “{aspects[0]}” (or another aspect that fits) for +2 or a reroll.",
-            kind="fp")
+            kind="dp")
     return out[:8]
 
 
@@ -112,7 +112,7 @@ GM_TIPS = [
     ("When a roll fails", "Failure should change the story, not stop it. Offer success at a cost: a complication, "
                           "lost time, a consequence, or an advantage for the other side."),
     ("Only roll when it matters", "If failing wouldn't be interesting, just say yes."),
-    ("Compels", "When an aspect would make life harder in a fun way, offer a compel. It's how players earn fate "
+    ("Compels", "When an aspect would make life harder in a fun way, offer a compel. It's how players earn drama "
                 "points, so offer one or two per session per player."),
     ("Discover answers", "Each question earned deserves a true, useful answer. Use the area's secrets."),
     ("Spotlight", "Rotate who you ask “What do you do?”. Quiet players often have the best ideas."),

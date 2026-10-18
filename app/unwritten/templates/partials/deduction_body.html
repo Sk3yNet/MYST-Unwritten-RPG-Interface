@@ -25,7 +25,7 @@
       {% if r %}<span class="dice">{% for x in r.dice %}<span class="die {{ 'plus' if x > 0 else ('minus' if x < 0 else '') }}">{{ "+" if x > 0 else ("−" if x < 0 else " ") }}</span>{% endfor %}</span>
         {{ r.skill }} → <strong>{{ ladder(r.total) }}</strong>{% if r.bonus %} <span class="small muted">(incl. +{{ r.bonus }})</span>{% endif %}
         {% if (p.char_id|string) in my_ids %}
-          <button class="btn tiny plain" hx-post="{{ base }}/boost" hx-vals='{"character_id": {{ p.char_id }}, "source": "fp"}' title="Invoke an aspect for a fate point">+2 (FP)</button>
+          <button class="btn tiny plain" hx-post="{{ base }}/boost" hx-vals='{"character_id": {{ p.char_id }}, "source": "dp"}' title="Invoke an aspect for a drama point">+2 (DP)</button>
           <button class="btn tiny plain" hx-post="{{ base }}/boost" hx-vals='{"character_id": {{ p.char_id }}, "source": "free"}' title="Use a free invoke (remove it on the scene board)">+2 (free)</button>
         {% endif %}
       {% elif d.stage in ("round", "reveal") and (p.char_id|string) in my_ids %}

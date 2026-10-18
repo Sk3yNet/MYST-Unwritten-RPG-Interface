@@ -7,10 +7,10 @@
       <h3><a href="/c/{{ ctx.cid }}/ch/{{ c.id }}">{{ d.name }}</a></h3>
       <span class="small faint">{{ party.names.get(c.owner_email, "") }}</span>
       <span class="spacer"></span>
-      <span class="fp" title="Fate points (refresh {{ rules.refresh(d) }})">
-        {% if ctx.can_edit(c) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ c.id }}/op" hx-vals='{"op":"fp","delta":-1}'>−</button>{% endif %}
-        <span class="coin">{{ d.fate_points }}</span>
-        {% if ctx.can_edit(c) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ c.id }}/op" hx-vals='{"op":"fp","delta":1}'>+</button>{% endif %}
+      <span class="dp" title="Drama points (refresh {{ rules.refresh(d) }})">
+        {% if ctx.can_edit(c) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ c.id }}/op" hx-vals='{"op":"dp","delta":-1}'>−</button>{% endif %}
+        <span class="coin">{{ d.drama_points }}</span>
+        {% if ctx.can_edit(c) %}<button class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/ch/{{ c.id }}/op" hx-vals='{"op":"dp","delta":1}'>+</button>{% endif %}
         <span class="small faint">/ {{ rules.refresh(d) }}</span>
       </span>
     </div>

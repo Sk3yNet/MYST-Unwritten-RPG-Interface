@@ -365,7 +365,7 @@ async def roll(request: Request, cid: int):
             raise HTTPError(400, "Pick one of your characters to roll for.")
         value = _int(f.get("skill_value"), 0, -2, 12)
     opp = f.get("opposition", "")
-    r = rules.Roll(action=action, skill=skill or "Mediocre", skill_value=value, dice=rules.roll_fate_dice(),
+    r = rules.Roll(action=action, skill=skill or "Mediocre", skill_value=value, dice=rules.roll_drama_dice(),
                    opposition=None if str(opp).strip() == "" else _int(opp, 0, -4, 12),
                    stunt_bonus=_int(f.get("stunt_bonus"), 0, -4, 6), teamwork=_int(f.get("teamwork"), 0, 0, 6),
                    dangerous=bool(f.get("dangerous")))
@@ -403,18 +403,18 @@ async def invoke(request: Request, cid: int, lid: int):
     scene = ctx.camp["scene"]
     r = rules.Roll.from_dict(data["roll"])
     topics = ["log"]
-    if source == "fp":
+    if source == "dp":
         label = _txt(f.get("aspect"), 120)
         if not label:
             raise HTTPError(400, "Name the aspect you invoke.")
         if any(m.kind == "invoke" and m.label == label for m in r.modifiers) or \
-                any(x.get("source") == "fp" and x.get("label") == label for x in data["rerolls"]):
-            raise HTTPError(400, "Each aspect can be invoked with a fate point only once per roll.")
+                any(x.get("source") == "dp" and x.get("label") == label for x in data["rerolls"]):
+            raise HTTPError(400, "Each aspect can be invoked with a drama point only once per roll.")
         if ch:
             cd = rules.normalize_character(ch["data"])
-            if cd["fate_points"] < 1:
-                raise HTTPError(400, f"{cd['name']} has no fate points left. (Out of points? Consider a sacrifice.)")
-            cd["fate_points"] -= 1
+            if cd["drama_points"] < 1:
+                raise HTTPError(400, f"{cd['name']} has no drama points left. (Out of points? Consider a sacrifice.)")
+            cd["drama_points"] -= 1
             await ctx.db.save_character(ch["id"], cd)
             topics += ["party", f"ch-{ch['id']}"]
         kind = "invoke"
@@ -435,10 +435,10 @@ async def invoke(request: Request, cid: int, lid: int):
         await ctx.db.save_scene(cid, scene)
         topics.append("scene")
     else:
-        raise HTTPError(400, "Pick what you're spending: a fate point, a free invoke or a boost.")
+        raise HTTPError(400, "Pick what you're spending: a drama point, a free invoke or a boost.")
     if effect == "reroll":
-        data["rerolls"].append({"source": "fp" if kind == "invoke" else kind, "label": label, "from": r.dice})
-        r.dice = rules.roll_fate_dice()
+        data["rerolls"].append({"source": "dp" if kind == "invoke" else kind, "label": label, "from": r.dice})
+        r.dice = rules.roll_drama_dice()
     else:
         r.modifiers.append(rules.Modifier(kind=kind, label=label, value=2))
     data["roll"] = r.to_dict()
@@ -493,12 +493,12 @@ async def resolve_compel(request: Request, cid: int, lid: int):
     cd = rules.normalize_character(ch["data"])
     op = (await form(request)).get("op")
     if op == "accept":
-        cd["fate_points"] += 1
+        cd["drama_points"] += 1
         d["status"] = "accepted"
     elif op == "refuse":
-        if cd["fate_points"] < 1:
-            raise HTTPError(400, "Buying off a compel costs a fate point, and there are none left.")
-        cd["fate_points"] -= 1
+        if cd["drama_points"] < 1:
+            raise HTTPError(400, "Buying off a compel costs a drama point, and there are none left.")
+        cd["drama_points"] -= 1
         d["status"] = "refused"
     elif op == "withdraw" and (ctx.is_gm or entry["email"] == ctx.email):
         d["status"] = "withdrawn"
@@ -568,9 +568,9 @@ async def scene_op(request: Request, cid: int, op: str):
             await ctx.db.save_character(ch["id"], fn(rules.normalize_character(ch["data"])))
             topics.append(f"ch-{ch['id']}")
         msg = {"end": "Scene ended: boosts cleared, recovering minor consequences healed.",
-               "session": "New session: fate points refilled to refresh (extras kept); recovering minor and moderate "
+               "session": "New session: drama points refilled to refresh (extras kept); recovering minor and moderate "
                           "consequences healed.",
-               "chapter": "New chapter: fate points reset to refresh; all recovering consequences healed."}[op]
+               "chapter": "New chapter: drama points reset to refresh; all recovering consequences healed."}[op]
         if op == "end":
             scene["boosts"] = []
             if f.get("clear"):
@@ -661,7 +661,7 @@ async def sheet_export(request: Request, cid: int, chid: int):
     return JSONResponse(ch["data"], headers={"Content-Disposition": f'attachment; filename="{fn}.json"'})
 
 
-_FIELD = re.compile(r"^(name|high_concept|notes|refresh_base|fate_points|skill_points_banked)$|"
+_FIELD = re.compile(r"^(name|high_concept|notes|refresh_base|drama_points|skill_points_banked)$|"
                     r"^journey\.(\d)$|^skill\.([A-Za-z ]{1,30})$|^(stunts|resources)\.(\d{1,2})\.(name|text)$|"
                     r"^consequences\.(\d{1,2})\.text$")
 
@@ -672,7 +672,7 @@ def apply_field(d: dict, key: str, value: str) -> None:
         raise HTTPError(400, f"Unknown field {key!r}.")
     if m.group(1):
         k = m.group(1)
-        if k in ("refresh_base", "fate_points", "skill_points_banked"):
+        if k in ("refresh_base", "drama_points", "skill_points_banked"):
             d[k] = _int(value, d[k], 0 if k != "refresh_base" else 1, 20)
         else:
             d[k] = _txt(value, 4000 if k == "notes" else 120)
@@ -742,8 +742,8 @@ async def sheet_op(request: Request, cid: int, chid: int):
     elif op == "clear":
         if 0 <= i < len(d["consequences"]):
             d["consequences"][i].update(text="", recovering=False)
-    elif op == "fp":
-        d["fate_points"] = max(0, min(20, d["fate_points"] + _int(f.get("delta"), 0, -1, 1)))
+    elif op == "dp":
+        d["drama_points"] = max(0, min(20, d["drama_points"] + _int(f.get("delta"), 0, -1, 1)))
     elif op in ("take", "sacrifice"):
         sev = f.get("severity") if f.get("severity") in rules.CONSEQUENCES else "minor"
         text = _txt(f.get("text"), 120)
@@ -754,8 +754,8 @@ async def sheet_op(request: Request, cid: int, chid: int):
             if idx is None:
                 raise HTTPError(400, f"No open {sev} slot to sacrifice into.")
             gain = rules.CONSEQUENCES[sev]["sacrifice"]
-            d["fate_points"] += gain
-            msg = f"{d['name']} makes a sacrifice: {text} ({sev}), gaining {gain} fate point(s). The GM gets a free invoke."
+            d["drama_points"] += gain
+            msg = f"{d['name']} makes a sacrifice: {text} ({sev}), gaining {gain} drama point(s). The GM gets a free invoke."
         else:
             idx = rules.open_slot_for(d, sev)
             if idx is None:
@@ -842,7 +842,7 @@ async def deduction_op(request: Request, cid: int, op: str):
         if str(ch["id"]) in d["rolls"]:
             raise HTTPError(400, "Already rolled this round.")
         skill = _txt(f.get("skill"), 40)
-        dice = rules.roll_fate_dice()
+        dice = rules.roll_drama_dice()
         val = ch["data"]["skills"].get(skill, 0)
         d["rolls"][str(ch["id"])] = {"name": ch["data"]["name"], "skill": skill or "Mediocre", "value": val,
                                      "dice": dice, "total": sum(dice) + val}
@@ -852,11 +852,11 @@ async def deduction_op(request: Request, cid: int, op: str):
         if key not in d["rolls"]:
             raise HTTPError(400, "No roll to improve.")
         ch = await _roll_character(ctx, key)
-        if f.get("source") == "fp":
+        if f.get("source") == "dp":
             cd = ch["data"]
-            if cd["fate_points"] < 1:
-                raise HTTPError(400, "No fate points left.")
-            cd["fate_points"] -= 1
+            if cd["drama_points"] < 1:
+                raise HTTPError(400, "No drama points left.")
+            cd["drama_points"] -= 1
             await ctx.db.save_character(ch["id"], cd)
             topics += ["party", f"ch-{ch['id']}"]
         d["rolls"][key]["total"] += 2

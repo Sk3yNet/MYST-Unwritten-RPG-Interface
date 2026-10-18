@@ -144,7 +144,7 @@ def test_inspect_request_roll_reveals(client, monkeypatch):
     post(client, f"/c/{cid}/request/{rid}", GM, {"op": "roll"})
     sg = get(client, f"/c/{cid}/me/frag/suggest", P1).text
     assert "calls for a roll" in sg and 'name="request_id"' in sg
-    monkeypatch.setattr(rules, "roll_fate_dice", lambda rng=None: [1, 0, 0, 0])
+    monkeypatch.setattr(rules, "roll_drama_dice", lambda rng=None: [1, 0, 0, 0])
     post(client, f"/c/{cid}/roll", P1, {"character_id": chid, "skill": "Notice", "action": "discover",
                                         "opposition": "1", "request_id": rid})
     mp = get(client, f"/c/{cid}/me/frag/map", P1).text
@@ -157,7 +157,7 @@ def test_failed_roll_leaves_fog_and_gm_reveal(client, monkeypatch):
     post(client, f"/c/{cid}/map/call", GM, {"map": "archive", "area": "hall", "difficulty": "4",
                                             "skills": "Notice", "action": "discover"})
     rid = int(re.search(r'name="request_id" value="(\d+)"', get(client, f"/c/{cid}/me/frag/suggest", P1).text).group(1))
-    monkeypatch.setattr(rules, "roll_fate_dice", lambda rng=None: [-1, -1, 0, 0])
+    monkeypatch.setattr(rules, "roll_drama_dice", lambda rng=None: [-1, -1, 0, 0])
     post(client, f"/c/{cid}/roll", P1, {"character_id": chid, "skill": "Notice", "action": "discover",
                                         "opposition": "4", "request_id": rid})
     assert "Reading Hall" not in get(client, f"/c/{cid}/me/frag/map", P1).text
@@ -201,14 +201,14 @@ def test_upload_handout(client):
 
 def test_suggestions_rules():
     ch = {"id": 1, "data": rules.normalize_character({**rules.blank_character("A"), "skills": {"Notice": 4},
-                                                     "high_concept": "Cartographer", "fate_points": 0})}
+                                                     "high_concept": "Cartographer", "drama_points": 0})}
     ch["data"]["consequences"][0]["text"] = "Twisted Ankle"
     scene = {"aspects": [{"text": "Slick", "free": 1}]}
     area = {"hooks": [{"text": "Look up", "skill": "Notice", "action": "discover"}]}
     out = suggest.for_player(ch, scene, area, ["A dark stair"])
     kinds = [o["kind"] for o in out]
-    assert kinds[:4] == ["area", "invoke", "explore", "heal"] and "fp" in kinds
-    assert any("out of fate points" in o["title"] for o in out)
+    assert kinds[:4] == ["area", "invoke", "explore", "heal"] and "dp" in kinds
+    assert any("out of drama points" in o["title"] for o in out)
     assert suggest.compel_ideas([ch]) == [{"who": "A", "char_id": 1, "aspect": "Cartographer"}]
 
 

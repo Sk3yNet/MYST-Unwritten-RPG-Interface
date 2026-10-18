@@ -1,5 +1,5 @@
 {% set rc = roll_char or (mine[0] if mine else none) %}
-<header><h2 class="sc">Roll the Fate dice</h2></header>
+<header><h2 class="sc">Roll the Drama dice</h2></header>
 {% if not mine and not ctx.is_gm %}
 <p class="empty">Create your explorer on the <a href="/c/{{ ctx.cid }}/party">Explorers</a> page to roll.</p>
 {% else %}
@@ -38,8 +38,8 @@
     <label class="small" title="Fumbling a dangerous action leaves you overwhelmed"><input type="checkbox" name="dangerous" value="1"> dangerous</label>
   </div>
   <div class="row">
-    <button class="btn brass" style="font-size:1.15rem">Roll 4dF</button>
-    {% if rc %}<span class="fp small muted"><span class="coin">{{ rc.data.fate_points }}</span> fate points</span>{% endif %}
+    <button class="btn brass" style="font-size:1.15rem">Roll the drama dice</button>
+    {% if rc %}<span class="dp small muted"><span class="coin">{{ rc.data.drama_points }}</span> drama points</span>{% endif %}
   </div>
   <p class="small faint" style="margin:0">Difficulties: Mediocre 0 · Adequate 1 · Fair 2 · Good 3 · Great 4 · Superb 5 · Fantastic 6</p>
 </form>

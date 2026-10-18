@@ -1,4 +1,4 @@
-"""Unwritten game mechanics (Fate-based, Open Game Content), written in our own words.
+"""Unwritten game mechanics (drama dice, aspects, drama points), written in our own words.
 
 Everything here is pure: no I/O, so it is easy to test and reuse from the web layer.
 """
@@ -24,7 +24,7 @@ FREE_STUNTS = 3
 MAX_EXTRA_STUNTS_AT_CREATION = 2
 JOURNEY_ASPECTS = 4
 
-# Consequence severity -> (shift value, recovery difficulty, fate points from a sacrifice).
+# Consequence severity -> (shift value, recovery difficulty, drama points from a sacrifice).
 CONSEQUENCES = {
     "minor": {"label": "Minor", "shifts": 2, "recover": 2, "sacrifice": 1},
     "moderate": {"label": "Moderate", "shifts": 4, "recover": 4, "sacrifice": 2},
@@ -53,7 +53,7 @@ def ladder(value: int) -> str:
     return f"{LADDER[value]} ({sign})"
 
 
-def roll_fate_dice(rng: random.Random | None = None) -> list[int]:
+def roll_drama_dice(rng: random.Random | None = None) -> list[int]:
     r = rng or random.SystemRandom()
     return [r.choice((-1, 0, 1)) for _ in range(4)]
 
@@ -100,7 +100,7 @@ OUTCOME_TEXT = {
         "tie": ["Nothing useful turns up.", "Or: minor cost and ask 1 question."],
         "succeed": ["Ask one question per shift."],
         "excel": ["Ask one question per shift, and you may ask the GM for an important hint.",
-                  "Don't use the hint this scene and you gain a fate point instead."],
+                  "Don't use the hint this scene and you gain a drama point instead."],
     },
     "oppose": {
         "fumble": ["The actor gets through you."],
@@ -128,7 +128,7 @@ def questions_for(action: str, shifts: int) -> int:
 
 @dataclass
 class Modifier:
-    kind: str          # "invoke" (fate point), "free" (free invoke), "boost", "reroll"
+    kind: str          # "invoke" (drama point), "free" (free invoke), "boost", "reroll"
     label: str
     value: int = 2
 
@@ -205,7 +205,7 @@ class Roll:
 def blank_character(name: str = "") -> dict:
     return {
         "name": name, "high_concept": "", "journey": [""] * JOURNEY_ASPECTS, "skills": {},
-        "stunts": [], "resources": [], "refresh_base": BASE_REFRESH, "fate_points": BASE_REFRESH,
+        "stunts": [], "resources": [], "refresh_base": BASE_REFRESH, "drama_points": BASE_REFRESH,
         "consequences": [{"severity": s, "text": "", "recovering": False} for s in CONSEQUENCE_ORDER],
         "notes": "", "skill_points_banked": 0,
     }
@@ -213,6 +213,8 @@ def blank_character(name: str = "") -> dict:
 
 def normalize_character(c: dict) -> dict:
     """Fill in fields an older or partial record may lack, so templates never KeyError."""
+    if "fate_points" in c:  # records saved before the rename to drama points
+        c.setdefault("drama_points", c.pop("fate_points"))
     base = blank_character()
     for k, v in base.items():
         c.setdefault(k, v)
@@ -288,8 +290,8 @@ def open_slot_for(c: dict, severity: str) -> int | None:
 # Session & chapter housekeeping
 # --------------------------------------------------------------------------------------------
 def start_session(c: dict) -> dict:
-    """Refill fate points up to refresh (keep extras); clear recovering minor/moderate consequences."""
-    c["fate_points"] = max(int(c.get("fate_points", 0)), refresh(c))
+    """Refill drama points up to refresh (keep extras); clear recovering minor/moderate consequences."""
+    c["drama_points"] = max(int(c.get("drama_points", 0)), refresh(c))
     for s in c["consequences"]:
         if s["recovering"] and s["severity"] in ("minor", "moderate"):
             s["text"], s["recovering"] = "", False
@@ -305,8 +307,8 @@ def end_scene(c: dict) -> dict:
 
 
 def start_chapter(c: dict) -> dict:
-    """Reset fate points to refresh (extras lost); clear every recovering consequence."""
-    c["fate_points"] = refresh(c)
+    """Reset drama points to refresh (extras lost); clear every recovering consequence."""
+    c["drama_points"] = refresh(c)
     for s in c["consequences"]:
         if s["recovering"]:
             s["text"], s["recovering"] = "", False

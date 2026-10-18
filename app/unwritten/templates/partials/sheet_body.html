@@ -90,9 +90,9 @@
           </div>
           <div class="row">
             <button class="btn tiny" name="op" value="take">Take it (cost / excelled advantage)</button>
-            <button class="btn tiny seal" name="op" value="sacrifice" title="Out of fate points? Gain 1/2/3 FP; the GM gets a free invoke on it.">Sacrifice for fate points</button>
+            <button class="btn tiny seal" name="op" value="sacrifice" title="Out of drama points? Gain 1/2/3 drama points; the GM gets a free invoke on it.">Sacrifice for drama points</button>
           </div>
-          <p class="muted" style="margin:0">A taken consequence rolls up to the next open slot; with none open you are overwhelmed. A sacrifice gives 1, 2 or 3 fate points. Healing it is an overcome roll (+1 harder on yourself), then it heals with time.</p>
+          <p class="muted" style="margin:0">A taken consequence rolls up to the next open slot; with none open you are overwhelmed. A sacrifice gives 1, 2 or 3 drama points. Healing it is an overcome roll (+1 harder on yourself), then it heals with time.</p>
         </form>
         <div class="row small" style="margin-top:.4rem">Extra slot from a stunt: {% for k in rules.CONSEQUENCE_ORDER %}{{ op("+ " ~ k, {"op": "add_slot", "severity": k}) }}{% endfor %}</div>
       </details>
@@ -105,7 +105,7 @@
       {% if editable %}
       <div class="row small muted">
         <label>Base refresh <input type="number" name="refresh_base" value="{{ d.refresh_base }}" min="1" max="20" hx-post="{{ base }}/field" hx-trigger="change"></label>
-        <label>Fate points <input type="number" name="fate_points" value="{{ d.fate_points }}" min="0" max="20" hx-post="{{ base }}/field" hx-trigger="change"></label>
+        <label>Drama points <input type="number" name="drama_points" value="{{ d.drama_points }}" min="0" max="20" hx-post="{{ base }}/field" hx-trigger="change"></label>
         <label>Banked skill points <input type="number" name="skill_points_banked" value="{{ d.skill_points_banked }}" min="0" max="20" hx-post="{{ base }}/field" hx-trigger="change"></label>
       </div>
       <div class="row">
