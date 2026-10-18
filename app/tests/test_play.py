@@ -26,17 +26,54 @@ def loaded(c):
     return cid, chid
 
 
-def test_bundled_module_is_valid():
-    m = modules.get("flooded-archive")
-    assert m and not m.data.get("error")
-    assert set(m.maps) == {"archive", "seleshva"} and len(m.scenes) == 5
+@pytest.mark.parametrize("slug", sorted(modules.available()))
+def test_bundled_modules_are_valid(slug):
+    m = modules.get(slug)
+    assert m and not m.data.get("error"), modules.available()[slug].data.get("error")
     for mp in m.maps.values():
         svg = m.file(mp["file"]).read_text()
-        for aid in mp["areas"]:
+        for aid, a in mp["areas"].items():
             assert f'data-area="{aid}"' in svg, (mp["id"], aid)
+            for hid in a["handouts"]:
+                assert hid in m.handouts, (aid, hid)
+        for aid in mp["start_revealed"]:
+            assert aid in mp["areas"]
     for s in m.scenes.values():
         for hid in s["handouts"]:
-            assert hid in m.handouts
+            assert hid in m.handouts, (s["id"], hid)
+        for aid in s["reveal"]:
+            assert aid in m.maps[s["map"]]["areas"], (s["id"], aid)
+    npcs = {n["name"] for n in m.data.get("npcs", [])}
+    for s in m.scenes.values():
+        assert set(s["npcs"]) <= npcs, s["id"]
+
+
+def test_flooded_archive_shape():
+    m = modules.get("flooded-archive")
+    assert set(m.maps) == {"archive", "seleshva"} and len(m.scenes) == 5
+
+
+def test_concordance_solution_is_consistent():
+    """The final puzzle's clues must agree: dome direct view = what to set, reflection = twin = target."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("art", modules.campaigns_dir() / "concordance/source/art.py")
+    art = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(art)
+    for elem, const, tone, ring, target in art.AGES:
+        set_glyph = art.OPPOSITE[target]
+        # what you see directly is the mirror image of the target, which must be the glyph to set
+        path, mirrored = art.GLYPHS[target]
+        seen = next(k for k, (p2, m2) in art.GLYPHS.items() if p2 == path and m2 != mirrored) if target != "ice" else "ice"
+        assert seen == set_glyph, (const, target, seen)
+    assert [t for *_x, t, _r, _g in art.AGES] == ["E", "C", "G", "D", "A"]
+    # The Calendar Stone solution: turning ring k advances rings k and k+1.
+    rings, turns = [1, 4, 0, 3, 2], [3, 2, 2, 4, 3]
+    for k, n in enumerate(turns):
+        for _ in range(n):
+            rings[k] = (rings[k] + 1) % 5
+            if k + 1 < 5:
+                rings[k + 1] = (rings[k + 1] + 1) % 5
+    assert rings == [4] * 5
 
 
 def test_player_map_never_contains_hidden_areas():
@@ -49,6 +86,8 @@ def test_player_map_never_contains_hidden_areas():
     assert "A wide, dark hall" in svg  # the teaser, not the name
     gm = modules.render_map(m, "archive", {"landing"}, gm=True)
     assert "Sealed Vault" in gm and 'data-hot="vault"' in gm
+    # Never the class "hidden": the stylesheet's .hidden utility would make it unclickable.
+    assert 'class="hot fogged"' in gm and "hot hidden" not in gm
 
 
 def test_frontier():

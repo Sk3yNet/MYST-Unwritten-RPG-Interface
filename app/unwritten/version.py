@@ -1,6 +1,8 @@
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 
 CHANGES = [
+    ("0.2.1", "2026-10-18", "New adventure: The Concordance (a hub and five elemental Ages, six maps, nineteen "
+                            "handouts). Handouts can be turned over. Fix: the GM can click unrevealed map areas."),
     ("0.2.0", "2026-10-18", "Adventures: load a written campaign on the Desk and run it from the GM Screen (scene notes, "
                             "compel ideas, NPCs). Maps with fog of war: GM reveals, players ask to inspect, a successful "
                             "roll reveals. Push images, videos and animations to players' screens with effects. "

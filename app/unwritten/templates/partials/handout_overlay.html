@@ -6,5 +6,8 @@
     {% else %}<img class="handout-media" src="/c/{{ ctx.cid }}/media/{{ h.key }}" alt="{{ cur.caption }}">{% endif %}
     {% if cur.caption %}<figcaption>{{ cur.caption }}</figcaption>{% endif %}
   </figure>
-  <button type="button" class="btn plain handout-close" onclick="dismissHandout(this)">Close</button>
+  <div class="handout-tools">
+    <button type="button" class="btn plain" onclick="this.closest('.handout-overlay').classList.toggle('turned')" title="Turn it upside down">↻ Turn over</button>
+    <button type="button" class="btn plain handout-close" onclick="dismissHandout(this)">Close</button>
+  </div>
 </div>

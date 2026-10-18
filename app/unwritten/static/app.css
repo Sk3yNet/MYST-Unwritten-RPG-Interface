@@ -346,14 +346,14 @@ details.fold > summary { cursor: pointer; font-family: var(--display); color: va
 .map-svg .hot.revealed:hover, .map-svg .hot.revealed:focus { fill: rgba(196, 154, 69, .18); }
 .map-svg .hot.frontier { fill: rgba(70, 45, 20, .06); stroke: #8c6a2c; stroke-width: 2.5; stroke-dasharray: 9 7; }
 .map-svg .hot.frontier:hover, .map-svg .hot.frontier:focus { fill: rgba(196, 154, 69, .3); }
-.map-svg.gm .hot.hidden { stroke: #7d2a1c; stroke-width: 1.5; stroke-dasharray: 4 6; }
+.map-svg.gm .hot.fogged { stroke: #7d2a1c; stroke-width: 1.5; stroke-dasharray: 4 6; }
 .map-svg.gm .hot:hover { fill: rgba(125, 42, 28, .12); }
 .map-svg .hot.pending { stroke: #7d2a1c; stroke-width: 4; stroke-dasharray: none; animation: pulse 1.6s ease-in-out infinite; }
 @keyframes pulse { 50% { stroke-opacity: .25; } }
 .map-svg .frontier-mark { font: 46px "IM Fell English", Georgia, serif; fill: #6b4a24; opacity: .75; dominant-baseline: middle; }
 .map-legend .key { display: inline-block; width: 14px; height: 10px; vertical-align: middle; border: 2px dashed #8c6a2c; }
 .map-legend .key.revealed { border: 1px solid var(--rule); background: #e8d6ae; }
-.map-legend .key.hidden { border: 2px dashed #7d2a1c; }
+.map-legend .key.fogged { border: 2px dashed #7d2a1c; }
 .map-legend .key.pending { border: 3px solid #7d2a1c; }
 
 /* ---- handout overlay ---------------------------------------------------------------------------------------- */
@@ -366,7 +366,10 @@ details.fold > summary { cursor: pointer; font-family: var(--display); color: va
 div.handout-media { box-shadow: none; }
 div.handout-media svg { display: block; height: 78vh; width: auto; max-width: 92vw; box-shadow: 0 10px 40px rgba(0, 0, 0, .7); }
 .handout-figure figcaption { color: #f1e2c0; font-family: var(--display); font-style: italic; font-size: 1.25rem; text-align: center; }
-.handout-close { position: absolute; top: 14px; right: 16px; color: #f1e2c0 !important; border-color: rgba(241, 226, 192, .4) !important; }
+.handout-tools { position: absolute; top: 14px; right: 16px; display: flex; gap: .5rem; }
+.handout-tools .btn { color: #f1e2c0 !important; border-color: rgba(241, 226, 192, .4) !important; }
+.turned .handout-media, figure.turned .gallery-media { transform: rotate(180deg); transition: transform .8s ease; }
+.handout-media, .gallery-media { transition: transform .8s ease; }
 .handout-fx { position: absolute; inset: 0; pointer-events: none; }
 .fx-fade .handout-figure { animation: fx-fade 1.2s ease-out both; }
 @keyframes fx-fade { from { opacity: 0; transform: scale(.98); } }

@@ -209,8 +209,8 @@ def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: 
     hot = ET.SubElement(root, _q("g"), {"class": "hotspots"})
     edge = set(frontier(mmap, revealed))
     for aid, a in mmap["areas"].items():
-        state = "revealed" if aid in revealed else ("frontier" if aid in edge else "hidden")
-        if not gm and state == "hidden":
+        state = "revealed" if aid in revealed else ("frontier" if aid in edge else "fogged")
+        if not gm and state == "fogged":
             continue
         if state == "revealed" or gm:
             label = a["name"]

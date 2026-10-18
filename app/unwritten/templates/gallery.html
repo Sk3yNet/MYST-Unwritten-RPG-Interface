@@ -9,7 +9,7 @@
     {% if h.inline %}<div class="gallery-media">{{ h.inline | safe }}</div>
     {% elif h.type.startswith("video/") %}<video class="gallery-media" src="/c/{{ ctx.cid }}/media/{{ h.key }}" controls muted playsinline></video>
     {% else %}<img class="gallery-media" src="/c/{{ ctx.cid }}/media/{{ h.key }}" alt="{{ h.caption }}">{% endif %}
-    <figcaption class="small">{{ h.caption or h.name }}</figcaption>
+    <figcaption class="small row">{{ h.caption or h.name }}<span class="spacer"></span><button type="button" class="link small" onclick="this.closest('figure').classList.toggle('turned')">↻ turn over</button></figcaption>
   </figure>
 {% else %}<p class="empty">Nothing yet.</p>{% endfor %}
 </div>
