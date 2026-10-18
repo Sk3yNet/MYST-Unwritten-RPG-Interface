@@ -1,0 +1,17 @@
+{% set n_ready = people | selectattr("ready") | list | length %}
+<div class="candles" data-ready="{{ n_ready }}" data-total="{{ people | length }}">
+  {% for p in people %}
+  <div class="candle-slot{{ ' lit' if p.ready }}" title="{{ p.name or p.email }}{{ ' (ready)' if p.ready else '' }}">
+    <div class="candle"><span class="flame"></span><span class="wax"></span></div>
+    <div class="candle-name">{{ p.name or p.email.split('@')[0] }}{% if p.role == "gm" %} <span class="tag">GM</span>{% endif %}</div>
+  </div>
+  {% endfor %}
+</div>
+{% set me = people | selectattr("email", "equalto", ctx.email) | first %}
+<div class="ready-row">
+  <button type="button" class="btn {{ 'plain' if me and me.ready else 'brass' }}" hx-post="/c/{{ ctx.cid }}/lobby/ready" onclick="unlockAudio()">
+    {{ "Snuff my candle (not ready)" if me and me.ready else "Light my candle (ready)" }}</button>
+  <span class="small">{{ n_ready }} of {{ people | length }} ready</span>
+  <button type="button" class="btn tiny plain" onclick="unlockAudio(true)" title="Browsers keep pages quiet until you click">♪ test sound</button>
+  {% if ctx.is_gm and n_ready %}<button type="button" class="btn tiny plain" hx-post="/c/{{ ctx.cid }}/lobby/snuff" hx-confirm="Snuff every candle, to start a fresh gathering?">snuff all</button>{% endif %}
+</div>

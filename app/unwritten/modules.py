@@ -40,6 +40,7 @@ class Module:
     maps: dict = field(default_factory=dict)       # map id -> map dict (with "areas": {id: area})
     handouts: dict = field(default_factory=dict)   # handout id -> handout dict
     scenes: dict = field(default_factory=dict)     # scene id -> scene dict (with "chapter")
+    book: dict = field(default_factory=dict)       # how it looks on the lobby shelf (see _book)
 
     @property
     def title(self) -> str:
@@ -74,6 +75,7 @@ def _centroid(points: str) -> tuple[float, float]:
 def load_module(path: Path) -> Module:
     raw = yaml.safe_load((path / "campaign.yaml").read_text(encoding="utf-8")) or {}
     mod = Module(slug=path.name, path=path, data=raw)
+    mod.book = _book(mod, raw.get("book") or {})
     for m in raw.get("maps", []):
         if not _ID.match(str(m.get("id", ""))):
             raise ModuleError(f"map id {m.get('id')!r} must be lower-case letters, digits, - or _")
@@ -117,6 +119,25 @@ _cache: dict[Path, tuple[float, Module]] = {}
 def _stamp(p: Path) -> float:
     """Newest modification time of anything in the module folder, so edits are picked up without a restart."""
     return max((f.stat().st_mtime for f in p.rglob("*") if f.is_file()), default=0.0)
+
+
+BOOK_IMAGES = {".svg", ".png", ".jpg", ".jpeg", ".gif", ".webp"}
+_COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
+
+
+def _book(mod: Module, b: dict) -> dict:
+    """Lobby-shelf look: spine identifier, volume, leather color, cover logo and linking-panel preview (both optional)."""
+    out = {"spine": str(b.get("spine") or mod.data.get("title") or mod.slug), "volume": str(b.get("volume") or ""),
+           "color": b.get("color") if _COLOR.match(str(b.get("color", ""))) else "#5b3518",
+           "cover": None, "preview": None}
+    for kind in ("cover", "preview"):
+        rel = b.get(kind)
+        if rel:
+            f = mod.file(rel)
+            if f.suffix.lower() not in BOOK_IMAGES or not f.exists():
+                raise ModuleError(f"book {kind} {rel} missing or not an image")
+            out[kind] = rel
+    return out
 
 
 def available() -> dict[str, Module]:

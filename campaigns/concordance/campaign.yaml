@@ -7,6 +7,12 @@ summary: >
   Resonance Keys. Five Linking Books lead to five elemental Ages (ice, fire, air, earth, water), each with its own
   logic, its own puzzles, and one rule of reality. Only by learning all five rules can they wake the machine.
 players: 2-5 explorers, about 8-12 sessions
+book:                       # how it appears on the lobby shelf
+  spine: Concordance
+  volume: "Vol. II"
+  color: "#5e2a14"
+  cover: handouts/cover.svg
+  preview: handouts/preview.svg
 gm_intro: |
   **The shape of the campaign.** The Sanctuary is the hub. Each Age is a self-contained world with one rule:
   **Ice preserves, Fire transforms, Air observes, Earth grows, Water reflects.** Every Age yields five things:

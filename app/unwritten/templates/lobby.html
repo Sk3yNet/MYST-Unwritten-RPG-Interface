@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Lobby{% endblock %}
+{% block mainclass %}lobby-main{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="/static/lobby.css?v={{ VERSION }}">
+<script src="/static/lobby.js?v={{ VERSION }}" defer></script>
+{% endblock %}
+{% block content %}
+<div class="theater" id="theater" data-gm="{{ 1 if ctx.is_gm else 0 }}" data-seen-seq="{{ launch.seq if launch else 0 }}">
+  <div class="curtain left" aria-hidden="true"></div>
+  <div class="curtain right" aria-hidden="true"></div>
+  <div class="valance" aria-hidden="true"></div>
+
+  <div class="stagefront">
+    <p class="lobby-intro">{% if ctx.is_gm %}Choose a surviving Book when everyone’s candle is lit.{% else %}Light your candle when you’re ready. The GM will choose the Book.{% endif %}</p>
+
+    <div class="bookcase" role="list" aria-label="The bookshelf">
+      {% for row in shelf %}
+      <div class="shelf">
+        {% for b in row %}
+          {% if b.kind == "burned" %}
+          <div class="bk burned{{ ' ember' if b.ember }}" aria-hidden="true"
+               style="--w:{{ b.w }}px;--h:{{ b.h }}%;--hue:{{ b.hue }};--lean:{{ b.lean }}deg;clip-path:{{ b.clip }}">{% if b.band %}<i class="band"></i>{% endif %}</div>
+          {% else %}
+          <button type="button" class="bk live" role="listitem" data-slug="{{ b.slug }}" data-title="{{ b.title }}"
+                  data-summary="{{ b.summary }}" data-players="{{ b.players }}" data-volume="{{ b.book.volume }}"
+                  data-cover="{{ '/c/%d/book/%s/cover' % (ctx.cid, b.slug) if b.book.cover else '' }}"
+                  style="--w:{{ b.w }}px;--h:{{ b.h }}%;--c:{{ b.book.color }}" onclick="pickBook(this)"
+                  title="{{ b.title }}">
+            {% if b.book.cover %}<img class="spine-mark" src="/c/{{ ctx.cid }}/book/{{ b.slug }}/cover" alt="">{% endif %}
+            <span class="spine-title">{{ b.book.spine }}</span>
+            {% if b.book.volume %}<span class="spine-vol">{{ b.book.volume }}</span>{% endif %}
+          </button>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if current %}
+    <p class="underway">An adventure is under way: <strong>{{ current.title }}</strong> ·
+      <a href="/c/{{ ctx.cid }}/{{ 'run' if ctx.is_gm else 'me' }}">step back in →</a></p>
+    {% endif %}
+
+    <div id="lobby-people" hx-get="/c/{{ ctx.cid }}/lobby/people" hx-trigger="sse:lobby, lobby from:body" hx-swap="innerHTML">
+      {% include "partials/lobby_people.html" %}
+    </div>
+  </div>
+
+  <div class="book-card" id="book-card" hidden>
+    <button type="button" class="x card-close" onclick="closeCard()" aria-label="Close">×</button>
+    <div class="card-cover" id="card-cover"></div>
+    <div>
+      <h2 id="card-title"></h2>
+      <p class="small muted" id="card-players"></p>
+      <p id="card-summary"></p>
+      {% if ctx.is_gm %}
+      <button type="button" class="btn brass" id="card-open" onclick="openChosen()">Open this Book for everyone</button>
+      {% if current %}<p class="small faint">Opening {{ current.title }} again keeps your progress; another Book starts fresh.</p>{% endif %}
+      {% else %}
+      <p class="small faint">Only the GM can open a Book.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="launch-watch" hx-get="/c/{{ ctx.cid }}/lobby/launch" hx-trigger="sse:launch, launch from:body" hx-swap="innerHTML" hidden></div>
+
+  <div class="stage" id="stage" hidden aria-live="polite">
+    <div class="stage-flash"></div>
+    <div class="book3d" id="book3d">
+      <div class="b3-page b3-right"><div class="b3-panel" id="b3-panel"></div></div>
+      <div class="b3-cover" id="b3-cover">
+        <div class="b3-face b3-front"><div class="b3-logo" id="b3-logo"></div><div class="b3-cover-title" id="b3-cover-title"></div></div>
+        <div class="b3-face b3-back"><div class="b3-endpaper"><div class="ornament">❦</div><div class="b3-title" id="b3-title"></div>
+          <p class="b3-note">a Linking Book</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -267,7 +267,7 @@ async def join(request: Request, token: str):
     ctx.hub.publish(camp["id"], "party")
     await ctx.db.add_log(camp["id"], ctx.email, "note", {"text": f"{ctx.user['name']} joined the table."})
     ctx.hub.publish(camp["id"], "log")
-    return redirect(f"/c/{camp['id']}/me")
+    return redirect(f"/c/{camp['id']}/lobby")
 
 
 # =============================================================================================
@@ -1046,3 +1046,7 @@ async def gm_op(request: Request, cid: int, op: str):
 from . import play  # noqa: E402  (routes that build on the helpers above)
 
 app.include_router(play.router)
+
+from . import lobby  # noqa: E402
+
+app.include_router(lobby.router)

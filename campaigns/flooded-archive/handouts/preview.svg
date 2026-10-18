@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="fp-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b1d4a"/><stop offset=".6" stop-color="#7d5aa6"/><stop offset="1" stop-color="#e3a6c8"/></linearGradient>
+    <radialGradient id="fp-glow"><stop offset="0" stop-color="#fff6d0" stop-opacity=".9"/><stop offset="1" stop-color="#fff6d0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="400" height="200" fill="url(#fp-sky)"/>
+  <circle cx="110" cy="160" r="28" fill="#f0c7e6" opacity=".9"/>
+  <rect y="190" width="400" height="110" fill="#262c52"/>
+  <g fill="none" stroke="#9fb0e6" stroke-width="2" opacity=".7">
+    <path d="M-40 215 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"><animateTransform attributeName="transform" type="translate" values="0 0;40 0" dur="2.6s" repeatCount="indefinite"/></path>
+    <path d="M-40 245 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"><animateTransform attributeName="transform" type="translate" values="40 0;0 0" dur="3.2s" repeatCount="indefinite"/></path>
+    <path d="M-40 275 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"><animateTransform attributeName="transform" type="translate" values="0 0;40 0" dur="3.8s" repeatCount="indefinite"/></path>
+  </g>
+  <path d="M285 195 L293 95 L307 95 L315 195 Z" fill="#f5f0e3" stroke="#3a2816" stroke-width="2"/>
+  <rect x="289" y="82" width="22" height="15" fill="#f3d68e"/>
+  <g transform="translate(300 90)">
+    <path d="M0 -4 L-330 -50 L-330 50 L0 4 Z" fill="#fff6d0" opacity=".25"><animateTransform attributeName="transform" type="rotate" values="0;360" dur="6s" repeatCount="indefinite"/></path>
+    <circle r="26" fill="url(#fp-glow)"/>
+  </g>
+</svg>

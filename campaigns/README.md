@@ -18,6 +18,12 @@ Ids (`<slug>`, map, area, handout and scene ids) use lower-case letters, digits,
 title: The Flooded Archive
 summary: One-paragraph pitch shown when choosing an adventure.
 players: 2-5 explorers
+book:                       # optional: how it looks on the lobby shelf
+  spine: The Flooded Archive                # identifier on the spine
+  volume: "Vol. I"
+  color: "#1f4a5a"                          # leather color
+  cover: handouts/cover.svg                 # logo on the cover (and on the spine)
+  preview: handouts/preview.svg             # plays in the linking window when the Book opens (4:3, animated SVG/GIF)
 gm_intro: |                 # Markdown-lite: paragraphs, * bullets, **bold**, *italics*
   Shown on the GM Screen before the first scene.
 

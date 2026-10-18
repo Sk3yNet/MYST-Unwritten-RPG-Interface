@@ -1,0 +1,4 @@
+<div class="launch-data" data-seq="{{ launch.seq }}" data-slug="{{ mod.slug }}" data-title="{{ mod.title }}"
+     data-color="{{ mod.book.color }}" data-dest="{{ dest }}"
+     data-cover="{{ '/c/%d/book/%s/cover' % (ctx.cid, mod.slug) if mod.book.cover else '' }}"
+     data-preview="{{ '/c/%d/book/%s/preview' % (ctx.cid, mod.slug) if mod.book.preview else '' }}"></div>

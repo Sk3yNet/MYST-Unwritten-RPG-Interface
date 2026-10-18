@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS timeline (
 EMPTY_SCENE = {"name": "", "aspects": [], "boosts": [], "notes": "", "next_id": 1}
 # Adventure play state: loaded module, current scene, fog of war, inspect requests, pushed handouts.
 EMPTY_STATE = {"module": None, "scene_id": None, "map_id": None, "revealed": {}, "here": {}, "requests": [],
-               "next_req": 1, "handout": None, "handout_seq": 0, "shown": {}, "uploads": []}
+               "next_req": 1, "handout": None, "handout_seq": 0, "shown": {}, "uploads": [],
+               "ready": [], "launch": None, "launch_seq": 0}
 
 
 class DB:

@@ -6,6 +6,12 @@ summary: >
   back. The search leads through drowned reading rooms, a vault that answers only in D'ni numbers, and a Linking
   Book to a small, strange Age where the tide is kept by a lighthouse.
 players: 2-5 explorers
+book:                       # how it appears on the lobby shelf
+  spine: Flooded Archive
+  volume: "Vol. I"
+  color: "#1f4a5a"
+  cover: handouts/cover.svg
+  preview: handouts/preview.svg
 gm_intro: |
   Welcome to your first adventure! Here's the shape of it:
 

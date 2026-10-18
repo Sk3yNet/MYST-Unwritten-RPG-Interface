@@ -1,6 +1,9 @@
-VERSION = "0.2.1"
+VERSION = "0.3.0"
 
 CHANGES = [
+    ("0.3.0", "2026-10-18", "The Lobby: a curtained stage and a bookshelf of burned books where only playable "
+                            "adventures survive. Players light candles when ready; the GM picks a Book and every "
+                            "screen watches it leave the shelf, open to its Linking page, play its preview and link."),
     ("0.2.1", "2026-10-18", "New adventure: The Concordance (a hub and five elemental Ages, six maps, nineteen "
                             "handouts). Handouts can be turned over. Fix: the GM can click unrevealed map areas."),
     ("0.2.0", "2026-10-18", "Adventures: load a written campaign on the Desk and run it from the GM Screen (scene notes, "

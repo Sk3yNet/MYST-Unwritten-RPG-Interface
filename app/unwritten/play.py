@@ -116,9 +116,16 @@ async def load_module(request: Request, cid: int):
         state.update(module=None, scene_id=None, map_id=None, revealed={}, here={}, requests=[], handout=None)
         await ctx.db.save_state(cid, state)
         return redirect(f"/c/{cid}/gm")
+    await activate_module(ctx, slug)
+    return redirect(f"/c/{cid}/run")
+
+
+async def activate_module(ctx, slug: str) -> modules.Module:
+    """Make `slug` this table's adventure: fresh fog and requests, its NPCs added as hidden sheets."""
     mod = modules.get(slug)
     if not mod:
         raise HTTPError(400, "That adventure can't be loaded; check its campaign.yaml.")
+    cid, state = ctx.cid, ctx.camp["state"]
     state.update(module=slug, scene_id=None, map_id=None, revealed={}, here={}, requests=[], handout=None, shown={})
     for mid, m in mod.maps.items():
         for aid in m.get("start_revealed", []):
@@ -139,7 +146,7 @@ async def load_module(request: Request, cid: int):
         await ctx.db.create_character(cid, ctx.email, "npc", d)
     await ctx.db.add_log(cid, ctx.email, "note", {"system": True, "text": f"The GM opens a new adventure: {mod.title}."})
     ctx.hub.publish(cid, "party", "log", "map", "state")
-    return redirect(f"/c/{cid}/run")
+    return mod
 
 
 @router.post("/c/{cid}/run/scene")

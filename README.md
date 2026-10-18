@@ -49,12 +49,23 @@ Included:
 
 New adventures follow the format in `campaigns/README.md`.
 
+## The Lobby
+
+Each table has a pre-game lobby: velvet curtains open on a bookshelf of burned books, and the only intact ones are the
+adventures you can play, each with its identifier on the spine and its logo on the cover. Players light their
+candle when they're ready (that click also lets their browser play sound). When the GM chooses a Book, every
+screen at the table plays the same scene together: the Book slides off the shelf, opens to its Linking page, its
+preview plays in the panel for a few seconds, the linking sound plays (synthesized in the browser, no audio files),
+and everyone arrives: players on their own screen, the GM on the GM Screen. Choosing the adventure already under way
+keeps its progress; choosing another starts it fresh. An adventure's `book:` section sets its spine, color, cover
+and preview.
+
 ## How people join
 
 1. The GM signs in with Google and starts a campaign (**Begin a new journal**).
 2. On the **GM’s Desk** they copy the invite link and send it to players. **New link** retires the old one.
-3. A player opens the link, signs in with Google, and joins with one click. A campaign is invisible to anyone who
-   hasn’t joined it.
+3. A player opens the link, signs in with Google, and joins with one click, landing in the Lobby. A campaign is
+   invisible to anyone who hasn’t joined it.
 
 `ALLOWED_EMAIL` / `ALLOWED_DOMAINS` can narrow who may sign in at all, and `GM_EMAILS` who may start campaigns.
 
@@ -109,6 +120,7 @@ app/unwritten/rules.py      game mechanics (pure functions, no I/O): ladder, out
 app/unwritten/dni.py        base-25 numbers, the D'ni calendar and clock, script transcription
 app/unwritten/main.py       FastAPI routes, permissions, live updates
 app/unwritten/play.py       player screen, GM screen, fog of war, inspect requests, handouts
+app/unwritten/lobby.py      the pre-game lobby: bookshelf, candles, and the shared launch
 app/unwritten/modules.py    adventure loading and fog-of-war map rendering
 app/unwritten/suggest.py    rules-based suggestions for players and GM prompts
 campaigns/                  adventures (see campaigns/README.md)

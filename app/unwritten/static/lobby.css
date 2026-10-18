@@ -1,0 +1,189 @@
+/* The lobby: a curtained stage, a bookshelf of burned books, candles, and the launch of a Linking Book. */
+main.lobby-main { max-width: none; padding: 0; }
+.theater {
+  position: relative; overflow: hidden; min-height: calc(100vh - 64px);
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(255, 190, 110, .16), transparent 55%),
+    radial-gradient(ellipse at 50% 120%, rgba(0, 0, 0, .8), transparent 60%),
+    #140d08;
+  color: #ecdcb8;
+}
+
+/* ---- curtains ----------------------------------------------------------------------------------------------- */
+.curtain {
+  position: absolute; top: 0; bottom: 0; width: 51%; z-index: 20; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, .55), transparent 12%, transparent 88%, rgba(0, 0, 0, .55)),
+    repeating-linear-gradient(90deg, #5e0f12 0 18px, #8e1c1f 30px, #b02a2a 38px, #7a1518 52px, #5e0f12 70px);
+  box-shadow: inset 0 -40px 60px rgba(0, 0, 0, .6);
+  transition: transform 2.6s cubic-bezier(.65, 0, .25, 1);
+}
+.curtain::after {  /* gold fringe along the hem */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 14px;
+  background: repeating-linear-gradient(90deg, #c49a45 0 3px, #8c6a2c 3px 6px);
+}
+.curtain.left { left: 0; transform-origin: left center; }
+.curtain.right { right: 0; transform-origin: right center; }
+.theater.open .curtain.left { transform: translateX(-84%) skewY(-1deg); animation: sway-l 7s 2.6s ease-in-out infinite; }
+.theater.open .curtain.right { transform: translateX(84%) skewY(1deg); animation: sway-r 8s 2.6s ease-in-out infinite; }
+.theater.closing .curtain.left { transform: translateX(0); animation: none; transition-duration: 1.6s; }
+.theater.closing .curtain.right { transform: translateX(0); animation: none; transition-duration: 1.6s; }
+@keyframes sway-l { 50% { transform: translateX(-82%) skewY(-.5deg); } }
+@keyframes sway-r { 50% { transform: translateX(82%) skewY(.6deg); } }
+.valance {
+  position: absolute; top: 0; left: 0; right: 0; height: 54px; z-index: 21; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60px 30px at 60px 54px, transparent 58%, #6a1114 60%) repeat-x,
+    linear-gradient(#8e1c1f, #5e0f12);
+  background-size: 120px 54px, 100% 100%;
+  border-bottom: 4px solid #c49a45; box-shadow: 0 6px 18px rgba(0, 0, 0, .6);
+}
+
+/* ---- the stage and the bookcase ----------------------------------------------------------------------------- */
+.stagefront { position: relative; z-index: 5; padding: 76px 5vw 40px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; justify-items: center; }
+.lobby-intro { font-family: var(--display); font-style: italic; font-size: 1.2rem; color: #e9d8b4; margin: 0; text-align: center; }
+.underway { margin: 0; color: #e9d8b4; } .underway a { color: #f3d68e; }
+.bookcase {
+  width: min(1100px, 100%); min-width: 0; box-sizing: border-box; padding: 18px 18px 6px; border-radius: 4px;
+  background: linear-gradient(90deg, #3b2412, #5a3a1e 8%, #4a2f18 50%, #5a3a1e 92%, #3b2412);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .7), inset 0 0 0 6px #2a190c;
+}
+.shelf {
+  display: flex; align-items: flex-end; justify-content: center; gap: 3px; height: 204px; padding: 0 10px; margin-bottom: 14px; overflow: hidden; min-width: 0;
+  background: linear-gradient(#1a0f07, #23150a 70%, #2e1c0e);
+  border-bottom: 14px solid #6b4423; box-shadow: inset 0 14px 20px rgba(0, 0, 0, .7), 0 6px 0 #3b2412;
+}
+.bk { flex: 0 0 var(--w); height: var(--h); border-radius: 3px 3px 1px 1px; transform: rotate(var(--lean)); transform-origin: bottom center; position: relative; }
+.bk.burned {
+  background:
+    linear-gradient(180deg, #050302 0%, transparent 22%),
+    linear-gradient(90deg, rgba(0, 0, 0, .55), transparent 25%, transparent 75%, rgba(0, 0, 0, .6)),
+    var(--hue);
+  filter: saturate(.6);
+}
+.bk.burned .band { position: absolute; left: 0; right: 0; top: 62%; height: 6px; background: #4a3a2a; opacity: .6; }
+.bk.burned.ember::after {
+  content: ""; position: absolute; left: 10%; right: 10%; top: 0; height: 30%;
+  background: radial-gradient(circle at 30% 10%, #ff8a3d 0 2px, transparent 4px), radial-gradient(circle at 70% 25%, #ffb35c 0 1.5px, transparent 3px);
+  animation: ember 2.8s ease-in-out infinite;
+}
+@keyframes ember { 50% { opacity: .25; } }
+.bk.live {
+  cursor: pointer; border: 0; padding: 6px 0; color: #f3d68e; font: inherit;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 4px;
+  background:
+    linear-gradient(180deg, transparent 6%, #c49a45 6% 8%, transparent 8% 92%, #c49a45 92% 94%, transparent 94%),
+    linear-gradient(90deg, rgba(0, 0, 0, .45), rgba(255, 255, 255, .12) 30%, rgba(0, 0, 0, .1) 60%, rgba(0, 0, 0, .5)),
+    var(--c);
+  box-shadow: 0 0 18px rgba(243, 214, 142, .25), 0 0 0 1px rgba(0, 0, 0, .6);
+  transition: transform .35s ease, box-shadow .35s ease;
+  animation: survivor 4s ease-in-out infinite;
+}
+@keyframes survivor { 50% { box-shadow: 0 0 26px rgba(243, 214, 142, .45), 0 0 0 1px rgba(0, 0, 0, .6); } }
+.bk.live:hover, .bk.live:focus-visible, .bk.live.peek { transform: translateY(-10px); outline: none; }
+.bk.live.pulled { transform: translateY(-14px) scale(1.12); z-index: 3; box-shadow: 0 0 40px rgba(243, 214, 142, .8); }
+.bk.live.gone { visibility: hidden; }
+.spine-mark { width: 28px; height: 28px; flex: none; object-fit: contain; margin-top: 10px; filter: drop-shadow(0 0 2px rgba(0, 0, 0, .7)); }
+.spine-title {
+  writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-family: var(--display-sc);
+  font-size: .9rem; letter-spacing: .02em; line-height: 1; text-align: center; display: block;
+  flex: 1 1 0; min-height: 0; overflow: hidden; text-shadow: 0 1px 1px rgba(0, 0, 0, .8);
+}
+.spine-vol { flex: none; font-family: var(--display); font-size: .75rem; margin-bottom: 10px; border-top: 1px solid #c49a45; padding-top: 2px; }
+@media (max-width: 720px) {
+  .stagefront { padding: 70px 38px 30px; }
+  .bookcase { padding: 10px 8px 4px; }
+  .lobby-intro { font-size: 1rem; }
+  .shelf { height: 196px; gap: 2px; }
+  .bk.burned { flex-basis: calc(var(--w) * .6); }
+  .bk.live { flex-basis: 40px; }
+  .spine-mark { width: 26px; height: 26px; }
+  .spine-title { font-size: .78rem; }
+}
+
+/* ---- candles: who's ready ---------------------------------------------------------------------------------- */
+.candles { display: flex; flex-wrap: wrap; gap: 1.2rem; justify-content: center; }
+.candle-slot { display: grid; justify-items: center; gap: .3rem; min-width: 70px; }
+.candle { position: relative; width: 22px; height: 64px; }
+.candle .wax { position: absolute; bottom: 0; left: 0; right: 0; height: 52px; border-radius: 3px; background: linear-gradient(90deg, #d8cdb0, #f4ecd8 45%, #c9bd9c); }
+.candle .flame {
+  position: absolute; left: 50%; bottom: 52px; width: 12px; height: 20px; margin-left: -6px; border-radius: 50% 50% 45% 45% / 70% 70% 35% 35%;
+  background: radial-gradient(circle at 50% 75%, #fff6d0, #ffcc5c 45%, #ff7a1a 80%, transparent 82%);
+  opacity: 0; transform-origin: 50% 100%; transition: opacity .6s;
+}
+.candle-slot.lit .flame { opacity: 1; animation: flicker 1.3s ease-in-out infinite alternate; box-shadow: 0 -10px 30px rgba(255, 190, 90, .55); }
+@keyframes flicker { 0% { transform: scale(1, 1) rotate(-2deg); } 50% { transform: scale(.92, 1.08) rotate(2deg); } 100% { transform: scale(1.04, .95) rotate(-1deg); } }
+.candle-name { font-size: .9rem; color: #e9d8b4; }
+.candle-slot:not(.lit) .candle-name { color: #9a8160; }
+.ready-row { display: flex; gap: .8rem; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: .6rem; color: #e9d8b4; }
+.ready-row .btn.plain { color: #e9d8b4; border-color: rgba(233, 216, 180, .35); }
+
+/* ---- the chosen book's card -------------------------------------------------------------------------------- */
+.book-card {
+  position: fixed; z-index: 30; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(620px, calc(100% - 32px));
+  display: grid; grid-template-columns: 150px 1fr; gap: 1rem; padding: 1.1rem 1.2rem; color: var(--ink);
+  background: #ecdcb8; border: 1px solid #8c6a2c; border-radius: 3px; box-shadow: 0 20px 50px rgba(0, 0, 0, .7);
+}
+.book-card[hidden] { display: none; }
+.book-card h2 { margin: 0 0 .2rem; }
+.card-close { position: absolute; top: 6px; right: 8px; font-size: 1.4rem; }
+.card-cover { aspect-ratio: 3 / 4; border-radius: 3px; display: grid; place-items: center; background: var(--c, #5b3518); box-shadow: inset 0 0 0 4px rgba(0, 0, 0, .25), inset 0 0 0 7px #c49a45; }
+.card-cover img { width: 70%; }
+@media (max-width: 560px) { .book-card { grid-template-columns: 1fr; } .card-cover { width: 120px; } }
+
+/* ---- the launch: a Linking Book on the stage ----------------------------------------------------------------- */
+.stage { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; perspective: 2000px; background: rgba(5, 3, 2, 0); transition: background 1.2s; }
+.stage[hidden] { display: none; }
+.stage.dim { background: rgba(5, 3, 2, .82); }
+.stage-flash { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at 50% 50%, #fffbe8, rgba(200, 185, 255, .85) 30%, rgba(255, 255, 255, .95) 70%); }
+.stage.linking .stage-flash { animation: linkflash 2.4s ease-in forwards; }
+@keyframes linkflash { 0% { opacity: 0; } 55% { opacity: .85; } 100% { opacity: 1; } }
+.book3d {
+  --W: min(300px, 42vw); --H: calc(var(--W) * 1.38);
+  position: relative; width: calc(var(--W) * 2); height: var(--H); transform-style: preserve-3d;
+  transform: translateX(calc(var(--W) / -2));
+}
+.book3d.fly { transition: transform 1.3s cubic-bezier(.3, .1, .2, 1); }
+.book3d.open { transform: translateX(0); transition: transform 1.4s ease-in-out; }
+/* The plunge: bring the right page's panel to the center, then fall into it. */
+.book3d.linking { transform: scale(3.4) translateX(calc(var(--W) / -2)); transition: transform 2.4s cubic-bezier(.55, 0, .9, .4); }
+.b3-page {
+  position: absolute; top: 0; width: var(--W); height: var(--H); box-sizing: border-box; padding: 8% 9%;
+  background: linear-gradient(90deg, #d9c69c, #efe2c2 12%, #ecdcb8 88%, #d9c69c); color: var(--ink);
+  box-shadow: inset 0 0 30px rgba(120, 80, 30, .35);
+}
+.b3-right { left: var(--W); border-radius: 0 6px 6px 0; display: grid; place-items: center; }
+.b3-title { font-family: var(--display); font-size: clamp(1.1rem, 2.6vw, 1.8rem); }
+.b3-note { font-family: var(--display); font-style: italic; color: var(--ink-soft); }
+.b3-panel {
+  width: 100%; aspect-ratio: 4 / 3; background: #0c0a14; border: 3px solid #3a2816; border-radius: 4px; overflow: hidden;
+  box-shadow: 0 0 0 1px #c49a45, 0 0 24px rgba(180, 160, 255, .25); position: relative;
+}
+.b3-panel img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 1.6s; }
+.b3-panel.playing img { opacity: 1; }
+.b3-panel.playing { animation: panelglow 2.2s ease-in-out infinite; }
+@keyframes panelglow { 50% { box-shadow: 0 0 0 1px #c49a45, 0 0 44px rgba(200, 185, 255, .6); } }
+.b3-cover {
+  position: absolute; top: -4px; left: var(--W); width: calc(var(--W) + 4px); height: calc(var(--H) + 8px);
+  transform-origin: left center; transform-style: preserve-3d; transition: transform 1.4s ease-in-out;
+}
+.book3d.open .b3-cover { transform: rotateY(-180deg); }
+.b3-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 0 8px 8px 0; }
+.b3-front {
+  display: grid; place-items: center; align-content: center; gap: 1.2rem;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, .5), rgba(255, 255, 255, .1) 8%, transparent 20%, rgba(0, 0, 0, .3)),
+    var(--c, #5b3518);
+  box-shadow: inset 0 0 0 10px rgba(0, 0, 0, .18), inset 0 0 0 13px #c49a45, 0 18px 40px rgba(0, 0, 0, .6);
+}
+.b3-logo { width: 58%; aspect-ratio: 1; display: grid; place-items: center; }
+.b3-logo img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .6)); }
+.b3-cover-title { font-family: var(--display-sc); color: #f3d68e; font-size: clamp(1rem, 2.4vw, 1.5rem); letter-spacing: .05em; text-align: center; padding: 0 10%; text-shadow: 0 1px 2px rgba(0, 0, 0, .8); }
+.b3-back { transform: rotateY(180deg); background: #6b4423; border-radius: 8px 0 0 8px; padding: 10px; box-sizing: border-box; }
+.b3-endpaper {  /* the title page, printed on the inside of the cover */
+  height: 100%; display: grid; align-content: center; justify-items: center; text-align: center; padding: 0 10%;
+  background: linear-gradient(90deg, #d9c69c, #ecdcb8 12%, #efe2c2 88%, #d9c69c); color: var(--ink); border-radius: 4px 0 0 4px;
+  box-shadow: inset 0 0 30px rgba(120, 80, 30, .35);
+}
+@media (prefers-reduced-motion: reduce) { .curtain, .book3d, .b3-cover { transition-duration: .01s !important; animation: none !important; } }

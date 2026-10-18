@@ -21,7 +21,7 @@
     <span class="camp-name">{{ ctx.camp.name }}</span>
     {% set c = ctx.camp.id %}
     {% set gm_tabs = [("run", "/c/%d/run" % c, "GM Screen")] if ctx.is_gm else [] %}
-    {% for key, href, label in gm_tabs + [("me", "/c/%d/me" % c, "My Explorer"), ("table", "/c/%d" % c, "The Table"),
+    {% for key, href, label in [("lobby", "/c/%d/lobby" % c, "Lobby")] + gm_tabs + [("me", "/c/%d/me" % c, "My Explorer"), ("table", "/c/%d" % c, "The Table"),
                                 ("party", "/c/%d/party" % c, "Sheets"),
                                 ("deduction", "/c/%d/deduction" % c, "Deduction"), ("dni", "/c/%d/dni" % c, "D’ni Lore"),
                                 ("rules", "/c/%d/rules" % c, "Rules")] %}

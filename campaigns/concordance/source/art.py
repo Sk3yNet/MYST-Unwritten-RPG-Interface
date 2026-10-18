@@ -559,6 +559,44 @@ def all_links():
             '<path d="M180 270 L180 330 A 40 40 0 0 0 260 330 L260 270" fill="none" stroke="#c9d1f0" stroke-width="3" opacity=".4"/>')
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# Lobby book: cover logo and linking-window preview
+# ---------------------------------------------------------------------------------------------------------------
+def cover_logo():
+    """Five rings with the five glyphs around them: the Concordance, in gold leaf."""
+    gold = "#f3d68e"
+    parts = [f'<circle cx="100" cy="100" r="{r}" fill="none" stroke="{gold}" stroke-width="{3 if r < 70 else 4}" '
+             f'opacity="{.55 + r / 300:.2f}"/>' for r in (14, 28, 42, 56, 70)]
+    for i, (e, *_r) in enumerate(AGES):
+        a = math.radians(-90 + i * 72)
+        parts.append(glyph(e, 100 + 86 * math.cos(a) - 13, 100 + 86 * math.sin(a) - 13, 26, gold, 6))
+    parts.append(f'<circle cx="100" cy="100" r="5" fill="{gold}"/>')
+    (ROOT / "handouts" / "cover.svg").write_text(
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">{"".join(parts)}</svg>\n', encoding="utf-8")
+
+
+def preview():
+    """The linking window: the Sanctuary's dome sky turning above the five rings, one Age-color after another."""
+    rings = "".join(
+        f'<g transform="translate(200 300)"><ellipse rx="{40 + i * 26}" ry="{12 + i * 8}" fill="none" stroke="#c49a45" '
+        f'stroke-width="3" opacity=".85"><animateTransform attributeName="transform" type="rotate" '
+        f'values="0;{360 if i % 2 else -360}" dur="{14 + i * 4}s" repeatCount="indefinite"/></ellipse></g>'
+        for i in range(5))
+    stars = "".join(
+        constellation(c, 200 + 120 * math.cos(math.radians(a)), 120 + 60 * math.sin(math.radians(a)), .9, True,
+                      "#c9d1f0") for c, a in DOME_ANGLE.items())
+    hues = ";".join(["#24405e", "#5e2412", "#5a7090", "#3a5a2a", "#1c2448", "#24405e"])
+    body = (f'<rect width="400" height="300" fill="#24405e"><animate attributeName="fill" values="{hues}" dur="12s" '
+            f'repeatCount="indefinite"/></rect>'
+            f'<radialGradient id="pv-glow"><stop offset="0" stop-color="#fff6d0" stop-opacity=".5"/>'
+            f'<stop offset="1" stop-color="#fff6d0" stop-opacity="0"/></radialGradient>'
+            f'<circle cx="200" cy="300" r="160" fill="url(#pv-glow)"/>'
+            f'<g><animateTransform attributeName="transform" type="rotate" values="0 200 300;360 200 300" dur="60s" '
+            f'repeatCount="indefinite"/>{stars}</g>{rings}')
+    (ROOT / "handouts" / "preview.svg").write_text(
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">{body}</svg>\n', encoding="utf-8")
+
+
 if __name__ == "__main__":
     (ROOT / "maps").mkdir(exist_ok=True)
     (ROOT / "handouts").mkdir(exist_ok=True)
@@ -566,6 +604,6 @@ if __name__ == "__main__":
     for e, *_rest in AGES:
         journal(e)
     ice_mirrors(); fire_molds(); air_map_handout(); earth_calendar(); water_alphabet()
-    concordance_diagram(); dome(False); dome(True); letter(); all_links()
+    concordance_diagram(); dome(False); dome(True); letter(); all_links(); cover_logo(); preview()
     print("maps:", sorted(p.name for p in (ROOT / "maps").iterdir()))
     print("handouts:", sorted(p.name for p in (ROOT / "handouts").iterdir()))
