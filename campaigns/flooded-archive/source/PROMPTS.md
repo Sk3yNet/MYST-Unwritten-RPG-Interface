@@ -28,7 +28,7 @@ Add for the hall (the base image has no doors, and "glowing lake" can come back 
 
 > The archive stands in the still, dark WATER of a vast underground lake, NOT lava: the water glows faintly orange
 > from light deep beneath its surface. Every room is connected by visible open doorways or arches in its walls:
-> the landing to the reading hall and to the pump room; the reading hall to the pump room's neighbour the study
+> the landing to the reading hall and to the pump room; the reading hall to the study above it
 > (by the steps at its far end) and to the collapsed stacks; the pump room to the study; the study and the stacks
 > each to the vault room; and the great round stone door stands upright in the wall between the vault room and the
 > small alcove beyond it, closed.
