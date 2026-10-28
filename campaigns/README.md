@@ -117,4 +117,7 @@ maps:
   every revealed shape stays fogged.
 * **Players never receive the hidden parts.** The server paints the fog into their copy of the picture before
   sending it, so opening the image on its own shows no more than the map does. The GM gets the original.
+* **Making the art:** `python3 campaigns/tools/base_images.py <adventure>` writes a text-free base image of each
+  drawn map to `source/prompts/`; give one to an image generator with its prompt from `source/PROMPTS.md` (see
+  The Concordance's for the full set) so the painting keeps the areas in place.
 * Bigger pictures look sharper but load slower; about 1600–2400 pixels wide is plenty.
