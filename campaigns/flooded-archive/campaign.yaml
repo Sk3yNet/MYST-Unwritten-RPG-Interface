@@ -166,13 +166,17 @@ maps:
 
   - id: seleshva
     name: The Age of Seleshva
-    file: maps/seleshva.svg
+    file: maps/seleshva.jpg      # painted with ChatGPT from source/prompts/seleshva-sketch.jpg; seleshva.svg is the drawn fallback
+    fog: "#4a3f6e"
+    legend: [30, 95]            # top-left corner of the key, clear of the pier
+    markers: true
+    clear: ["0,0 1500,0 1500,80 0,80"]   # the horizon and the violet sun
     start_revealed: [pier]
     areas:
       - id: pier
         name: The Arrival Pier
         teaser: A stone pier
-        shape: "70,430 280,400 300,620 90,650"
+        shape: "80,668 370,642 380,700 255,732 255,962 150,968 138,742 84,722"
         read_aloud: >
           You arrive on a stone pier slick with spray. The sea is the color of a bruise; the tide is going out, and
           not slowly. A violet sun hangs low and does not seem to move.
@@ -186,7 +190,7 @@ maps:
       - id: reeds
         name: The Glass Reeds
         teaser: Glittering grass
-        shape: "290,330 560,300 560,560 300,580"
+        shape: "330,592 445,470 610,398 760,388 925,398 965,560 885,650 875,790 700,838 555,835 425,795 345,660"
         read_aloud: >
           Reeds of something like glass ring softly in the wind, a thousand small bells. Paths have been trodden
           through them, some by boots, some by something smaller.
@@ -200,7 +204,7 @@ maps:
       - id: camp
         name: Ilse's Camp
         teaser: Smoke on the ridge
-        shape: [330, 90, 250, 200]
+        shape: "435,195 555,92 705,108 860,168 1000,285 960,335 800,358 640,385 480,362 418,282"
         read_aloud: >
           A tarp lean-to on a ridge, a cold fire ring, and sheets of notes pinned under stones, covered in tide
           tables and sketches of a tower.
@@ -215,7 +219,7 @@ maps:
       - id: pools
         name: The Tide Pools
         teaser: Wet rocks below
-        shape: [560, 430, 250, 200]
+        shape: "872,612 1025,588 1185,598 1305,652 1368,780 1305,935 1170,965 1000,925 895,862 828,800 858,700"
         read_aloud: >
           The retreating sea has left a staircase of pools, each with brass rings set in its floor. In the third,
           something rectangular glints. Someone is sitting on the rocks above it, soaked and shivering.
@@ -231,7 +235,7 @@ maps:
       - id: lighthouse
         name: The Lighthouse
         teaser: A white tower
-        shape: [720, 90, 220, 260]
+        shape: "1085,238 1250,105 1365,135 1465,220 1475,430 1445,625 1305,612 1175,522 1115,452 1000,342 1075,298"
         read_aloud: >
           A white tower of fitted stone, its lamp turning even in daylight. Gears inside it tick like a clock, and
           their sound carries down to the sea.

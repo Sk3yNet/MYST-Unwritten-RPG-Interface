@@ -1,6 +1,8 @@
-VERSION = "0.4.0"
+VERSION = "0.4.1"
 
 CHANGES = [
+    ("0.4.1", "2026-10-28", "The Age of Seleshva is now a painted map. Picture maps can keep scenery clear of fog "
+                            "(a horizon, open sky) and place their legend where it hides nothing."),
     ("0.4.0", "2026-10-28", "Picture maps: a map can be a painted or generated image (PNG, JPEG, WebP). Players' copies "
                             "are fogged on the server; numbered markers and the legend are added on top. The GM "
                             "Screen's ✎ Trace tool outlines areas for campaign.yaml."),

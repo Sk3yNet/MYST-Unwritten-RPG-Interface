@@ -101,6 +101,8 @@ def load_module(path: Path) -> Module:
         if not f.exists():
             raise ModuleError(f"map file {m['file']} not found")
         m = {"name": m["id"], "start_revealed": [], **m, "areas": areas}
+        # Shapes that are never fogged (a horizon, open sky): scenery that gives nothing away.
+        m["clear"] = [_points(c) for c in m.get("clear", [])]
         if f.suffix.lower() in RASTER_MAPS:
             # Area shapes are in the picture's own pixels, so they can be traced straight off it.
             with Image.open(f) as im:
@@ -217,9 +219,8 @@ def map_picture(mod: Module, map_id: str, revealed: set[str] | None) -> tuple[by
         w, h = im.size
         mask = Image.new("L", im.size, 255)
         draw = ImageDraw.Draw(mask)
-        for aid in key[3]:
-            pts = [tuple(float(v) for v in p.split(",")) for p in mmap["areas"][aid]["points"].split()]
-            draw.polygon(pts, fill=0)
+        for points in [mmap["areas"][aid]["points"] for aid in key[3]] + mmap["clear"]:
+            draw.polygon([tuple(float(v) for v in p.split(",")) for p in points.split()], fill=0)
         # Soft edges, as in the drawn maps, but the fog stays solid well inside hidden areas.
         mask = mask.filter(ImageFilter.GaussianBlur(max(w, h) / 110))
         fog = Image.new("RGB", im.size, mmap.get("fog") or "#cbb68c")
@@ -248,6 +249,8 @@ def _picture_root(mmap: dict, image_url: str) -> ET.Element:
         root.set("data-fog", mmap["fog"])
     if mmap.get("legend"):
         root.set("data-legend", "on")
+        if isinstance(mmap["legend"], (list, tuple)) and len(mmap["legend"]) == 2:
+            root.set("data-legend-at", "{:g},{:g}".format(*(float(v) for v in mmap["legend"])))
     ET.SubElement(root, _q("image"), {"href": image_url, "x": "0", "y": "0", "width": str(w), "height": str(h),
                                       "preserveAspectRatio": "none"})
     return root
@@ -288,9 +291,8 @@ def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: 
     ET.SubElement(mask, _q("rect"), {"x": f"{x:g}", "y": f"{y:g}", "width": f"{w:g}", "height": f"{h:g}",
                                      "fill": "white"})
     holes = ET.SubElement(mask, _q("g"), {"filter": f"url(#{pre}-soft)"})
-    for aid in revealed:
-        if aid in mmap["areas"]:
-            ET.SubElement(holes, _q("polygon"), {"points": mmap["areas"][aid]["points"], "fill": "black"})
+    for points in [mmap["areas"][a]["points"] for a in revealed if a in mmap["areas"]] + mmap["clear"]:
+        ET.SubElement(holes, _q("polygon"), {"points": points, "fill": "black"})
     fog = ET.SubElement(root, _q("g"), {"class": "fog", "mask": f"url(#{pre}-mask)", "pointer-events": "none",
                                         "opacity": "0.4" if gm else "1"})
     # A map may choose its mist color (an icy blue, smoke over lava…); parchment otherwise.
@@ -360,6 +362,8 @@ def _legend(root, mmap: dict, revealed: set[str], gm: bool, x: float, y: float, 
     height = pad * 2 + lh * len(rows)
     k = h / 700  # legends are laid out for a 700-high map; picture maps scale them to their own size
     lx, ly = x + 22 * k, y + h - (22 + height) * k
+    if root.get("data-legend-at"):  # a picture map may move it off its scenery: top-left corner, in its pixels
+        lx, ly = (float(v) for v in root.get("data-legend-at").split(","))
     g = ET.SubElement(root, _q("g"), {"class": "map-legend-box", "pointer-events": "none",
                                       "transform": f"translate({lx:g} {ly:g}) scale({k:g})"})
     lx = ly = 0

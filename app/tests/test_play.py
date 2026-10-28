@@ -248,7 +248,7 @@ def test_picture_map_is_fogged_on_the_server(tmp_path):
     Image.new("RGB", (400, 200), "#ff0000").save(d / "maps" / "art.png")
     (d / "campaign.yaml").write_text(
         "title: Painted\nmaps:\n  - id: m\n    file: maps/art.png\n    fog: '#0000ff'\n    legend: true\n"
-        "    markers: true\n    areas:\n      - {id: a, name: Seen Place, shape: [0, 0, 200, 200], exits: [b]}\n"
+        "    markers: true\n    clear: [[0, 0, 400, 10]]\n    areas:\n      - {id: a, name: Seen Place, shape: [0, 0, 200, 200], exits: [b]}\n"
         "      - {id: b, name: Secret Place, shape: [200, 0, 200, 200]}\n")
     mod = modules.load_module(d)
     assert mod.maps["m"]["size"] == (400, 200)
@@ -260,6 +260,8 @@ def test_picture_map_is_fogged_on_the_server(tmp_path):
     assert r > 200 and b < 60          # inside the revealed area: the art
     r, g, b = im.getpixel((380, 100))
     assert b > 200 and r < 60          # deep in the hidden area: solid fog
+    r, g, b = im.getpixel((380, 1))
+    assert r > 150 and b < 120         # the always-clear strip along the top
     assert modules.map_picture(mod, "m", None)[0] == (d / "maps" / "art.png").read_bytes()  # the GM: the original
     svg = modules.render_map(mod, "m", {"a"}, gm=False, image_url="/pic?v=1")
     assert 'href="/pic?v=1"' in svg and 'viewBox="0 0 400 200"' in svg

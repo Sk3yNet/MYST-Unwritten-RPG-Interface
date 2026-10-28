@@ -103,8 +103,9 @@ maps:
     name: The Sky Monastery
     file: maps/sky-monastery.jpg
     fog: "#eef3f8"            # the mist's color (parchment if left out)
-    legend: true              # a numbered key of discovered areas in the corner
+    legend: true              # a numbered key of discovered areas, bottom left; or [x, y] to place its top-left corner
     markers: true             # numbered medallions on the areas (painted art rarely has the right numbers)
+    clear: ["0,0 1600,0 1600,90 0,90"]   # optional: shapes never fogged (a horizon, open sky)
     areas:
       - id: wheels
         shape: "536,768 947,827 ..."   # in the picture's own pixels
