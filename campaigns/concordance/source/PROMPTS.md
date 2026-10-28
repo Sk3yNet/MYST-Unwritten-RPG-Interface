@@ -6,8 +6,14 @@ expects it. (Regenerate the bases with `python3 campaigns/tools/base_images.py c
 
 ## How to use them
 
-* **ChatGPT / DALL·E:** upload the base image, paste the shared style and then the map's prompt, and ask for a
-  landscape image (1536 × 1024).
+* **ChatGPT:** upload the base image, paste the shared style and then the map's prompt, and ask for a landscape
+  image (1536 × 1024). Tips:
+  * Make all the maps of one adventure in **one chat**, and once one looks right, say "same painting style as the
+    previous map" so the set matches.
+  * To fix part of a picture, **edit it rather than regenerate**: open the image, use the selection tool to brush
+    over the problem (a square coastline, stray text) and describe only that change, e.g. "make this a natural
+    rocky coastline" or "join these two islands with a low rock causeway". The rest stays as it is.
+  * If it adds words or numbers, select them and say "remove the text, paint the scenery underneath".
 * **Midjourney:** upload the base image, use it as an image prompt with a high weight (`--iw 2`), add `--ar 10:7`,
   then paste the shared style and the map's prompt. Once one map looks right, use it as a style reference (`--sref`)
   for the other five so the set matches.
