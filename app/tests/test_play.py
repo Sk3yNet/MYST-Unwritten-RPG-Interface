@@ -31,9 +31,9 @@ def test_bundled_modules_are_valid(slug):
     m = modules.get(slug)
     assert m and not m.data.get("error"), modules.available()[slug].data.get("error")
     for mp in m.maps.values():
-        svg = m.file(mp["file"]).read_text()
+        svg = "" if modules.is_raster(mp) else m.file(mp["file"]).read_text()
         for aid, a in mp["areas"].items():
-            assert f'data-area="{aid}"' in svg, (mp["id"], aid)
+            assert modules.is_raster(mp) or f'data-area="{aid}"' in svg, (mp["id"], aid)
             for hid in a["handouts"]:
                 assert hid in m.handouts, (aid, hid)
         for aid in mp["start_revealed"]:
@@ -238,3 +238,32 @@ def test_illustrated_map_legend_and_mist():
     assert svg.index('class="fog"') < svg.index('class="map-banner"')  # the title stays above the fog
     gm = modules.render_map(m, "ice", set(), gm=True)
     assert "6. The Great Dome" in gm
+
+
+def test_picture_map_is_fogged_on_the_server(tmp_path):
+    """A painted map: players' copy of the picture has unrevealed areas painted over before it is sent."""
+    from PIL import Image
+    d = tmp_path / "painted"
+    (d / "maps").mkdir(parents=True)
+    Image.new("RGB", (400, 200), "#ff0000").save(d / "maps" / "art.png")
+    (d / "campaign.yaml").write_text(
+        "title: Painted\nmaps:\n  - id: m\n    file: maps/art.png\n    fog: '#0000ff'\n    legend: true\n"
+        "    markers: true\n    areas:\n      - {id: a, name: Seen Place, shape: [0, 0, 200, 200], exits: [b]}\n"
+        "      - {id: b, name: Secret Place, shape: [200, 0, 200, 200]}\n")
+    mod = modules.load_module(d)
+    assert mod.maps["m"]["size"] == (400, 200)
+    body, kind = modules.map_picture(mod, "m", {"a"})
+    assert kind == "image/jpeg"
+    from io import BytesIO
+    im = Image.open(BytesIO(body)).convert("RGB")
+    r, g, b = im.getpixel((20, 100))
+    assert r > 200 and b < 60          # inside the revealed area: the art
+    r, g, b = im.getpixel((380, 100))
+    assert b > 200 and r < 60          # deep in the hidden area: solid fog
+    assert modules.map_picture(mod, "m", None)[0] == (d / "maps" / "art.png").read_bytes()  # the GM: the original
+    svg = modules.render_map(mod, "m", {"a"}, gm=False, image_url="/pic?v=1")
+    assert 'href="/pic?v=1"' in svg and 'viewBox="0 0 400 200"' in svg
+    assert "Seen Place" in svg and "Secret Place" not in svg
+    assert modules.picture_version(mod, "m", {"a"}) != modules.picture_version(mod, "m", {"a", "b"})
+    gm = modules.render_map(mod, "m", {"a"}, gm=True, image_url="/pic")
+    assert "Secret Place" in gm

@@ -453,12 +453,32 @@ async def me_frag(request: Request, cid: int, name: str):
     return page(request, f"partials/me_{name}.html", ctx, **data)
 
 
+def _picture_url(ctx, mod, map_id, gm: bool) -> str:
+    if not modules.is_raster(mod.maps[map_id]):
+        return ""
+    seen = None if gm else _revealed(ctx.camp["state"], map_id)
+    return f"/c/{ctx.camp['id']}/mapimg/{map_id}?v={modules.picture_version(mod, map_id, seen)}"
+
+
 def _player_svg(ctx, mod, map_id) -> str:
     if not mod or not map_id:
         return ""
     state = ctx.camp["state"]
     mine = {r["area"] for r in state["requests"] if r["map"] == map_id and r["status"] in ("pending", "roll")}
-    return modules.render_map(mod, map_id, _revealed(state, map_id), gm=False, pending=mine)
+    return modules.render_map(mod, map_id, _revealed(state, map_id), gm=False, pending=mine,
+                              image_url=_picture_url(ctx, mod, map_id, gm=False))
+
+
+@router.get("/c/{cid}/mapimg/{map_id}")
+async def map_image(request: Request, cid: int, map_id: str):
+    """A picture map. Players get it with every unrevealed area fogged on the server; the GM gets the original."""
+    ctx = await camp_ctx(request, cid)
+    mod = _mod(ctx)
+    if not mod or map_id not in mod.maps or not modules.is_raster(mod.maps[map_id]):
+        raise HTTPError(404, "No such map.")
+    seen = None if ctx.is_gm else _revealed(ctx.camp["state"], map_id)
+    body, kind = modules.map_picture(mod, map_id, seen)
+    return Response(body, media_type=kind, headers={"Cache-Control": "private, max-age=86400"})
 
 
 @router.get("/c/{cid}/me/area/{map_id}/{area_id}", response_class=HTMLResponse)
@@ -513,7 +533,8 @@ def _gm_svg(ctx, mod, map_id) -> str:
         return ""
     state = ctx.camp["state"]
     pend = {r["area"] for r in state["requests"] if r["map"] == map_id and r["status"] in ("pending", "roll")}
-    return modules.render_map(mod, map_id, _revealed(state, map_id), gm=True, pending=pend)
+    return modules.render_map(mod, map_id, _revealed(state, map_id), gm=True, pending=pend,
+                              image_url=_picture_url(ctx, mod, map_id, gm=True))
 
 
 @router.get("/c/{cid}/run/frag/{name}", response_class=HTMLResponse)

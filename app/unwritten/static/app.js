@@ -75,6 +75,7 @@ document.addEventListener("htmx:sseOpen", () => {
 
 // ---- maps: click an area ---------------------------------------------------------------------------------------
 document.addEventListener("click", (e) => {
+  if (traceClick(e)) return;
   const hot = e.target.closest && e.target.closest("[data-hot]");
   if (!hot) return;
   const svg = hot.closest("svg.map-svg");
@@ -100,6 +101,49 @@ document.addEventListener("keydown", (e) => {
     e.preventDefault();
     e.target.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   }
+});
+
+// ---- GM: trace area outlines for campaign.yaml (in the map's own coordinates) -------------------------------------
+let tracePts = [];
+function traceToggle() {
+  const panel = document.getElementById("trace-panel");
+  if (!panel) return;
+  panel.classList.toggle("hidden");
+  document.body.classList.toggle("tracing", !panel.classList.contains("hidden"));
+  traceDraw();
+}
+function traceClick(e) {
+  if (!document.body.classList.contains("tracing")) return false;
+  const svg = e.target.closest && e.target.closest("svg.map-svg.gm");
+  if (!svg) return false;
+  e.preventDefault();
+  const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
+  tracePts.push([Math.round(pt.x), Math.round(pt.y)]);
+  traceDraw();
+  return true;
+}
+function traceUndo() { tracePts.pop(); traceDraw(); }
+function traceClear() { tracePts = []; traceDraw(); }
+function traceDraw() {
+  const svg = document.querySelector("svg.map-svg.gm");
+  const out = document.getElementById("trace-out");
+  if (!svg || !out) return;
+  let line = svg.querySelector(".trace-line");
+  if (!line) {
+    line = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    line.setAttribute("class", "trace-line");
+    svg.appendChild(line);
+  }
+  const s = tracePts.map((p) => p.join(",")).join(" ");
+  line.setAttribute("points", document.body.classList.contains("tracing") ? s : "");
+  out.value = tracePts.length > 2 ? `shape: "${s}"` : "";
+}
+// The map is redrawn whenever the fog changes: put the outline back.
+document.addEventListener("htmx:afterSwap", () => {
+  if (!document.body.classList.contains("tracing")) return;
+  const panel = document.getElementById("trace-panel");
+  if (panel) panel.classList.remove("hidden");
+  traceDraw();
 });
 
 // ---- suggestions: set up the roller ----------------------------------------------------------------------------

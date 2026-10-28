@@ -1,6 +1,9 @@
-VERSION = "0.3.2"
+VERSION = "0.4.0"
 
 CHANGES = [
+    ("0.4.0", "2026-10-28", "Picture maps: a map can be a painted or generated image (PNG, JPEG, WebP). Players' copies "
+                            "are fogged on the server; numbered markers and the legend are added on top. The GM "
+                            "Screen's ✎ Trace tool outlines areas for campaign.yaml."),
     ("0.3.2", "2026-10-28", "The Concordance's six maps redrawn as illustrated 3/4-view maps: themed terrain, stone "
                             "platforms and walkways, numbered markers, and a legend that lists only discovered areas. "
                             "Fog takes each Age's own mist color; titles stay above it."),

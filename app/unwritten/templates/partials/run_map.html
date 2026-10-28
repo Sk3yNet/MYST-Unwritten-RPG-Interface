@@ -1,3 +1,8 @@
 {% if svg %}<div class="map-wrap">{{ svg | safe }}</div>
-<p class="small muted map-legend"><span class="key revealed"></span> revealed · <span class="key fogged"></span> hidden (players see fog) · <span class="key pending"></span> a player asked</p>
+<div class="trace-panel hidden" id="trace-panel">
+  <p class="small">Click around an area to outline it. <button type="button" class="ghost small" onclick="traceUndo()">Undo point</button>
+    <button type="button" class="ghost small" onclick="traceClear()">Start over</button></p>
+  <textarea readonly rows="2" id="trace-out" onclick="this.select()" placeholder='shape: "x,y x,y …"'></textarea>
+</div>
+<p class="small muted map-legend"><button type="button" class="ghost small" onclick="traceToggle()" title="Outline areas for campaign.yaml">✎ Trace</button> ·<span class="key revealed"></span> revealed · <span class="key fogged"></span> hidden (players see fog) · <span class="key pending"></span> a player asked</p>
 {% else %}<p class="empty">This adventure has no map for this scene.</p>{% endif %}

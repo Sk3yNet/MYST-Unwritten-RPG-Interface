@@ -6,6 +6,8 @@ been pushed, and map SVGs are filtered on the server so hidden areas are never s
 """
 from __future__ import annotations
 
+import hashlib
+import io
 import os
 import re
 import xml.etree.ElementTree as ET
@@ -13,6 +15,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
+from PIL import Image, ImageDraw, ImageFilter
 
 SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG_NS)
@@ -20,6 +23,8 @@ ET.register_namespace("xlink", "http://www.w3.org/1999/xlink")
 
 MEDIA_TYPES = {".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
                ".gif": "image/gif", ".webp": "image/webp", ".mp4": "video/mp4", ".webm": "video/webm"}
+# A map can be a drawing (SVG) or a picture: painted, generated or scanned art, fogged on the server.
+RASTER_MAPS = {".png", ".jpg", ".jpeg", ".webp"}
 _ID = re.compile(r"^[a-z0-9][a-z0-9_-]{0,60}$")
 
 
@@ -92,9 +97,15 @@ def load_module(path: Path) -> Module:
             for e in a["exits"]:
                 if e not in areas:
                     raise ModuleError(f"area {a['id']} exits to unknown area {e!r}")
-        if not mod.file(m["file"]).exists():
+        f = mod.file(m["file"])
+        if not f.exists():
             raise ModuleError(f"map file {m['file']} not found")
-        mod.maps[m["id"]] = {"name": m["id"], "start_revealed": [], **m, "areas": areas}
+        m = {"name": m["id"], "start_revealed": [], **m, "areas": areas}
+        if f.suffix.lower() in RASTER_MAPS:
+            # Area shapes are in the picture's own pixels, so they can be traced straight off it.
+            with Image.open(f) as im:
+                m["size"] = im.size
+        mod.maps[m["id"]] = m
     for h in raw.get("handouts", []):
         if not _ID.match(str(h.get("id", ""))):
             raise ModuleError(f"handout id {h.get('id')!r} is not a valid id")
@@ -188,11 +199,69 @@ def frontier(mmap: dict, revealed: set[str]) -> list[str]:
     return out
 
 
-def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: set[str] = frozenset()) -> str:
-    """Inline SVG for one map. Players get only revealed areas; the GM gets everything under a thin fog."""
+def is_raster(mmap: dict) -> bool:
+    return "size" in mmap
+
+
+def map_picture(mod: Module, map_id: str, revealed: set[str] | None) -> tuple[bytes, str]:
+    """A picture map as an image. With revealed=None (the GM) it is the original; for players every area not yet
+    revealed is painted over in the fog color before it leaves the server, so the URL shows nothing extra."""
     mmap = mod.maps[map_id]
-    tree = ET.parse(mod.file(mmap["file"]))
-    root = tree.getroot()
+    path = mod.file(mmap["file"])
+    if revealed is None:
+        return path.read_bytes(), MEDIA_TYPES[path.suffix.lower()]
+    key = (str(path), path.stat().st_mtime, map_id, frozenset(a for a in revealed if a in mmap["areas"]))
+    if key not in _pictures:
+        with Image.open(path) as im:
+            im = im.convert("RGB")
+        w, h = im.size
+        mask = Image.new("L", im.size, 255)
+        draw = ImageDraw.Draw(mask)
+        for aid in key[3]:
+            pts = [tuple(float(v) for v in p.split(",")) for p in mmap["areas"][aid]["points"].split()]
+            draw.polygon(pts, fill=0)
+        # Soft edges, as in the drawn maps, but the fog stays solid well inside hidden areas.
+        mask = mask.filter(ImageFilter.GaussianBlur(max(w, h) / 110))
+        fog = Image.new("RGB", im.size, mmap.get("fog") or "#cbb68c")
+        out = io.BytesIO()
+        Image.composite(fog, im, mask).save(out, "JPEG", quality=86)
+        if len(_pictures) > 64:
+            _pictures.clear()
+        _pictures[key] = out.getvalue()
+    return _pictures[key], "image/jpeg"
+
+
+_pictures: dict[tuple, bytes] = {}
+
+
+def picture_version(mod: Module, map_id: str, revealed: set[str] | None) -> str:
+    """A short tag for the picture URL, so browsers fetch a new one when the fog changes."""
+    mmap = mod.maps[map_id]
+    seen = "gm" if revealed is None else ",".join(sorted(a for a in revealed if a in mmap["areas"]))
+    return hashlib.sha1(f"{mod.file(mmap['file']).stat().st_mtime}|{seen}".encode()).hexdigest()[:10]
+
+
+def _picture_root(mmap: dict, image_url: str) -> ET.Element:
+    w, h = mmap["size"]
+    root = ET.Element(_q("svg"), {"viewBox": f"0 0 {w} {h}"})
+    if mmap.get("fog"):
+        root.set("data-fog", mmap["fog"])
+    if mmap.get("legend"):
+        root.set("data-legend", "on")
+    ET.SubElement(root, _q("image"), {"href": image_url, "x": "0", "y": "0", "width": str(w), "height": str(h),
+                                      "preserveAspectRatio": "none"})
+    return root
+
+
+def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: set[str] = frozenset(),
+               image_url: str = "") -> str:
+    """Inline SVG for one map. Players get only revealed areas; the GM gets everything under a thin fog.
+    Picture maps are wrapped in the same SVG, pointing at image_url (see map_picture)."""
+    mmap = mod.maps[map_id]
+    if is_raster(mmap):
+        root = _picture_root(mmap, image_url)
+    else:
+        root = ET.parse(mod.file(mmap["file"])).getroot()
     # Drop hidden areas' drawings (players), so nothing about them is ever sent.
     if not gm:
         def prune(parent):
@@ -205,15 +274,16 @@ def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: 
         prune(root)
     vb = (root.get("viewBox") or "0 0 1000 700").split()
     x, y, w, h = (float(v) for v in vb)
+    k = w / 1000  # sizes below are tuned for a 1000-wide map
     pre = f"m-{map_id}"
     defs = ET.SubElement(root, _q("defs"))
     flt = ET.SubElement(defs, _q("filter"), {"id": f"{pre}-fog", "x": "0", "y": "0", "width": "100%", "height": "100%"})
-    ET.SubElement(flt, _q("feTurbulence"), {"type": "fractalNoise", "baseFrequency": "0.012", "numOctaves": "4",
+    ET.SubElement(flt, _q("feTurbulence"), {"type": "fractalNoise", "baseFrequency": f"{0.012 / k:.5g}", "numOctaves": "4",
                                             "seed": "7"})
     # Drifting mist: pale noise over the map's fog color.
     ET.SubElement(flt, _q("feColorMatrix"), {"values": "0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 -0.2"})
     soft = ET.SubElement(defs, _q("filter"), {"id": f"{pre}-soft"})
-    ET.SubElement(soft, _q("feGaussianBlur"), {"stdDeviation": "9"})
+    ET.SubElement(soft, _q("feGaussianBlur"), {"stdDeviation": f"{9 * k:g}"})
     mask = ET.SubElement(defs, _q("mask"), {"id": f"{pre}-mask"})
     ET.SubElement(mask, _q("rect"), {"x": f"{x:g}", "y": f"{y:g}", "width": f"{w:g}", "height": f"{h:g}",
                                      "fill": "white"})
@@ -234,6 +304,8 @@ def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: 
         parent = next(p for p in root.iter() if el in list(p))
         parent.remove(el)
         root.append(el)
+    if is_raster(mmap) and mmap.get("markers"):
+        _markers(root, mmap, revealed, gm, k)
     if root.get("data-legend") == "on":
         _legend(root, mmap, revealed, gm, x, y, h)
     # Hotspots: the GM can click any area; players the revealed ones and the frontier.
@@ -253,7 +325,7 @@ def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: 
         ET.SubElement(poly, _q("title")).text = label
         if state == "frontier" and not gm:
             cx, cy = a["center"]
-            t = ET.SubElement(hot, _q("text"), {"x": f"{cx:g}", "y": f"{cy:g}", "class": "frontier-mark",
+            t = ET.SubElement(hot, _q("text"), {"x": f"{cx:g}", "y": f"{cy:g}", "class": "frontier-mark", "font-size": f"{46 * k:g}",
                                                 "text-anchor": "middle", "pointer-events": "none"})
             t.text = "?"
     root.set("class", "map-svg " + ("gm" if gm else "player"))
@@ -263,6 +335,22 @@ def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: 
     return ET.tostring(root, encoding="unicode")
 
 
+def _markers(root, mmap: dict, revealed: set[str], gm: bool, k: float) -> None:
+    """Numbered medallions over a picture map (painted art rarely has the right numbers on it)."""
+    g = ET.SubElement(root, _q("g"), {"class": "map-markers", "pointer-events": "none"})
+    for a in mmap["areas"].values():
+        if not gm and a["id"] not in revealed:
+            continue
+        cx, cy = a.get("marker") or a["center"]
+        m = ET.SubElement(g, _q("g"), {"transform": f"translate({cx:g} {cy:g}) scale({k:g})",
+                                       "opacity": "1" if a["id"] in revealed else ".55"})
+        ET.SubElement(m, _q("circle"), {"r": "17", "fill": "#f1e8d4", "stroke": "#3a2816", "stroke-width": "3"})
+        ET.SubElement(m, _q("circle"), {"r": "13", "fill": "none", "stroke": "#8c6a2c", "stroke-width": "1.2"})
+        t = ET.SubElement(m, _q("text"), {"y": "6.5", "text-anchor": "middle", "font-size": "19", "fill": "#2b1d10",
+                                          "font-family": "IM Fell English, Georgia, serif"})
+        t.text = str(a["number"])
+
+
 def _legend(root, mmap: dict, revealed: set[str], gm: bool, x: float, y: float, h: float) -> None:
     """A numbered key in the corner, like a printed map's. Players see only what they've discovered."""
     rows = [a for a in sorted(mmap["areas"].values(), key=lambda a: a["number"]) if gm or a["id"] in revealed]
@@ -270,8 +358,11 @@ def _legend(root, mmap: dict, revealed: set[str], gm: bool, x: float, y: float, 
         return
     lh, pad, width = 24, 12, 250
     height = pad * 2 + lh * len(rows)
-    lx, ly = x + 22, y + h - 22 - height
-    g = ET.SubElement(root, _q("g"), {"class": "map-legend-box", "pointer-events": "none"})
+    k = h / 700  # legends are laid out for a 700-high map; picture maps scale them to their own size
+    lx, ly = x + 22 * k, y + h - (22 + height) * k
+    g = ET.SubElement(root, _q("g"), {"class": "map-legend-box", "pointer-events": "none",
+                                      "transform": f"translate({lx:g} {ly:g}) scale({k:g})"})
+    lx = ly = 0
     ET.SubElement(g, _q("rect"), {"x": f"{lx:g}", "y": f"{ly:g}", "width": f"{width}", "height": f"{height}", "rx": "6",
                                   "fill": "#f1e8d4", "fill-opacity": ".93", "stroke": "#3a2816", "stroke-width": "2"})
     for i, a in enumerate(rows):

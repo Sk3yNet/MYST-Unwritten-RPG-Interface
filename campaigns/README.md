@@ -88,5 +88,33 @@ chapters:
   copies of the map have those groups **removed** until the area is revealed.
 * Anything outside an area group (frame, title, compass, sea) is always visible.
 * Prefix `id`s inside the SVG (`ar-ink`, `se-sea`) so two maps never clash on one page. No scripts.
+* Optional root attributes: `data-fog="#rrggbb"` (the mist's color), `data-legend="on"` (a numbered key of
+  discovered areas), and `data-above-fog="on"` on titles or frames that should stay visible over the mist.
 * Handout SVGs are shown inline, so they can use the page fonts (`IM Fell English`, `EB Garamond`, and `Dni` for
   D'ni script and numerals) and SMIL animation (`<animate>`, `<animateTransform>`).
+
+## Picture maps
+
+A map can also be a picture (`.png`, `.jpg`, `.jpeg` or `.webp`): painted, AI-generated, scanned or photographed.
+
+```yaml
+maps:
+  - id: air
+    name: The Sky Monastery
+    file: maps/sky-monastery.jpg
+    fog: "#eef3f8"            # the mist's color (parchment if left out)
+    legend: true              # a numbered key of discovered areas in the corner
+    markers: true             # numbered medallions on the areas (painted art rarely has the right numbers)
+    areas:
+      - id: wheels
+        shape: "536,768 947,827 ..."   # in the picture's own pixels
+        marker: [760, 770]             # optional: where the medallion goes (the shape's middle by default)
+```
+
+* Area `shape`s are in the picture's pixels (a 1600×1120 picture runs from 0,0 to 1600,1120).
+* **Trace them on the GM Screen:** open the map, press **✎ Trace**, click around an area, and copy the `shape:`
+  line it gives you. Include everything that belongs to the area (towers, roofs, bridges): whatever is outside
+  every revealed shape stays fogged.
+* **Players never receive the hidden parts.** The server paints the fog into their copy of the picture before
+  sending it, so opening the image on its own shows no more than the map does. The GM gets the original.
+* Bigger pictures look sharper but load slower; about 1600–2400 pixels wide is plenty.

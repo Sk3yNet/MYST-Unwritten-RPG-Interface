@@ -36,8 +36,10 @@ IM Fell English and EB Garamond are under the SIL Open Font License. The linking
 ## Adventures
 
 Adventures live in [`campaigns/`](campaigns/README.md), one folder each: a `campaign.yaml` (chapters, scenes, maps,
-areas, NPCs, handouts) plus SVG maps and handouts. The GM picks one on the **Desk**. Players never receive adventure
-content directly: hidden map areas are stripped from their copy of the map on the server, GM notes and secrets stay on
+areas, NPCs, handouts) plus maps and handouts. Maps can be drawn (SVG) or pictures: painted or AI-generated art,
+with areas outlined using the GM Screen's **✎ Trace** tool. The GM picks an adventure on the **Desk**. Players never
+receive adventure content directly: hidden map areas are stripped (drawn maps) or painted over with fog (pictures)
+on the server before their copy is sent, GM notes and secrets stay on
 the GM Screen, and a handout is served to a player only after it’s been shown to them.
 
 Included:
