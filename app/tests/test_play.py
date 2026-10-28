@@ -226,3 +226,15 @@ def test_gm_map_before_any_scene_and_bad_map_param(client):
     for url in (f"/c/{cid}/run/frag/map", f"/c/{cid}/run/frag/map?map=None", f"/c/{cid}/run?map=nope"):
         assert 'data-hot="vault"' in get(client, url, GM).text, url
     assert 'data-map="seleshva"' in get(client, f"/c/{cid}/run/frag/map?map=seleshva", GM).text
+
+
+def test_illustrated_map_legend_and_mist():
+    m = modules.get("concordance")
+    svg = modules.render_map(m, "ice", {"arrival", "terrace"}, gm=False)
+    assert "1. The Linking Ledge" in svg and "2. The Mirror Terrace" in svg
+    for hidden in ("Hall of Telescopes", "Meltwater Cistern", "Star Archive", "Great Dome"):
+        assert hidden not in svg, hidden
+    assert 'fill="#dfe9f0"' in svg  # the Age's own mist color
+    assert svg.index('class="fog"') < svg.index('class="map-banner"')  # the title stays above the fog
+    gm = modules.render_map(m, "ice", set(), gm=True)
+    assert "6. The Great Dome" in gm

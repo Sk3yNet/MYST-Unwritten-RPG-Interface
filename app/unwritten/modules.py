@@ -80,11 +80,11 @@ def load_module(path: Path) -> Module:
         if not _ID.match(str(m.get("id", ""))):
             raise ModuleError(f"map id {m.get('id')!r} must be lower-case letters, digits, - or _")
         areas = {}
-        for a in m.get("areas", []):
+        for num, a in enumerate(m.get("areas", []), 1):
             if not _ID.match(str(a.get("id", ""))):
                 raise ModuleError(f"area id {a.get('id')!r} in map {m['id']} is not a valid id")
             a = {"name": a["id"], "teaser": "", "read_aloud": "", "gm_notes": "", "hooks": [], "secrets": [],
-                 "aspects": [], "exits": [], "discover": None, "handouts": [], **a}
+                 "aspects": [], "exits": [], "discover": None, "handouts": [], "number": num, **a}
             a["points"] = _points(a.get("shape"))
             a["center"] = _centroid(a["points"])
             areas[a["id"]] = a
@@ -210,7 +210,8 @@ def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: 
     flt = ET.SubElement(defs, _q("filter"), {"id": f"{pre}-fog", "x": "0", "y": "0", "width": "100%", "height": "100%"})
     ET.SubElement(flt, _q("feTurbulence"), {"type": "fractalNoise", "baseFrequency": "0.012", "numOctaves": "4",
                                             "seed": "7"})
-    ET.SubElement(flt, _q("feColorMatrix"), {"values": "0 0 0 0 0.80  0 0 0 0 0.72  0 0 0 0 0.56  0 0 0 0.55 0.55"})
+    # Drifting mist: pale noise over the map's fog color.
+    ET.SubElement(flt, _q("feColorMatrix"), {"values": "0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 -0.2"})
     soft = ET.SubElement(defs, _q("filter"), {"id": f"{pre}-soft"})
     ET.SubElement(soft, _q("feGaussianBlur"), {"stdDeviation": "9"})
     mask = ET.SubElement(defs, _q("mask"), {"id": f"{pre}-mask"})
@@ -221,11 +222,20 @@ def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: 
         if aid in mmap["areas"]:
             ET.SubElement(holes, _q("polygon"), {"points": mmap["areas"][aid]["points"], "fill": "black"})
     fog = ET.SubElement(root, _q("g"), {"class": "fog", "mask": f"url(#{pre}-mask)", "pointer-events": "none",
-                                        "opacity": "0.55" if gm else "1"})
+                                        "opacity": "0.4" if gm else "1"})
+    # A map may choose its mist color (an icy blue, smoke over lava…); parchment otherwise.
+    fog_color = root.get("data-fog") or "#cbb68c"
     ET.SubElement(fog, _q("rect"), {"x": f"{x:g}", "y": f"{y:g}", "width": f"{w:g}", "height": f"{h:g}",
-                                    "fill": "#cbb68c"})
+                                    "fill": fog_color})
     ET.SubElement(fog, _q("rect"), {"x": f"{x:g}", "y": f"{y:g}", "width": f"{w:g}", "height": f"{h:g}",
                                     "filter": f"url(#{pre}-fog)"})
+    # Titles, frames and compass roses marked data-above-fog stay readable over the mist.
+    for el in [e for e in root.iter() if e.get("data-above-fog") == "on"]:
+        parent = next(p for p in root.iter() if el in list(p))
+        parent.remove(el)
+        root.append(el)
+    if root.get("data-legend") == "on":
+        _legend(root, mmap, revealed, gm, x, y, h)
     # Hotspots: the GM can click any area; players the revealed ones and the frontier.
     hot = ET.SubElement(root, _q("g"), {"class": "hotspots"})
     edge = set(frontier(mmap, revealed))
@@ -251,6 +261,24 @@ def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: 
     root.attrib.pop("width", None)
     root.attrib.pop("height", None)
     return ET.tostring(root, encoding="unicode")
+
+
+def _legend(root, mmap: dict, revealed: set[str], gm: bool, x: float, y: float, h: float) -> None:
+    """A numbered key in the corner, like a printed map's. Players see only what they've discovered."""
+    rows = [a for a in sorted(mmap["areas"].values(), key=lambda a: a["number"]) if gm or a["id"] in revealed]
+    if not rows:
+        return
+    lh, pad, width = 24, 12, 250
+    height = pad * 2 + lh * len(rows)
+    lx, ly = x + 22, y + h - 22 - height
+    g = ET.SubElement(root, _q("g"), {"class": "map-legend-box", "pointer-events": "none"})
+    ET.SubElement(g, _q("rect"), {"x": f"{lx:g}", "y": f"{ly:g}", "width": f"{width}", "height": f"{height}", "rx": "6",
+                                  "fill": "#f1e8d4", "fill-opacity": ".93", "stroke": "#3a2816", "stroke-width": "2"})
+    for i, a in enumerate(rows):
+        t = ET.SubElement(g, _q("text"), {"x": f"{lx + 14:g}", "y": f"{ly + pad + lh * i + 17:g}", "font-size": "17",
+                                          "font-family": "IM Fell English, Georgia, serif", "fill": "#2b1d10",
+                                          "opacity": "1" if a["id"] in revealed else ".45"})
+        t.text = f"{a['number']}. {a['name']}"
 
 
 def player_area(a: dict) -> dict:

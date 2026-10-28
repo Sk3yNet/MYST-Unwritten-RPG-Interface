@@ -1,6 +1,9 @@
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 
 CHANGES = [
+    ("0.3.2", "2026-10-28", "The Concordance's six maps redrawn as illustrated 3/4-view maps: themed terrain, stone "
+                            "platforms and walkways, numbered markers, and a legend that lists only discovered areas. "
+                            "Fog takes each Age's own mist color; titles stay above it."),
     ("0.3.1", "2026-10-18", "Drama dice and drama points (renamed throughout). The lobby plays a fan-made linking "
                             "sound, timed so everyone arrives as it fades."),
     ("0.3.0", "2026-10-18", "The Lobby: a curtained stage and a bookshelf of burned books where only playable "

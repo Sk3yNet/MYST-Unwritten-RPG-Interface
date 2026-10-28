@@ -68,7 +68,7 @@ maps:
       - id: awakening
         name: The Reading Nook
         teaser: A lamp-lit alcove
-        shape: [90, 520, 200, 140]
+        shape: "275,470 455,470 455,645 275,645"
         read_aloud: >
           You wake on cushions in a lamp-lit alcove that smells of old paper and cold brass. On the reading desk, a
           note is held down by a small snowflake carved from glass: “Begin where nothing changes.”
@@ -83,7 +83,7 @@ maps:
       - id: library
         name: The Great Library
         teaser: Tall shelves in the dark
-        shape: [90, 200, 230, 300]
+        shape: "205,270 410,270 410,470 205,470"
         read_aloud: >
           Shelves rise into shadow, ladders on brass rails. Most books are ordinary: atlases, star almanacs, music
           treatises. One shelf holds nothing but empty, gilded Linking Book covers.
@@ -101,7 +101,7 @@ maps:
       - id: concordance
         name: The Concordance
         teaser: A great machine under a dome
-        shape: [365, 245, 270, 270]
+        shape: "718,395 700,438 651,473 580,492 500,492 429,473 380,438 362,395 380,352 429,317 500,298 580,298 651,317 700,352"
         read_aloud: >
           Under a painted dome stands a machine of five concentric brass rings over a dark, rippling pool. Each ring
           is engraved with five glyphs and has a lever on its rim; tiny stars are punched into each rim. Around the
@@ -125,7 +125,7 @@ maps:
       - id: gallery
         name: The Book Gallery
         teaser: Glass cases glinting
-        shape: [680, 200, 230, 300]
+        shape: "690,270 905,270 905,470 690,470"
         read_aloud: >
           Five tall glass cases, each holding a Linking Book. Each case has a brass dial ringed with five glyphs.
           Four of the cases are dark; the first, carved with a snowflake, has a faint frost on its glass.
@@ -144,7 +144,7 @@ maps:
       - id: balcony
         name: The Star Gallery
         teaser: A balcony above, out of reach
-        shape: [340, 70, 320, 125]
+        shape: "715,175 698,202 649,223 579,235 501,235 431,223 382,202 365,175 382,148 431,127 501,115 579,115 649,127 698,148"
         read_aloud: >
           The lift sighs to a stop on a curved balcony beneath the dome. From here the painting is whole: five
           constellations wheel around the sky, each with a golden glyph beneath it.
@@ -163,7 +163,7 @@ maps:
       - id: study
         name: The Cartographer’s Study
         teaser: A locked door with five bells
-        shape: [400, 560, 200, 110]
+        shape: "545,555 745,555 745,675 545,675"
         read_aloud: >
           The door swings open on its own as the last tone fades. A small study: a cold hearth, a desk, a letter, and
           a Book bound in plain leather, its first page blank.
@@ -183,7 +183,7 @@ maps:
       - id: arrival
         name: The Linking Ledge
         teaser: A snowy ledge
-        shape: [60, 480, 200, 160]
+        shape: "455,610 446,634 419,653 381,664 339,664 301,653 274,634 265,610 274,586 301,567 339,556 381,556 419,567 446,586"
         read_aloud: >
           You arrive on a ledge of blue ice. Snow falls without a sound and never seems to land. Below, a terrace of
           enormous crystal mirrors catches a low, unmoving sun.
@@ -197,7 +197,7 @@ maps:
       - id: terrace
         name: The Mirror Terrace
         teaser: Great crystal mirrors
-        shape: [270, 430, 250, 210]
+        shape: "675,425 658,468 609,503 539,522 461,522 391,503 342,468 325,425 342,382 391,347 461,328 539,328 609,347 658,382"
         read_aloud: >
           Three crystal mirrors, each taller than a door, stand on brass pivots. The low sun strikes the first; a
           beam of pale gold lies across the ice like a dropped ribbon.
@@ -219,7 +219,7 @@ maps:
       - id: hall
         name: The Hall of Telescopes
         teaser: Shapes behind frosted glass
-        shape: [300, 220, 250, 200]
+        shape: "285,135 545,135 545,320 285,320"
         read_aloud: >
           Brass telescopes, frozen in place, all point at the same patch of wall. One wall is a sheet of clear blue
           ice, and through it you can see shelves of charts.
@@ -235,7 +235,7 @@ maps:
       - id: cistern
         name: The Meltwater Cistern
         teaser: A sound of dripping
-        shape: [560, 470, 220, 180]
+        shape: "915,565 903,598 868,624 818,638 762,638 712,624 677,598 665,565 677,532 712,506 762,492 818,492 868,506 903,532"
         read_aloud: >
           A deep stone cistern of black water, half frozen. Ice floats in slow circles. On the bottom, a glint of
           brass.
@@ -249,7 +249,7 @@ maps:
       - id: archive
         name: The Star Archive
         teaser: Shelves of charts behind ice
-        shape: [570, 220, 210, 200]
+        shape: "625,150 825,150 825,315 625,315"
         read_aloud: >
           A dry, still room. Star charts are pinned under glass. On a pedestal stands a tiny brass copy of the
           Concordance, its innermost ring encased in ice. Beside it lies a frozen tuning fork and an open journal.
@@ -270,7 +270,7 @@ maps:
       - id: dome
         name: The Great Dome
         teaser: A white dome
-        shape: [800, 180, 160, 260]
+        shape: "972,310 963,362 937,404 900,427 860,427 823,404 797,362 788,310 797,258 823,216 860,193 900,193 937,216 963,258"
         read_aloud: >
           The greatest telescope of all, its housing locked in a cradle of ice. Inside the ice, something glows: a
           Resonance Key. Five shutters ring the dome, each painted with a constellation.
@@ -296,7 +296,7 @@ maps:
       - id: arrival
         name: The Basalt Landing
         teaser: Black stone, red light
-        shape: [60, 500, 200, 150]
+        shape: "455,615 446,638 419,656 381,666 339,666 301,656 274,638 265,615 274,592 301,574 339,564 381,564 419,574 446,592"
         read_aloud: >
           Heat hits you like a hand. You stand on black basalt above a river of slow, glowing lava. Somewhere above,
           enormous gears grind; the air smells of hot metal and rain that never falls.
@@ -309,7 +309,7 @@ maps:
       - id: valves
         name: The Valve Gallery
         teaser: Wheels and a gauge
-        shape: [280, 470, 220, 180]
+        shape: "315,385 545,385 545,545 315,545"
         read_aloud: >
           Two great valve wheels, marked A and B, stand before a pressure gauge with five marks. A counterweight hangs
           from a chain beside them.
@@ -332,7 +332,7 @@ maps:
       - id: channels
         name: The Lava Channels
         teaser: Rivers of fire
-        shape: [520, 470, 260, 180]
+        shape: "550,450 790,450 790,590 550,590"
         read_aloud: >
           Two channels of lava run side by side, bright as noon. Across them, through shimmering air, a carved shrine
           sits on an island of black rock.
@@ -345,7 +345,7 @@ maps:
       - id: gears
         name: The Hall of Gears
         teaser: Grinding machinery
-        shape: [280, 250, 240, 200]
+        shape: "620,245 605,285 564,317 503,335 437,335 376,317 335,285 320,245 335,205 376,173 437,155 503,155 564,173 605,205"
         read_aloud: >
           Gears as big as houses turn slowly, driven by steam. Every few turns they shift position, and a new gap
           opens between them.
@@ -359,7 +359,7 @@ maps:
       - id: elevator
         name: The Steam Lift
         teaser: A brass cage
-        shape: [540, 250, 130, 200]
+        shape: "742,245 736,293 719,331 694,352 666,352 641,331 624,293 618,245 624,197 641,159 666,138 694,138 719,159 736,197"
         read_aloud: >
           A brass cage on a chain, hissing gently. A lever inside points down.
         gm_notes: Rises only with pressure 2–4 and the counterweight released (see the Valve Gallery).
@@ -370,7 +370,7 @@ maps:
       - id: foundry
         name: The Bell Foundry
         teaser: An upper chamber
-        shape: [690, 100, 270, 230]
+        shape: "745,95 975,95 975,270 745,270"
         read_aloud: >
           A crucible of cold bronze sits under a hood. Before it, five bell molds, each with a glyph cut into it as a
           hollow. Above the crucible, an anvil encases a dark lump of slag, carved with a flame.
@@ -391,7 +391,7 @@ maps:
       - id: shrine
         name: The Anvil Shrine
         teaser: A shrine across the lava
-        shape: [800, 400, 160, 250]
+        shape: "970,560 959,595 929,623 884,638 836,638 791,623 761,595 750,560 761,525 791,497 836,482 884,482 929,497 959,525"
         read_aloud: >
           A small shrine, its ceiling pierced with holes that let the red light through as stars: an anvil, outlined
           in fire.
@@ -412,7 +412,7 @@ maps:
       - id: arrival
         name: The Wind Gate
         teaser: A floating island
-        shape: [60, 500, 190, 130]
+        shape: "422,620 413,650 387,675 350,688 310,688 273,675 247,650 238,620 247,590 273,565 310,552 350,552 387,565 413,590"
         read_aloud: >
           Wind, everywhere. You stand on a floating island of pale stone; others drift around you, tied together by
           rope bridges that sing in the gusts. Windmills turn on every roof.
@@ -425,7 +425,7 @@ maps:
       - id: wheels
         name: The Prayer-Wheel Terrace
         teaser: Painted wheels
-        shape: [280, 480, 220, 145]
+        shape: "605,480 592,517 554,546 500,563 440,563 386,546 348,517 335,480 348,443 386,414 440,397 500,397 554,414 592,443"
         read_aloud: >
           Three great prayer wheels, marked I, II and III. Spin one and a fan somewhere roars, and a tower on another
           island grinds round a quarter turn.
@@ -444,7 +444,7 @@ maps:
       - id: south
         name: The South Tower
         teaser: A tower on an island
-        shape: [540, 500, 160, 130]
+        shape: "785,545 776,595 749,635 711,657 669,657 631,635 604,595 595,545 604,495 631,455 669,433 711,433 749,455 776,495"
         read_aloud: A slim tower with a painted panel at its crown. From here the panel looks like random brushstrokes.
         gm_notes: Each tower's panel holds a fragment of the Air glyph; they align only from the listening seat in the Belfry.
         hooks:
@@ -455,7 +455,7 @@ maps:
       - id: east
         name: The East Tower
         teaser: A tower to the east
-        shape: [760, 330, 170, 135]
+        shape: "965,400 956,450 929,490 891,512 849,512 811,490 784,450 775,400 784,350 811,310 849,288 891,288 929,310 956,350"
         read_aloud: A tower whose open windows hum when the wind is right, like a bottle blown across.
         gm_notes: Each tower sings one pitch of a chord when its windows face the wind. Aligned, the chord carries to the Summit.
         hooks:
@@ -466,7 +466,7 @@ maps:
       - id: belfry
         name: The Belfry of Chimes
         teaser: Chimes in the wind
-        shape: [230, 230, 190, 160]
+        shape: "430,300 420,337 392,366 352,383 308,383 268,366 240,337 230,300 240,263 268,234 308,217 352,217 392,234 420,263"
         read_aloud: >
           Hundreds of chimes hang from a bell-frame. In the middle of the floor, a single stone seat faces the towers.
           A brass plaque reads: “Sit. Look. Do not move.”
@@ -485,7 +485,7 @@ maps:
       - id: north
         name: The North Tower
         teaser: A tower high above
-        shape: [450, 90, 150, 130]
+        shape: "632,195 623,247 597,289 560,312 520,312 483,289 457,247 448,195 457,143 483,101 520,78 560,78 597,101 623,143"
         read_aloud: The highest tower. From its stair you can see the Summit Shrine, and a pattern laid in its floor.
         gm_notes: The North Tower's stair overlooks the Summit floor, where the Kite constellation is laid in stones.
         hooks:
@@ -496,7 +496,7 @@ maps:
       - id: summit
         name: The Summit Shrine
         teaser: A shrine at the top
-        shape: [640, 90, 260, 165]
+        shape: "940,215 925,256 884,289 823,308 757,308 696,289 655,256 640,215 655,174 696,141 757,122 823,122 884,141 925,174"
         read_aloud: >
           A wind-locked door of slatted bronze. When the towers' chord reaches it, the slats turn like a flock of
           birds and let you in. On the floor, white stones make a kite of stars around a spiral; in the spiral's eye,
@@ -522,7 +522,7 @@ maps:
       - id: arrival
         name: The Root Gate
         teaser: An arch of roots
-        shape: [60, 500, 180, 150]
+        shape: "465,615 456,639 429,658 391,669 349,669 311,658 284,639 275,615 284,591 311,572 349,561 391,561 429,572 456,591"
         read_aloud: >
           You arrive under an arch of roots as thick as pillars. Moss, ruins, birdsong. Everything here is slowly
           growing; you can almost hear it.
@@ -534,7 +534,7 @@ maps:
       - id: clearing
         name: The Sun Clearing
         teaser: A bright clearing
-        shape: [270, 470, 210, 180]
+        shape: "635,520 623,553 588,579 538,593 482,593 432,579 397,553 385,520 397,487 432,461 482,447 538,447 588,461 623,487"
         read_aloud: >
           A circle of sunlight falls through the canopy onto a bronze sun-mirror on a swivel, tarnished green.
         gm_notes: The sun-mirror can throw light onto one garden bed at a time (Engineering or Finesse to aim it, vs Fair).
@@ -546,7 +546,7 @@ maps:
       - id: cisterns
         name: The Rain Cisterns
         teaser: Stone tanks
-        shape: [60, 240, 190, 200]
+        shape: "275,300 485,300 485,460 275,460"
         read_aloud: Three stone tanks full of rainwater, each with a sluice gate leading to the garden terraces.
         gm_notes: Each sluice waters one bed. Bridgevine's growth will choke the middle sluice, so grow it last.
         hooks:
@@ -558,7 +558,7 @@ maps:
       - id: gardens
         name: The Terraced Gardens
         teaser: Overgrown terraces
-        shape: [280, 220, 240, 220]
+        shape: "485,210 735,210 735,400 485,400"
         read_aloud: >
           Four seed beds, each labeled in a gardener's hand: Stairbloom, Ladder-reed, Bridgevine, Thornwall.
         gm_notes: >
@@ -576,7 +576,7 @@ maps:
       - id: ravine
         name: The Ravine
         teaser: A deep cleft
-        shape: [540, 300, 100, 350]
+        shape: "735,120 815,120 815,680 735,680"
         read_aloud: A cleft too wide to jump, its bottom lost in ferns. The far side holds a stone terrace and an enormous tree.
         gm_notes: Crossable once Bridgevine grows (or a dangerous Athletics vs Great jump).
         hooks:
@@ -587,7 +587,7 @@ maps:
       - id: calendar
         name: The Calendar Stone
         teaser: A carved stone disc
-        shape: [660, 430, 270, 220]
+        shape: "990,560 979,595 949,623 904,638 856,638 811,623 781,595 770,560 781,525 811,497 856,482 904,482 949,497 979,525"
         read_aloud: >
           A great stone of five nested rings, each carved with the same five seasons: Rain, Sun, Rain & Sun, Growth,
           Rest. A plaque: “Each wheel, turned, turns the one outside it.”
@@ -607,7 +607,7 @@ maps:
       - id: heart
         name: The Heart Tree
         teaser: An enormous tree
-        shape: [670, 100, 260, 280]
+        shape: "990,270 979,331 949,379 904,406 856,406 811,379 781,331 770,270 781,209 811,161 856,134 904,134 949,161 979,209"
         read_aloud: >
           When the last ring settles on Rest, the great tree sighs; its bark parts like a curtain. Inside, on a bed of
           roots, lies the Earth Key, and above it, carved into the heartwood, a seed of stars.
@@ -628,7 +628,7 @@ maps:
       - id: arrival
         name: The Moon Steps
         teaser: Steps into water
-        shape: [60, 520, 180, 140]
+        shape: "275,570 415,570 415,680 275,680"
         read_aloud: >
           Moonlight. Wide steps lead down into still water that fills a cathedral nave. Glass floors shine beneath the
           surface, and everything is doubled: every pillar has a twin hanging below it.
@@ -638,7 +638,7 @@ maps:
       - id: nave
         name: The Flooded Nave
         teaser: A flooded hall
-        shape: [260, 300, 300, 360]
+        shape: "405,290 705,290 705,570 405,570"
         read_aloud: >
           You wade along a glass floor. Above, the vaulted ceiling is painted with backward letters. In the water's
           reflection, they read the right way round.
@@ -652,7 +652,7 @@ maps:
       - id: wheel
         name: The Tide Wheel
         teaser: A great brass wheel
-        shape: [60, 280, 180, 200]
+        shape: "400,300 390,330 362,355 322,368 278,368 238,355 210,330 200,300 210,270 238,245 278,232 322,232 362,245 390,270"
         read_aloud: A brass wheel with three marks — a dry stone, a half moon, a full wave — moves the whole sea.
         gm_notes: >
           Three levels. LOW: the Moon Pool's niche is dry and reachable; the crypt arch is just paint on a wall.
@@ -668,7 +668,7 @@ maps:
       - id: choir
         name: The Choir of Bells
         teaser: Bells half in water
-        shape: [580, 450, 220, 210]
+        shape: "715,455 915,455 915,605 715,605"
         read_aloud: Bells hang at every height, some in air, some underwater. The water changes how each one sounds.
         gm_notes: At Mid tide one bell sits exactly at the waterline and rings a clear A. Any other level, a muffled thud.
         hooks:
@@ -680,7 +680,7 @@ maps:
       - id: moonpool
         name: The Moon Pool
         teaser: A round pool
-        shape: [260, 80, 300, 200]
+        shape: "695,180 681,213 642,239 586,253 524,253 468,239 429,213 415,180 429,147 468,121 524,107 586,107 642,121 681,147"
         read_aloud: >
           A round pool under an open oculus where the moon sits. Letters run around its rim, every one reversed.
         gm_notes: >
@@ -697,7 +697,7 @@ maps:
       - id: crypt
         name: The Drowned Crypt
         teaser: A dark crypt
-        shape: [580, 250, 220, 180]
+        shape: "715,285 915,285 915,435 715,435"
         read_aloud: A low crypt. On the far wall, an arch is painted, so lifelike you reach out to touch it — and touch stone.
         gm_notes: At High tide the painted arch is a real passage, underwater. Above water it is only paint.
         hooks:
@@ -709,7 +709,7 @@ maps:
       - id: apse
         name: The Apse
         teaser: Light under water
-        shape: [820, 160, 140, 400]
+        shape: "845,150 985,150 985,390 845,390"
         read_aloud: >
           You surface in a round apse lit by moonlight through blue glass. Beneath a glass floor, a reliquary holds the
           last Key. Its lock has three dials; above you, three glyphs are painted on the ceiling, and a heron of stars
