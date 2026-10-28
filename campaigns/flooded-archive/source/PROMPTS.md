@@ -24,7 +24,11 @@ use them with ChatGPT, Midjourney or Stable Diffusion, and what to do with the r
 > stone vault door with three dials, a seam of light leaking around its edge. Top right, a small alcove with a
 > single pedestal holding an open book that glows violet. Dark blues, black water, orange lake-light, grey stone.
 
-## 2. The Age of Seleshva — `seleshva-base.jpg`
+## 2. The Age of Seleshva — `seleshva-sketch.jpg` (preferred) or `seleshva-base.jpg`
+
+The drawn map's areas are boxes, and a generator copies them as square islands. `seleshva-sketch.jpg` is a loose
+colour sketch with natural coastlines instead; use it with a *lower* image weight (Midjourney `--iw 1`, img2img
+denoise about 0.75), and add the coastline paragraph below to the prompt.
 
 > A strange coastal Age under a low violet sun that never moves; a bruise-coloured sea with the tide rushing out,
 > wet rocks and spray. Lower left, a stone pier slick with spray. Centre, a wide field of reeds made of something
@@ -32,3 +36,11 @@ use them with ChatGPT, Midjourney or Stable Diffusion, and what to do with the r
 > fire ring and papers pinned under stones. Lower right, a staircase of rock pools left by the retreating sea, brass
 > rings set in their floors, something rectangular glinting in the lowest pool. Upper right, a tall white lighthouse
 > of fitted stone with its lamp turning. Violet, indigo, sea-green, wet black rock and white stone.
+
+Add for Seleshva:
+
+> One natural tidal island, not separate blocks: an irregular, eroded coastline with coves, sea stacks, tumbled
+> boulders and sandy necks between the parts. The reed field follows the shape of the land, with ragged soft edges,
+> not a rectangle. The camp sits on a grassy rise; the lighthouse stands on a rocky headland joined to the island by
+> a low causeway of rock; the tide pools are on a flat shelf of dark rock stepping down to the sea. The pier is the
+> only built straight edge. The reference sketch shows only rough positions; do not copy its flat shapes or colours.
