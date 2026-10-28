@@ -24,6 +24,15 @@ use them with ChatGPT, Midjourney or Stable Diffusion, and what to do with the r
 > stone vault door with three dials, a seam of light leaking around its edge. Top right, a small alcove with a
 > single pedestal holding an open book that glows violet. Dark blues, black water, orange lake-light, grey stone.
 
+Add for the hall (the base image has no doors, and "glowing lake" can come back as lava):
+
+> The archive stands in the still, dark WATER of a vast underground lake, NOT lava: the water glows faintly orange
+> from light deep beneath its surface. Every room is connected by visible open doorways or arches in its walls:
+> the landing to the reading hall and to the pump room; the reading hall to the pump room's neighbour the study
+> (by the steps at its far end) and to the collapsed stacks; the pump room to the study; the study and the stacks
+> each to the vault room; and the great round stone door stands upright in the wall between the vault room and the
+> small alcove beyond it, closed.
+
 ## 2. The Age of Seleshva — `seleshva-sketch.jpg` (preferred) or `seleshva-base.jpg`
 
 The drawn map's areas are boxes, and a generator copies them as square islands. `seleshva-sketch.jpg` is a loose
