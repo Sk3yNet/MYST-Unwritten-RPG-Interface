@@ -91,6 +91,8 @@ def load_module(path: Path) -> Module:
             a = {"name": a["id"], "teaser": "", "read_aloud": "", "gm_notes": "", "hooks": [], "secrets": [],
                  "aspects": [], "exits": [], "discover": None, "handouts": [], "number": num, **a}
             a["points"] = _points(a.get("shape"))
+            # What the fog lifts from: the shape, or a wider `reveal` that reaches out to the map's edges.
+            a["reveal_points"] = _points(a["reveal"]) if a.get("reveal") else a["points"]
             a["center"] = _centroid(a["points"])
             areas[a["id"]] = a
         for a in areas.values():
@@ -219,7 +221,7 @@ def map_picture(mod: Module, map_id: str, revealed: set[str] | None) -> tuple[by
         w, h = im.size
         mask = Image.new("L", im.size, 255)
         draw = ImageDraw.Draw(mask)
-        for points in [mmap["areas"][aid]["points"] for aid in key[3]] + mmap["clear"]:
+        for points in [mmap["areas"][aid]["reveal_points"] for aid in key[3]] + mmap["clear"]:
             draw.polygon([tuple(float(v) for v in p.split(",")) for p in points.split()], fill=0)
         # Soft edges, as in the drawn maps, but the fog stays solid well inside hidden areas.
         mask = mask.filter(ImageFilter.GaussianBlur(max(w, h) / 110))
@@ -291,7 +293,7 @@ def render_map(mod: Module, map_id: str, revealed: set[str], gm: bool, pending: 
     ET.SubElement(mask, _q("rect"), {"x": f"{x:g}", "y": f"{y:g}", "width": f"{w:g}", "height": f"{h:g}",
                                      "fill": "white"})
     holes = ET.SubElement(mask, _q("g"), {"filter": f"url(#{pre}-soft)"})
-    for points in [mmap["areas"][a]["points"] for a in revealed if a in mmap["areas"]] + mmap["clear"]:
+    for points in [mmap["areas"][a]["reveal_points"] for a in revealed if a in mmap["areas"]] + mmap["clear"]:
         ET.SubElement(holes, _q("polygon"), {"points": points, "fill": "black"})
     fog = ET.SubElement(root, _q("g"), {"class": "fog", "mask": f"url(#{pre}-mask)", "pointer-events": "none",
                                         "opacity": "0.4" if gm else "1"})

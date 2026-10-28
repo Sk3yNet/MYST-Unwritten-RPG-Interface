@@ -170,13 +170,14 @@ maps:
     fog: "#4a3f6e"
     legend: [30, 95]            # top-left corner of the key, clear of the pier
     markers: true
-    clear: ["0,0 1500,0 1500,80 0,80"]   # the horizon and the violet sun
+    clear: ["-40,-40 1540,-40 1540,80 -40,80"]   # the horizon and the violet sun
     start_revealed: [pier]
     areas:
       - id: pier
         name: The Arrival Pier
         teaser: A stone pier
         shape: "80,668 370,642 380,700 255,732 255,962 150,968 138,742 84,722"
+        reveal: "-40,520 300,470 320,580 385,650 395,730 420,820 470,1089 -40,1089"
         read_aloud: >
           You arrive on a stone pier slick with spray. The sea is the color of a bruise; the tide is going out, and
           not slowly. A violet sun hangs low and does not seem to move.
@@ -191,6 +192,7 @@ maps:
         name: The Glass Reeds
         teaser: Glittering grass
         shape: "330,592 445,470 610,398 760,388 925,398 965,560 885,650 875,790 700,838 555,835 425,795 345,660"
+        reveal: "300,470 480,375 640,393 800,370 975,360 1060,500 995,575 900,640 860,760 800,850 760,1089 470,1089 420,820 395,730 385,650 320,580"
         read_aloud: >
           Reeds of something like glass ring softly in the wind, a thousand small bells. Paths have been trodden
           through them, some by boots, some by something smaller.
@@ -205,6 +207,7 @@ maps:
         name: Ilse's Camp
         teaser: Smoke on the ridge
         shape: "435,195 555,92 705,108 860,168 1000,285 960,335 800,358 640,385 480,362 418,282"
+        reveal: "-40,-40 1060,-40 1060,200 1035,290 975,360 800,370 640,393 480,375 300,470 -40,520"
         read_aloud: >
           A tarp lean-to on a ridge, a cold fire ring, and sheets of notes pinned under stones, covered in tide
           tables and sketches of a tower.
@@ -220,6 +223,7 @@ maps:
         name: The Tide Pools
         teaser: Wet rocks below
         shape: "872,612 1025,588 1185,598 1305,652 1368,780 1305,935 1170,965 1000,925 895,862 828,800 858,700"
+        reveal: "1540,650 1540,1089 760,1089 800,850 860,760 900,640 995,575 1060,500 1190,580 1320,635"
         read_aloud: >
           The retreating sea has left a staircase of pools, each with brass rings set in its floor. In the third,
           something rectangular glints. Someone is sitting on the rocks above it, soaked and shivering.
@@ -236,6 +240,7 @@ maps:
         name: The Lighthouse
         teaser: A white tower
         shape: "1085,238 1250,105 1365,135 1465,220 1475,430 1445,625 1305,612 1175,522 1115,452 1000,342 1075,298"
+        reveal: "1060,-40 1540,-40 1540,650 1320,635 1190,580 1060,500 975,360 1035,290 1060,200"
         read_aloud: >
           A white tower of fitted stone, its lamp turning even in daylight. Gears inside it tick like a clock, and
           their sound carries down to the sea.

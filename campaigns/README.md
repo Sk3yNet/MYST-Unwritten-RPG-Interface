@@ -110,12 +110,16 @@ maps:
       - id: wheels
         shape: "536,768 947,827 ..."   # in the picture's own pixels
         marker: [760, 770]             # optional: where the medallion goes (the shape's middle by default)
+        reveal: "400,380 980,360 ..."  # optional: what the fog lifts from, if wider than the clickable shape
 ```
 
 * Area `shape`s are in the picture's pixels (a 1600×1120 picture runs from 0,0 to 1600,1120).
 * **Trace them on the GM Screen:** open the map, press **✎ Trace**, click around an area, and copy the `shape:`
   line it gives you. Include everything that belongs to the area (towers, roofs, bridges): whatever is outside
   every revealed shape stays fogged.
+* Give each area a `reveal` region reaching out to the picture's edges (together they tile the whole picture,
+  each patch of sea or sky going to its nearest area), so a fully explored map has no fog left. Points just past
+  the edge (e.g. `-40` or width + 40) keep the soft fog edge off the picture.
 * **Players never receive the hidden parts.** The server paints the fog into their copy of the picture before
   sending it, so opening the image on its own shows no more than the map does. The GM gets the original.
 * **Making the art:** `python3 campaigns/tools/base_images.py <adventure>` writes a text-free base image of each
